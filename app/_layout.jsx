@@ -12,7 +12,18 @@ export default function RootLayout() {
           fontWeight: 'bold',
         },
       }}>
-      <Stack.Screen name="index" />
+      <Stack.Screen
+        name="(tabs)/main"
+        options={{ headerTitle: 'Main' }}
+      />
+      <Stack.Screen
+        name="(auth)/register"
+        options={{ headerTitle: 'Register' }}
+      />
+      <Stack.Screen
+        name="(auth)/login"
+        options={{ headerTitle: 'Login' }}
+      />
     </Stack>
   );
 }

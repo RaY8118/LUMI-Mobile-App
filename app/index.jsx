@@ -8,6 +8,9 @@ export default function HomeScreen() {
       <Link href="/register" className="text-blue-500 text-lg">
         Register
       </Link>
+      <Link href="/login" className="text-blue-500 text-lg">
+        Login
+      </Link>
     </View>
   );
 }

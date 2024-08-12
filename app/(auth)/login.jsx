@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { Link } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = () => {
   const router = useRouter(); // Ensure this is imported if not already
@@ -11,11 +12,15 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://192.168.0.102:5000/login", {
+      const response = await axios.post("http://192.168.0.109:5000/login", {
         email,
         password,
       });
 
+      const userData = response.data.user
+      await AsyncStorage.setItem("userData", JSON.stringify(userData) )
+      setEmail("")
+      setPassword("")
       Alert.alert("Success", response.data.message);
       router.push("/main"); // Redirect to home or another appropriate route
     } catch (error) {

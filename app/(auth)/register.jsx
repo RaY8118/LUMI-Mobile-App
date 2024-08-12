@@ -2,6 +2,7 @@ import { View, TextInput, Button, Alert, Text } from "react-native";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter, Link } from "expo-router";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const Register = () => {
   const router = useRouter();
@@ -9,14 +10,23 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: "Care Giver", value: "CG" },
+    { label: "Patient", value: "PAT" },
+    { label: "Doctor", value: "DOC" },
+  ]);
+
   const handleSubmit = async () => {
     try {
-      console.log("Submitting form with:", { name, email, password });
+      console.log("Submitting form with:", { name, email, password, value });
 
-      const response = await axios.post("http://192.168.0.102:5000/register", {
+      const response = await axios.post("http://192.168.0.109:5000/register", {
         name,
         email,
         password,
+        value
       });
 
       setName("");
@@ -25,7 +35,7 @@ const Register = () => {
 
       console.log("Response:", response);
       Alert.alert("Success", response.data.message);
-      router.push("/(tabs)/login");
+      router.push("/(auth)/login");
     } catch (error) {
       console.error("Error:", error.response || error.message);
       if (error.response && error.response.data) {
@@ -54,6 +64,15 @@ const Register = () => {
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
+      />
+      <DropDownPicker
+        className="h-12 border border-gray-300 mb-4 px-3 rounded"
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
       />
       <TextInput
         className="h-12 border border-gray-300 mb-4 px-3 rounded"
