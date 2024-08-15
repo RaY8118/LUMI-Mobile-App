@@ -1,29 +1,25 @@
-import { Stack } from 'expo-router';
+import { Stack } from "expo-router";
 
 export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#f4511e',
+          backgroundColor: "#f4511e",
         },
-        headerTintColor: '#fff',
+        headerTintColor: "#fff",
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
-      }}>
-      <Stack.Screen
-        name="(tabs)/main"
-        options={{ headerTitle: 'Main' }}
-      />
+      }}
+    >
+      <Stack.Screen name="(tabs)/main" options={{ headerTitle: "Main" }} />
       <Stack.Screen
         name="(auth)/register"
-        options={{ headerTitle: 'Register' }}
+        options={{ headerTitle: "Register" }}
       />
-      <Stack.Screen
-        name="(auth)/login"
-        options={{ headerTitle: 'Login' }}
-      />
+      <Stack.Screen name="(auth)/login" options={{ headerTitle: "Login" }} />
+      <Stack.Screen name="(tabs)/map" options={{ headerTitle: "Map" }} />
     </Stack>
   );
 }

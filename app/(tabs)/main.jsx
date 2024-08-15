@@ -30,12 +30,15 @@ const Main = () => {
             Welcome, {user.name}
           </Text>
           <Text className=" p-2">Email: {user.email}</Text>
-          <Text className=" p-2 m-2">Role: {user.role}</Text>
-          <Button
-            title="logout"
-            onPress={handleLogout}
-            className=""
-          ></Button>
+          <Text className=" p-2 m-2">
+            Role:{" "}
+            {user.role == "CG"
+              ? "Care Giver"
+              : user.role == "PAT"
+              ? "Patient"
+              : "Doctor"}
+          </Text>
+          <Button title="logout" onPress={handleLogout} className=""></Button>
         </>
       ) : (
         <Text>Loading user data...</Text>

@@ -11,6 +11,9 @@ export default function HomeScreen() {
       <Link href="/login" className="text-blue-500 text-lg">
         Login
       </Link>
+      <Link href="/map" className="text-blue-500 text-lg">
+        Map
+      </Link>
     </View>
   );
 }

@@ -1,4 +1,4 @@
-import { View, TextInput, Button, Alert, Text } from "react-native";
+import { View, TextInput, Pressable, Alert, Text } from "react-native";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter, Link } from "expo-router";
@@ -22,11 +22,11 @@ const Register = () => {
     try {
       console.log("Submitting form with:", { name, email, password, value });
 
-      const response = await axios.post("http://192.168.0.109:5000/register", {
+      const response = await axios.post("http://192.168.0.115:5000/register", {
         name,
         email,
         password,
-        value
+        value,
       });
 
       setName("");
@@ -50,23 +50,23 @@ const Register = () => {
   };
 
   return (
-    <View className="flex-1 justify-center p-4">
-      <Text className="text-3xl py-2 mb-6 text-center">Register</Text>
+    <View className="flex-1 justify-center p-4 m-6 pt-2 border border-black rounded-xl">
+      <Text className="text-3xl py-2 mb-6 text-center font-bold">Register</Text>
       <TextInput
-        className="h-12 border border-gray-300 mb-4 px-3 rounded"
+        className="h-12 border border-gray-600 mb-4 px-3 rounded"
         placeholder="Name"
         value={name}
         onChangeText={setName}
       />
       <TextInput
-        className="h-12 border border-gray-300 mb-4 px-3 rounded"
+        className="h-12 border border-gray-600 mb-4 px-3 rounded"
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
       />
       <DropDownPicker
-        className="h-12 border border-gray-300 mb-4 px-3 rounded"
+        className="h-12 border border-gray-600 mb-4 px-3 rounded"
         open={open}
         value={value}
         items={items}
@@ -82,11 +82,16 @@ const Register = () => {
         secureTextEntry
         autoCapitalize="none"
       />
-      <Button title="Submit" onPress={handleSubmit} />
+      <Pressable
+        onPress={handleSubmit}
+        className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}
+      >
+        <Text className="text-center">Submit</Text>
+      </Pressable>
       <View className="mt-4 flex-row justify-center items-center">
-        <Text>Already have an account? </Text>
+        <Text className="text-xl">Already have an account? </Text>
         <Link href="/login">
-          <Text className="text-blue-500">Click here to Login</Text>
+          <Text className="text-blue-500 text-xl">Click here to Login</Text>
         </Link>
       </View>
     </View>

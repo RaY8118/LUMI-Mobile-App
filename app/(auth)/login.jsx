@@ -12,7 +12,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://192.168.0.109:5000/login", {
+      const response = await axios.post("http://192.168.0.116:5000/login", {
         email,
         password,
       });
@@ -22,7 +22,7 @@ const Login = () => {
       setEmail("")
       setPassword("")
       Alert.alert("Success", response.data.message);
-      router.push("/main"); // Redirect to home or another appropriate route
+      router.push("/map"); // Redirect to home or another appropriate route
     } catch (error) {
       if (error.response && error.response.data) {
         Alert.alert("Error", error.response.data.message || "Failed to login");
@@ -33,17 +33,17 @@ const Login = () => {
   };
 
   return (
-    <View className="flex-1 justify-center p-4">
-      <Text className="text-3xl py-2 mb-6 text-center">Login</Text>
+    <View className="flex-1 justify-center p-4 m-6 pt-2 border border-black rounded-xl">
+      <Text className="text-3xl py-2 mb-6 text-center font-bold">Login</Text>
       <TextInput
-        className="h-12 border border-gray-300 mb-4 px-3 rounded"
+        className="h-12 border border-gray-600 mb-4 px-3 rounded"
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
       />
       <TextInput
-        className="h-12 border border-gray-300 mb-4 px-3 rounded"
+        className="h-12 border border-gray-600 mb-4 px-3 rounded"
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
@@ -52,9 +52,9 @@ const Login = () => {
       />
       <Button title="Submit" onPress={handleLogin} />
       <View className="mt-4 flex-row justify-center items-center">
-        <Text>Don't have an account? </Text>
+        <Text className="text-xl">Don't have an account? </Text>
         <Link href="/register">
-          <Text className="text-blue-500">Click here to register</Text>
+          <Text className="text-blue-500 text-xl">Click here to register</Text>
         </Link>
       </View>
     </View>
