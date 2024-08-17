@@ -38,7 +38,7 @@ import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import LocationMap from "../../components/LocationMap"; // Adjust the path accordingly
 
-const App = () => {
+const Map = () => {
   return (
     <SafeAreaView style={styles.container}>
       <LocationMap />
@@ -52,4 +52,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Map;

@@ -5,21 +5,27 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import { Link } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
   const router = useRouter(); // Ensure this is imported if not already
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigation = useNavigation();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://192.168.0.120:5000/login", {
+      const response = await axios.post("http://192.168.0.121:5000/login", {
         email,
         password,
       });
 
       const userData = response.data.user;
       await AsyncStorage.setItem("userData", JSON.stringify(userData));
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'index' }], // Navigate to the main screen or tabs stack
+      });
       setEmail("");
       setPassword("");
       Alert.alert("Success", response.data.message);

@@ -11,15 +11,19 @@ const Main = () => {
       const userData = await AsyncStorage.getItem("userData");
       if (userData) {
         setUser(JSON.parse(userData));
+      } else {
+        // If no user data, redirect to login page
+        router.replace("/login");
       }
     };
+
     fetchUserData();
-  }, []);
+  }, [router]);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userData");
     Alert.alert("Sucess", "Logout Succesfull");
-    router.push("/login");
+    router.replace("/login");
   };
   return (
     <View className="flex-1 justify-center items-center p-4 ">

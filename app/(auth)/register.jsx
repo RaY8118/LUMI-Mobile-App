@@ -23,7 +23,7 @@ const Register = () => {
     try {
       console.log("Submitting form with:", { name, email, password, value });
 
-      const response = await axios.post("http://192.168.0.120:5000/register", {
+      const response = await axios.post("http://192.168.0.121:5000/register", {
         name,
         email,
         password,
