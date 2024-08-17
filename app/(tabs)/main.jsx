@@ -1,4 +1,4 @@
-import { View, Text, Button, Alert } from "react-native";
+import { View, Text, Button, Alert, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -38,7 +38,19 @@ const Main = () => {
               ? "Patient"
               : "Doctor"}
           </Text>
-          <Button title="logout" onPress={handleLogout} className=""></Button>
+          <TouchableOpacity
+        onPress={handleLogout}
+        style={{
+          backgroundColor: "#3b82f6", // Tailwind's bg-blue-500
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+          alignItems: "center",
+          marginTop: 10
+        }}
+      >
+        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>Logout</Text>
+      </TouchableOpacity>
         </>
       ) : (
         <Text>Loading user data...</Text>

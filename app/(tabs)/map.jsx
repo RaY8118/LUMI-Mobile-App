@@ -36,7 +36,7 @@
 
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-import LocationMap from "../components/Location"; // Adjust the path accordingly
+import LocationMap from "../../components/LocationMap"; // Adjust the path accordingly
 
 const App = () => {
   return (

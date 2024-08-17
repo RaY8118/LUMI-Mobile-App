@@ -1,4 +1,5 @@
-import { View, TextInput, Pressable, Alert, Text } from "react-native";
+import { View, TextInput, Alert, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter, Link } from "expo-router";
@@ -22,7 +23,7 @@ const Register = () => {
     try {
       console.log("Submitting form with:", { name, email, password, value });
 
-      const response = await axios.post("http://192.168.0.115:5000/register", {
+      const response = await axios.post("http://192.168.0.120:5000/register", {
         name,
         email,
         password,
@@ -50,7 +51,7 @@ const Register = () => {
   };
 
   return (
-    <View className="flex-1 justify-center p-4 m-6 pt-2 border border-black rounded-xl">
+    <SafeAreaView className="flex-1 justify-center p-4 m-6 pt-2 border border-black rounded-xl">
       <Text className="text-3xl py-2 mb-6 text-center font-bold">Register</Text>
       <TextInput
         className="h-12 border border-gray-600 mb-4 px-3 rounded"
@@ -82,19 +83,26 @@ const Register = () => {
         secureTextEntry
         autoCapitalize="none"
       />
-      <Pressable
+      <TouchableOpacity
         onPress={handleSubmit}
-        className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}
+        style={{
+          backgroundColor: "#3b82f6", // Tailwind's bg-blue-500
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+          alignItems: "center",
+          marginTop: 10
+        }}
       >
-        <Text className="text-center">Submit</Text>
-      </Pressable>
+        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>Submit</Text>
+      </TouchableOpacity>
       <View className="mt-4 flex-row justify-center items-center">
         <Text className="text-xl">Already have an account? </Text>
         <Link href="/login">
           <Text className="text-blue-500 text-xl">Click here to Login</Text>
         </Link>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
