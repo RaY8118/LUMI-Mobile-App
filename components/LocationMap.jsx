@@ -104,6 +104,15 @@ const LocationMap = () => {
   return (
     <View className="flex-1 justify-center items-center p-4">
       {location ? (
+        <View>
+          <Text>Your Location</Text>
+          <Text>Latitude: {location.latitude}</Text>
+          <Text>Longitude: {location.longitude}</Text>
+        </View>
+      ) : (
+        <Text>Fetching location</Text>
+      )}
+      {location ? (
         <MapView
           className="w-full h-4/5"
           initialRegion={{
