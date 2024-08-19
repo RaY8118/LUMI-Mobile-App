@@ -53,6 +53,7 @@ const LocationMap = () => {
   }
 
   const saveLocation = useCallback(async () => {
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
     console.log("Fetching location..."); // Debugging statement
     Alert.alert("Saving Location", "Please wait while we save your location.");
 
@@ -82,13 +83,10 @@ const LocationMap = () => {
       setErrorMsg(null); // Clear any previous error messages
 
       // Send the correct data structure to the backend
-      const response = await axios.post(
-        "http://192.168.0.121:5000/homelocation",
-        {
-          userId,
-          coords, // Send as 'coords' to match backend expectation
-        }
-      );
+      const response = await axios.post(`${apiUrl}/homelocation`, {
+        userId,
+        coords, // Send as 'coords' to match backend expectation
+      });
 
       console.log("Response:", response.data); // Debugging statement
       Alert.alert("Success", "Your location has been saved successfully.");

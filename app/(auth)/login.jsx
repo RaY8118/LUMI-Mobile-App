@@ -1,13 +1,21 @@
-import { View, TextInput, Button, Alert, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  TextInput,
+  Button,
+  Alert,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { Link } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
 const Login = () => {
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   const router = useRouter(); // Ensure this is imported if not already
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +23,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://192.168.0.123:5000/login", {
+      const response = await axios.post(`${apiUrl}/login`, {
         email,
         password,
       });
@@ -24,7 +32,7 @@ const Login = () => {
       await AsyncStorage.setItem("userData", JSON.stringify(userData));
       navigation.reset({
         index: 0,
-        routes: [{ name: 'index' }], // Navigate to the main screen or tabs stack
+        routes: [{ name: "index" }], // Navigate to the main screen or tabs stack
       });
       setEmail("");
       setPassword("");
@@ -57,7 +65,7 @@ const Login = () => {
         secureTextEntry
         autoCapitalize="none"
       />
-     <TouchableOpacity
+      <TouchableOpacity
         onPress={handleLogin}
         style={{
           backgroundColor: "#3b82f6", // Tailwind's bg-blue-500
@@ -65,7 +73,7 @@ const Login = () => {
           paddingHorizontal: 20,
           borderRadius: 8,
           alignItems: "center",
-          marginTop: 10
+          marginTop: 10,
         }}
       >
         <Text style={{ color: "#ffffff", fontWeight: "bold" }}>Submit</Text>

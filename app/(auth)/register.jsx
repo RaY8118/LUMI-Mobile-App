@@ -6,10 +6,12 @@ import { useRouter, Link } from "expo-router";
 import DropDownPicker from "react-native-dropdown-picker";
 
 const Register = () => {
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [mobile, setMobile] = useState("");
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -21,11 +23,18 @@ const Register = () => {
 
   const handleSubmit = async () => {
     try {
-      console.log("Submitting form with:", { name, email, password, value });
-
-      const response = await axios.post("http://192.168.0.121:5000/register", {
+      console.log("Submitting form with:", {
         name,
         email,
+        mobile,
+        password,
+        value,
+      });
+
+      const response = await axios.post(`${apiUrl}/register`, {
+        name,
+        email,
+        mobile,
         password,
         value,
       });
@@ -33,6 +42,7 @@ const Register = () => {
       setName("");
       setEmail("");
       setPassword("");
+      setMobile("");
 
       console.log("Response:", response);
       Alert.alert("Success", response.data.message);
@@ -66,6 +76,13 @@ const Register = () => {
         onChangeText={setEmail}
         keyboardType="email-address"
       />
+      <TextInput
+        className="h-12 border border-gray-600 mb-4 px-3 rounded"
+        placeholder="Mobile No"
+        value={mobile}
+        onChangeText={setMobile}
+        keyboardType="phone-pad"
+      />
       <DropDownPicker
         className="h-12 border border-gray-600 mb-4 px-3 rounded"
         open={open}
@@ -91,7 +108,7 @@ const Register = () => {
           paddingHorizontal: 20,
           borderRadius: 8,
           alignItems: "center",
-          marginTop: 10
+          marginTop: 10,
         }}
       >
         <Text style={{ color: "#ffffff", fontWeight: "bold" }}>Submit</Text>
