@@ -2,6 +2,7 @@ import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+// TODO: Function to click image and send to the backend for processing 
 export default function CameraViewComponent() {
   const [facing, setFacing] = useState('back');
   const [permission, requestPermission] = useCameraPermissions();

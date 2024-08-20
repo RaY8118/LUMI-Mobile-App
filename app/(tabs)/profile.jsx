@@ -2,17 +2,27 @@ import { View, Text, Button, Alert, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { jwtDecode } from "jwt-decode";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const router = useRouter();
+
   useEffect(() => {
     const fetchUserData = async () => {
-      const userData = await AsyncStorage.getItem("userData");
-      if (userData) {
-        setUser(JSON.parse(userData));
+      const storedToken = await AsyncStorage.getItem("token");
+
+      if (storedToken) {
+        try {
+          const decoded = jwtDecode(storedToken);
+          setUser(decoded);
+          setToken(storedToken);
+        } catch (error) {
+          console.error("Token decoding error:", error);
+          router.replace("/login");
+        }
       } else {
-        // If no user data, redirect to login page
         router.replace("/login");
       }
     };
@@ -21,7 +31,7 @@ const Profile = () => {
   }, [router]);
 
   const handleLogout = async () => {
-    await AsyncStorage.removeItem("userData");
+    await AsyncStorage.removeItem("token");
     Alert.alert("Sucess", "Logout Succesfull");
     router.replace("/login");
   };
@@ -31,30 +41,31 @@ const Profile = () => {
       {user ? (
         <>
           <Text className="text-3xl py-1 mb-5 text-center ">
-            Welcome, {user.name}
+            Welcome, {user.sub.name}
           </Text>
-          <Text className=" p-2">Email: {user.email}</Text>
+          <Text className=" p-2">Email: {user.sub.email}</Text>
+          <Text className=" p-2">Mobile: {user.sub.mobile}</Text>
           <Text className=" p-2 m-2">
             Role:{" "}
-            {user.role == "CG"
+            {user.sub.role === "CG"
               ? "Care Giver"
-              : user.role == "PAT"
+              : user.role === "PAT"
               ? "Patient"
               : "Doctor"}
           </Text>
           <TouchableOpacity
-        onPress={handleLogout}
-        style={{
-          backgroundColor: "#3b82f6", // Tailwind's bg-blue-500
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-          borderRadius: 8,
-          alignItems: "center",
-          marginTop: 10
-        }}
-      >
-        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>Logout</Text>
-      </TouchableOpacity>
+            onPress={handleLogout}
+            style={{
+              backgroundColor: "#3b82f6", // Tailwind's bg-blue-500
+              paddingVertical: 10,
+              paddingHorizontal: 20,
+              borderRadius: 8,
+              alignItems: "center",
+              marginTop: 10,
+            }}
+          >
+            <Text style={{ color: "#ffffff", fontWeight: "bold" }}>Logout</Text>
+          </TouchableOpacity>
         </>
       ) : (
         <Text>Loading user data...</Text>

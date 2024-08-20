@@ -14,6 +14,7 @@ import { Link } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
+// TODO: change the async storage to encrypted storage to handle the JWT authentication
 const Login = () => {
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   const router = useRouter(); // Ensure this is imported if not already
@@ -28,8 +29,8 @@ const Login = () => {
         password,
       });
 
-      const userData = response.data.user;
-      await AsyncStorage.setItem("userData", JSON.stringify(userData));
+      const token = response.data.token;
+      await AsyncStorage.setItem("token", token);
       navigation.reset({
         index: 0,
         routes: [{ name: "index" }], // Navigate to the main screen or tabs stack

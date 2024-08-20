@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from "jwt-decode";
 
 const HomeScreen = () => {
   const router = useRouter();
@@ -9,17 +10,28 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const userData = await AsyncStorage.getItem('userData');
-      setLoading(false); // Stop loading after checking storage
-      if (userData) {
-        // Redirect to the main screen if user data exists
-        router.replace('/main');
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          if (decodedToken.sub.userId) {
+            router.replace("/main");
+          } else {
+            router.replace("/login");
+          }
+        } else {
+          router.replace("/login");
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        router.replace("/login");
+      } finally {
+        setLoading(false);
       }
     };
 
     checkAuth();
   }, [router]);
-
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center p-4">
