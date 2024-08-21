@@ -103,7 +103,7 @@ const Register = () => {
       <TouchableOpacity
         onPress={handleSubmit}
         style={{
-          backgroundColor: "#3b82f6", // Tailwind's bg-blue-500
+          backgroundColor: "#3b82f6", 
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 8,

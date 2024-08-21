@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { jwtDecode } from "jwt-decode";
 
 const HomeScreen = () => {
@@ -11,7 +11,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = await AsyncStorage.getItem("token");
+        const token = await SecureStore.getItemAsync("token");
         if (token) {
           const decodedToken = jwtDecode(token);
           if (decodedToken.sub.userId) {

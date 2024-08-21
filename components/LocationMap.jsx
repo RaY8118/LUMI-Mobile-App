@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from 'expo-secure-store';
 import * as Location from "expo-location";
 import axios from "axios";
 
@@ -68,7 +68,7 @@ const LocationMap = () => {
         accuracy: Location.Accuracy.High,
       });
 
-      const userData = await AsyncStorage.getItem("userData");
+      const userData = await SecureStore.getItemAsync("userData");
 
       if (!userData) {
         setErrorMsg("User not logged in");

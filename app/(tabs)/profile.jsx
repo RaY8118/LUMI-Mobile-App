@@ -1,6 +1,6 @@
 import { View, Text, Button, Alert, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from 'expo-secure-store';
 import { useRouter } from "expo-router";
 import { jwtDecode } from "jwt-decode";
 
@@ -11,7 +11,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const storedToken = await AsyncStorage.getItem("token");
+      const storedToken = await SecureStore.getItemAsync("token");
 
       if (storedToken) {
         try {
@@ -31,7 +31,7 @@ const Profile = () => {
   }, [router]);
 
   const handleLogout = async () => {
-    await AsyncStorage.removeItem("token");
+    await SecureStore.deleteItemAsync("token");
     Alert.alert("Sucess", "Logout Succesfull");
     router.replace("/login");
   };
