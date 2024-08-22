@@ -5,17 +5,24 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
+  Pressable,
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
+import AddModalComponent from "../../components/AddModalComponent";
 
 const Main = () => {
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [refreshing, setRefreshing] = useState(false); 
+  const [refreshing, setRefreshing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [status, setStatus] = useState("");
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
   const getUserIdFromToken = async () => {
@@ -39,11 +46,11 @@ const Main = () => {
       const response = await axios.post(`${apiUrl}/getreminders`, {
         userId,
       });
-  
+
       if (response.status === 200 && response.data.status === "success") {
         if (response.data.reminders.length > 0) {
           setReminders(response.data.reminders);
-          setError(null); 
+          setError(null);
         } else {
           setReminders([]);
           setError("No reminders for this user.");
@@ -56,7 +63,10 @@ const Main = () => {
       }
     } catch (error) {
       if (error.response && error.response.status === 500) {
-        setError("Internal server error: " + (error.response.data.details || "An unexpected error occurred"));
+        setError(
+          "Internal server error: " +
+            (error.response.data.details || "An unexpected error occurred")
+        );
       } else {
         setError("Error fetching reminders: " + error.message);
       }
@@ -65,30 +75,40 @@ const Main = () => {
       setRefreshing(false);
     }
   };
-  
 
   const postReminders = async () => {
     try {
-      const response = await axios.post(`${apiUrl}/postreminders`, {
-        title: "Doctor's Appointment",
-        description: "Visit Dr. Smith at 10 AM",
-        date: "2024-08-19T10:00:00Z",
-        status: "completed",
-        userId: "USID002",
-      });
+      const userId = await getUserIdFromToken();
+      if (!userId) {
+        Alert.alert("Error", "Failed to retrieve user ID");
+        return;
+      }
 
-      console.log("Response: ", response);
+      const response = await axios.post(`${apiUrl}/postreminders`, {
+        title,
+        description,
+        date: date.toISOString(),
+        status,
+        userId: userId,
+      });
+      setTitle("");
+      setDescription("");
+      setDate("");
+      setStatus("");
+      console.log("Response", response);
       Alert.alert("Success", response.data.message);
       onRefresh();
+      setModalVisible(false);
     } catch (error) {
-      console.error(error);
+      console.error("Error posting reminder", error);
+      Alert.alert("Error", "Failed to save the reminder. Please try again");
     }
   };
 
   const deleteReminder = async () => {
     try {
       const response = await axios.post(`${apiUrl}/deletereminders`, {
-        remId: "REMID002",
+        remId: "REMID004",
       });
       console.log(response);
       Alert.alert("Success", response.data.message);
@@ -101,12 +121,12 @@ const Main = () => {
   const updateReminder = async () => {
     try {
       const response = await axios.post(`${apiUrl}/updatereminders`, {
-        remId: "REMID001",
+        remId: "REMID003",
         status: "pending",
       });
       console.log("Response", response);
       Alert.alert("Success", response.data.message);
-      onRefresh()
+      onRefresh();
     } catch (error) {
       console.error(error);
     }
@@ -126,7 +146,7 @@ const Main = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchUserData(); 
+    fetchUserData();
   }, []);
 
   if (loading) {
@@ -158,7 +178,7 @@ const Main = () => {
       <TouchableOpacity
         onPress={postReminders}
         style={{
-          backgroundColor: "#3b82f6", 
+          backgroundColor: "#3b82f6",
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 8,
@@ -173,7 +193,7 @@ const Main = () => {
       <TouchableOpacity
         onPress={deleteReminder}
         style={{
-          backgroundColor: "#3b82f6", 
+          backgroundColor: "#3b82f6",
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 8,
@@ -201,6 +221,27 @@ const Main = () => {
         </Text>
       </TouchableOpacity>
       <View></View>
+      <View className="mt-2">
+        <Pressable
+          className="bg-blue-600 p-3 rounded-lg"
+          onPress={() => setModalVisible(true)}
+        >
+          <Text className="text-white text-center font-bold">Add Reminder</Text>
+        </Pressable>
+
+        <AddModalComponent
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          title={title}
+          setTitle={setTitle}
+          description={description}
+          setDescription={setDescription}
+          date={date}
+          setDate={setDate}
+          setStatus={setStatus}
+          onSave={postReminders}
+        />
+      </View>
     </ScrollView>
   );
 };
