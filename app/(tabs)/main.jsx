@@ -5,20 +5,25 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
-  Pressable,
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import AddModalComponent from "../../components/AddModalComponent";
+import EditModalComponent from "../../components/EditModalComponent";
+import Feather from "@expo/vector-icons/Feather";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Entypo from "@expo/vector-icons/Entypo";
 
 const Main = () => {
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [AddModalVisible, setAddModalVisible] = useState(false);
+  const [EditModalVisible, setEditModalVisible] = useState(false);
+  const [selectedReminder, setSelectedReminder] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date());
@@ -40,6 +45,19 @@ const Main = () => {
       return null;
     }
   };
+
+  const fetchUserData = async () => {
+    const userId = await getUserIdFromToken();
+    if (userId) {
+      fetchReminders(userId);
+    } else {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, [apiUrl]);
 
   const fetchReminders = async (userId) => {
     try {
@@ -98,56 +116,113 @@ const Main = () => {
       console.log("Response", response);
       Alert.alert("Success", response.data.message);
       onRefresh();
-      setModalVisible(false);
+      setAddModalVisible(false);
     } catch (error) {
       console.error("Error posting reminder", error);
       Alert.alert("Error", "Failed to save the reminder. Please try again");
     }
   };
 
-  const deleteReminder = async () => {
+  const updateReminder = async () => {
+    if (!selectedReminder) {
+      Alert.alert("Error", "No reminder selected for update");
+      return;
+    }
+
+    try {
+      const userId = await getUserIdFromToken();
+      if (!userId) {
+        Alert.alert("Error", "Failed to retrieve user ID");
+        return;
+      }
+
+      const response = await axios.post(`${apiUrl}/updatereminders`, {
+        remId: selectedReminder.remId, // Use the remId from selectedReminder
+        title,
+        description,
+        date: date.toISOString(),
+        status,
+        userId: userId, // Ensure userId is included as per backend requirement
+      });
+
+      if (response.status === 200) {
+        Alert.alert("Success", response.data.message);
+        onRefresh(); // Refresh the list of reminders
+        handleEditModalClose(); // Close the modal and reset fields
+      } else {
+        Alert.alert(
+          "Error",
+          response.data.message || "Failed to update the reminder"
+        );
+      }
+    } catch (error) {
+      console.error("Error updating reminder", error);
+      Alert.alert("Error", "Failed to update the reminder. Please try again");
+    }
+  };
+
+  const deleteReminder = async (remId) => {
+    if (!remId) {
+      Alert.alert("Error", "Reminder ID is required");
+      return;
+    }
+
     try {
       const response = await axios.post(`${apiUrl}/deletereminders`, {
-        remId: "REMID004",
+        remId,
       });
-      console.log(response);
-      Alert.alert("Success", response.data.message);
-      onRefresh();
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
-  const updateReminder = async () => {
-    try {
-      const response = await axios.post(`${apiUrl}/updatereminders`, {
-        remId: "REMID003",
-        status: "pending",
-      });
-      console.log("Response", response);
-      Alert.alert("Success", response.data.message);
-      onRefresh();
+      if (response.status === 200) {
+        Alert.alert("Success", response.data.message);
+        onRefresh(); // Refresh the list of reminders
+      } else {
+        Alert.alert(
+          "Error",
+          response.data.message || "Failed to delete the reminder"
+        );
+      }
     } catch (error) {
-      console.error(error);
+      if (error.response && error.response.status === 404) {
+        Alert.alert("Error", "Reminder not found");
+      } else {
+        console.error("Error deleting reminder", error);
+        Alert.alert("Error", "Failed to delete the reminder. Please try again");
+      }
     }
   };
-  const fetchUserData = async () => {
-    const userId = await getUserIdFromToken();
-    if (userId) {
-      fetchReminders(userId);
-    } else {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, [apiUrl]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchUserData();
   }, []);
+
+  const handleEdit = async (remId) => {
+    // Find the reminder with the given remId
+    const reminder = reminders.find((rem) => rem._id === remId);
+    if (reminder) {
+      setSelectedReminder(reminder);
+      setTitle(reminder.title);
+      setDescription(reminder.description);
+      setDate(new Date(reminder.date));
+      setStatus(reminder.status);
+      setEditModalVisible(true);
+    } else {
+      Alert.alert("Error", "Reminder not found");
+    }
+  };
+
+  const resetEditFields = () => {
+    setTitle("");
+    setDescription("");
+    setDate(new Date());
+    setStatus("");
+    setSelectedReminder(null);
+  };
+
+  const handleEditModalClose = () => {
+    resetEditFields();
+    setEditModalVisible(false);
+  };
 
   if (loading) {
     return <Text>Loading reminders...</Text>;
@@ -159,79 +234,38 @@ const Main = () => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <View>
+      <View className="border border-black">
         <Text className="text-3xl m-4">Reminders</Text>
         {error ? (
           <Text>{error}</Text>
         ) : (
           reminders.map((reminder) => (
-            <View key={reminder._id} className="m-4">
+            <View key={reminder._id} className="m-4 border border-black">
               <Text className="font-bold">Reminder {reminder.remId}</Text>
               <Text>{reminder.title}</Text>
               <Text>{reminder.description}</Text>
               <Text>{new Date(reminder.date).toLocaleString()}</Text>
               <Text>Status: {reminder.status}</Text>
+              <TouchableOpacity onPress={() => handleEdit(reminder._id)}>
+                <Feather name="edit-2" size={30} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => deleteReminder(reminder.remId)}>
+                <AntDesign name="delete" size={30} color="black" />
+              </TouchableOpacity>
             </View>
           ))
         )}
       </View>
-      <TouchableOpacity
-        onPress={postReminders}
-        style={{
-          backgroundColor: "#3b82f6",
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-          borderRadius: 8,
-          alignItems: "center",
-          marginTop: 10,
-        }}
-      >
-        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
-          Post reminder
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={deleteReminder}
-        style={{
-          backgroundColor: "#3b82f6",
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-          borderRadius: 8,
-          alignItems: "center",
-          marginTop: 10,
-        }}
-      >
-        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
-          Delete reminder
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={updateReminder}
-        style={{
-          backgroundColor: "#3b82f6",
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-          borderRadius: 8,
-          alignItems: "center",
-          marginTop: 10,
-        }}
-      >
-        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
-          Update reminder
-        </Text>
-      </TouchableOpacity>
-      <View></View>
       <View className="mt-2">
-        <Pressable
-          className="bg-blue-600 p-3 rounded-lg"
-          onPress={() => setModalVisible(true)}
-        >
-          <Text className="text-white text-center font-bold">Add Reminder</Text>
-        </Pressable>
+        <View className="justify-center items-center">
+          <TouchableOpacity onPress={() => setAddModalVisible(true)}>
+            <Entypo name="add-to-list" size={44} color="black" />
+          </TouchableOpacity>
+        </View>
 
         <AddModalComponent
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
+          AddModalVisible={AddModalVisible}
+          setAddModalVisible={setAddModalVisible}
           title={title}
           setTitle={setTitle}
           description={description}
@@ -240,6 +274,20 @@ const Main = () => {
           setDate={setDate}
           setStatus={setStatus}
           onSave={postReminders}
+        />
+
+        <EditModalComponent
+          editModalVisible={EditModalVisible}
+          setEditModalVisible={handleEditModalClose}
+          title={title}
+          setTitle={setTitle}
+          description={description}
+          setDescription={setDescription}
+          date={date}
+          setDate={setDate}
+          status={status}
+          setStatus={setStatus}
+          onSave={updateReminder}
         />
       </View>
     </ScrollView>
