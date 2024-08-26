@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Text, Pressable, View, TextInput } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
-import Entypo from '@expo/vector-icons/Entypo';
+import Entypo from "@expo/vector-icons/Entypo";
 
 const AddModalComponent = ({
   AddModalVisible,
@@ -42,7 +42,6 @@ const AddModalComponent = ({
       >
         <View className="flex-1 justify-center items-center mt-6">
           <View className="m-5 bg-white rounded-xl p-20 items-center shadow-md shadow-black">
-            {/* Close Button */}
             <Pressable
               className="absolute top-3 right-5"
               onPress={() => setAddModalVisible(false)}
@@ -68,13 +67,13 @@ const AddModalComponent = ({
             <DropDownPicker
               className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded"
               open={open}
-              value={value} 
+              value={value}
               items={items}
               setOpen={setOpen}
               setValue={(callback) => {
                 const selectedValue = callback(value);
                 setValue(selectedValue);
-                setStatus(selectedValue); 
+                setStatus(selectedValue);
               }}
               setItems={setItems}
             />
@@ -100,8 +99,8 @@ const AddModalComponent = ({
             <Pressable
               className="bg-black rounded-xl p-3 mt-3"
               onPress={() => {
-                onSave(); 
-                setAddModalVisible(false); 
+                onSave();
+                setAddModalVisible(false);
               }}
             >
               <Text className="text-white font-bold text-center">Save</Text>

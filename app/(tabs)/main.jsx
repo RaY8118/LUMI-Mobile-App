@@ -166,34 +166,54 @@ const Main = () => {
       Alert.alert("Error", "Reminder ID is required");
       return;
     }
+    Alert.alert(
+      "Confirm Deletion",
+      "Are you sure you want to delete this reminder?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+          onPress: () => console.log("Deletion cancelled"),
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            try {
+              const response = await axios.post(`${apiUrl}/deletereminders`, {
+                remId,
+              });
 
-    try {
-      const response = await axios.post(`${apiUrl}/deletereminders`, {
-        remId,
-      });
-
-      if (response.status === 200) {
-        Alert.alert("Success", response.data.message);
-        onRefresh(); // Refresh the list of reminders
-      } else {
-        Alert.alert(
-          "Error",
-          response.data.message || "Failed to delete the reminder"
-        );
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        Alert.alert("Error", "Reminder not found");
-      } else {
-        console.error("Error deleting reminder", error);
-        Alert.alert("Error", "Failed to delete the reminder. Please try again");
-      }
-    }
+              if (response.status === 200) {
+                Alert.alert("Success", response.data.message);
+                onRefresh();
+              } else {
+                Alert.alert(
+                  "Error",
+                  response.data.message || "Failed to delete the reminder"
+                );
+              }
+            } catch (error) {
+              if (error.response && error.response.status === 404) {
+                Alert.alert("Error", "Reminder not found");
+              } else {
+                console.error("Error deleting reminder", error);
+                Alert.alert(
+                  "Error",
+                  "Failed to delete the reminder. Please try again"
+                );
+              }
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchUserData();
+    resetEditFields();
   }, []);
 
   const handleEdit = async (remId) => {
@@ -229,68 +249,78 @@ const Main = () => {
   }
 
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <View className="border border-black">
-        <Text className="text-3xl m-4">Reminders</Text>
-        {error ? (
-          <Text>{error}</Text>
-        ) : (
-          reminders.map((reminder) => (
-            <View key={reminder._id} className="m-4 border border-black">
-              <Text className="font-bold">Reminder {reminder.remId}</Text>
-              <Text>{reminder.title}</Text>
-              <Text>{reminder.description}</Text>
-              <Text>{new Date(reminder.date).toLocaleString()}</Text>
-              <Text>Status: {reminder.status}</Text>
-              <TouchableOpacity onPress={() => handleEdit(reminder._id)}>
-                <Feather name="edit-2" size={30} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => deleteReminder(reminder.remId)}>
-                <AntDesign name="delete" size={30} color="black" />
-              </TouchableOpacity>
-            </View>
-          ))
-        )}
-      </View>
-      <View className="mt-2">
-        <View className="justify-center items-center">
-          <TouchableOpacity onPress={() => setAddModalVisible(true)}>
-            <Entypo name="add-to-list" size={44} color="black" />
-          </TouchableOpacity>
+    <>
+      <ScrollView
+      className="border border-black"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View className="border border-black">
+          <Text className="text-3xl m-4">Reminders</Text>
+          {error ? (
+            <Text>{error}</Text>
+          ) : (
+            reminders.map((reminder) => (
+              <View key={reminder._id} className="m-4 p-2 border border-black">
+                <Text className="font-bold text-xl">
+                  Reminder {reminder.remId}
+                </Text>
+                <Text>{reminder.title}</Text>
+                <Text>{reminder.description}</Text>
+                <Text>{new Date(reminder.date).toLocaleString()}</Text>
+                <Text>Status: {reminder.status}</Text>
+                <TouchableOpacity
+                  onPress={() => handleEdit(reminder._id)}
+                  className="absolute right-14 bottom-2"
+                >
+                  <Feather name="edit-2" size={30} color="green" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => deleteReminder(reminder.remId)}
+                  className="absolute right-4 bottom-2"
+                >
+                  <AntDesign name="delete" size={30} color="red" />
+                </TouchableOpacity>
+              </View>
+            ))
+          )}
         </View>
+        <View className="mt-2">
+          <AddModalComponent
+            AddModalVisible={AddModalVisible}
+            setAddModalVisible={setAddModalVisible}
+            title={title}
+            setTitle={setTitle}
+            description={description}
+            setDescription={setDescription}
+            date={date}
+            setDate={setDate}
+            setStatus={setStatus}
+            onSave={postReminders}
+          />
 
-        <AddModalComponent
-          AddModalVisible={AddModalVisible}
-          setAddModalVisible={setAddModalVisible}
-          title={title}
-          setTitle={setTitle}
-          description={description}
-          setDescription={setDescription}
-          date={date}
-          setDate={setDate}
-          setStatus={setStatus}
-          onSave={postReminders}
-        />
-
-        <EditModalComponent
-          editModalVisible={EditModalVisible}
-          setEditModalVisible={handleEditModalClose}
-          title={title}
-          setTitle={setTitle}
-          description={description}
-          setDescription={setDescription}
-          date={date}
-          setDate={setDate}
-          status={status}
-          setStatus={setStatus}
-          onSave={updateReminder}
-        />
+          <EditModalComponent
+            editModalVisible={EditModalVisible}
+            setEditModalVisible={handleEditModalClose}
+            title={title}
+            setTitle={setTitle}
+            description={description}
+            setDescription={setDescription}
+            date={date}
+            setDate={setDate}
+            status={status}
+            setStatus={setStatus}
+            onSave={updateReminder}
+          />
+        </View>
+      </ScrollView>
+      <View className="justify-center items-center">
+        <TouchableOpacity onPress={() => setAddModalVisible(true)} className='absolute right-5 bottom-3'>
+          <Entypo name="add-to-list" size={44} color="black" />
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </>
   );
 };
 

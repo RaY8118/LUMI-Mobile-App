@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Modal, Text, Pressable, View, TextInput } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
+import Entypo from '@expo/vector-icons/Entypo';
+
 
 const EditModalComponent = ({
   editModalVisible,
@@ -18,14 +20,13 @@ const EditModalComponent = ({
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(status); // Default to current status
+  const [value, setValue] = useState(status);
   const [items, setItems] = useState([
     { label: "Pending", value: "pending" },
     { label: "Completed", value: "completed" },
   ]);
 
   useEffect(() => {
-    // Update the state if any of the props change
     setValue(status);
     setTitle(title);
     setDescription(description);
@@ -39,8 +40,8 @@ const EditModalComponent = ({
   };
 
   const handleSave = () => {
-    onSave(); // Call the onSave function to handle saving
-    setEditModalVisible(false); // Close the modal
+    onSave(); 
+    setEditModalVisible(false);
   };
 
   return (
@@ -53,12 +54,11 @@ const EditModalComponent = ({
       >
         <View className="flex-1 justify-center items-center mt-6">
           <View className="m-5 bg-white rounded-xl p-20 items-center shadow-md shadow-black">
-            {/* Close Button */}
             <Pressable
               className="absolute top-3 right-5"
-              onPress={() => setEditModalVisible(false)}
+              onPress={() => setAddModalVisible(false)}
             >
-              <Text className="text-lg font-bold">X</Text>
+              <Entypo name="circle-with-cross" size={30} color="black" />
             </Pressable>
 
             <Text className="text-lg font-bold mb-5">Edit Reminder</Text>

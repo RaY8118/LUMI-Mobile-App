@@ -14,10 +14,10 @@ import { Link } from "expo-router";
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from "@react-navigation/native";
 
-// TODO: change the async storage to encrypted storage to handle the JWT authentication
+
 const Login = () => {
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-  const router = useRouter(); // Ensure this is imported if not already
+  const router = useRouter(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
@@ -33,12 +33,12 @@ const Login = () => {
       await SecureStore.setItemAsync("token", token);
       navigation.reset({
         index: 0,
-        routes: [{ name: "index" }], // Navigate to the main screen or tabs stack
+        routes: [{ name: "index" }], 
       });
       setEmail("");
       setPassword("");
       Alert.alert("Success", response.data.message);
-      router.push("/main"); // Redirect to home or another appropriate route
+      router.push("/main"); 
     } catch (error) {
       if (error.response && error.response.data) {
         Alert.alert("Error", error.response.data.message || "Failed to login");
@@ -69,7 +69,7 @@ const Login = () => {
       <TouchableOpacity
         onPress={handleLogin}
         style={{
-          backgroundColor: "#3b82f6", // Tailwind's bg-blue-500
+          backgroundColor: "#3b82f6", 
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 8,
