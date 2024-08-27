@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const LocationMap = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [homeLocation, setHomeLocation] = useState(null);
 
-  // Function to fetch the current location
   const fetchLocation = useCallback(async () => {
-    console.log("Fetching location..."); // Debugging statement
+    console.log("Fetching location...");
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       setErrorMsg("Permission to access location was denied");
@@ -25,18 +25,17 @@ const LocationMap = () => {
       });
       setLocation(coords);
       console.log(coords);
-      setErrorMsg(null); // Clear any previous error messages
+      setErrorMsg(null);
     } catch (error) {
-      console.error("Error fetching location:", error); // Add error logging
+      console.error("Error fetching location:", error);
       setErrorMsg("Failed to fetch location");
     }
   }, []);
 
   useEffect(() => {
-    fetchLocation(); // Fetch location on component mount
+    fetchLocation();
   }, [fetchLocation]);
 
-  // Handler for refreshing location
   const handleRefresh = () => {
     Alert.alert(
       "Refreshing Location",
@@ -54,7 +53,7 @@ const LocationMap = () => {
 
   const saveLocation = useCallback(async () => {
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-    console.log("Fetching location..."); // Debugging statement
+    console.log("Fetching location...");
     Alert.alert("Saving Location", "Please wait while we save your location.");
 
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -68,36 +67,36 @@ const LocationMap = () => {
         accuracy: Location.Accuracy.High,
       });
 
-      const userData = await SecureStore.getItemAsync("userData");
+      const token = await SecureStore.getItemAsync("token");
 
-      if (!userData) {
+      if (!token) {
         setErrorMsg("User not logged in");
         return;
       }
 
-      // Parse the userData JSON string
-      const parsedUserData = JSON.parse(userData);
-      const userId = parsedUserData.email;
+      const decodedToken = jwtDecode(token);
+      console.log(decodedToken);
+      const userId = decodedToken.sub.userId;
+      console.log(userId);
       setHomeLocation(coords);
-      console.log("Current Location:", coords); // Debugging statement
-      setErrorMsg(null); // Clear any previous error messages
+      console.log("Current Location:", coords);
+      setErrorMsg(null);
 
-      // Send the correct data structure to the backend
       const response = await axios.post(`${apiUrl}/homelocation`, {
         userId,
-        coords, // Send as 'coords' to match backend expectation
+        coords,
       });
 
-      console.log("Response:", response.data); // Debugging statement
+      console.log("Response:", response.data);
       Alert.alert("Success", "Your location has been saved successfully.");
     } catch (error) {
-      console.error("Error fetching location:", error.message); // More detailed error logging
+      console.error("Error saving location:", error.message);
       setErrorMsg(
-        "Failed to fetch location: " +
+        "Failed to save location: " +
           (error.response?.data?.message || error.message)
       );
     }
-  }, [homeLocation]); // Include homeLocation in the dependency array if it is used inside the callback
+  }, [homeLocation]);
 
   return (
     <View className="flex-1 justify-center items-center p-4">
@@ -134,7 +133,7 @@ const LocationMap = () => {
       <TouchableOpacity
         onPress={handleRefresh}
         style={{
-          backgroundColor: "#3b82f6", // Tailwind's bg-blue-500
+          backgroundColor: "#3b82f6",
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 8,
@@ -147,7 +146,7 @@ const LocationMap = () => {
       <TouchableOpacity
         onPress={saveLocation}
         style={{
-          backgroundColor: "#3b82f6", // Tailwind's bg-blue-500
+          backgroundColor: "#3b82f6",
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 8,
