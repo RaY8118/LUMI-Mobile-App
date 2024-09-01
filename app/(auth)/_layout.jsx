@@ -5,7 +5,7 @@ import { Stack } from 'expo-router';
 const App = () => {
   return (
     <>
-      <StatusBar backgroundColor="" style="dark" />
+      <StatusBar backgroundColor="" style="dark" hidden={false} />
       <Stack>
         <Stack.Screen name="register" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />

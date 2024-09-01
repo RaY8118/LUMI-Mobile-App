@@ -1,9 +1,21 @@
-import { View, TextInput, Alert, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  TextInput,
+  Alert,
+  Text,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter, Link } from "expo-router";
 import DropDownPicker from "react-native-dropdown-picker";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Fontisto from "@expo/vector-icons/Fontisto";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Entypo from "@expo/vector-icons/Entypo";
+import images from "../../constants/images";
 
 const Register = () => {
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
@@ -61,64 +73,101 @@ const Register = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 justify-center p-4 m-6 pt-2 border border-black rounded-xl">
-      <Text className="text-3xl py-2 mb-6 text-center font-bold">Register</Text>
-      <TextInput
-        className="h-12 border border-gray-600 mb-4 px-3 rounded"
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
+    <SafeAreaView className="flex-1 justify-center p-4 m-3 mt-14 border border-x-2 border-violet-400 rounded-xl">
+      <Image
+        source={images.registerImg}
+        resizeMode="contain"
+        className="self-center"
       />
-      <TextInput
-        className="h-12 border border-gray-600 mb-4 px-3 rounded"
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <TextInput
-        className="h-12 border border-gray-600 mb-4 px-3 rounded"
-        placeholder="Mobile No"
-        value={mobile}
-        onChangeText={setMobile}
-        keyboardType="phone-pad"
-      />
-      <DropDownPicker
-        className="h-12 border border-gray-600 mb-4 px-3 rounded"
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-      />
-      <TextInput
-        className="h-12 border border-gray-300 mb-4 px-3 rounded"
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
-      />
-      <TouchableOpacity
-        onPress={handleSubmit}
-        style={{
-          backgroundColor: "#3b82f6", 
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-          borderRadius: 8,
-          alignItems: "center",
-          marginTop: 10,
-        }}
-      >
-        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>Submit</Text>
-      </TouchableOpacity>
-      <View className="mt-4 flex-row justify-center items-center">
-        <Text className="text-xl">Already have an account? </Text>
+      <Text className="text-5xl py-2 mb-3 text-center font-bold text-violet-800">
+        Create New
+      </Text>
+      <Text className="text-5xl py-2 mb-3 text-center font-bold text-violet-800">
+        Account
+      </Text>
+      <View className="mt-2 mb-6 flex-row justify-center items-center">
+        <Text className="text-xl">Already registered? </Text>
         <Link href="/login">
-          <Text className="text-blue-500 text-xl">Click here to Login</Text>
+          <Text className="text-violet-500 text-xl">Login</Text>
         </Link>
       </View>
+      <View className="flex-row items-center p-4">
+        <AntDesign name="user" size={32} color="black" />
+        <TextInput
+          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white"
+          placeholder="Name"
+          value={name}
+          onChangeText={setName}
+        />
+      </View>
+      <View className="flex-row items-center p-4">
+        <Fontisto name="email" size={32} color="black" className="mr-4" />
+        <TextInput
+          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white"
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+      </View>
+      <View className="flex-row items-center p-4">
+        <AntDesign name="mobile1" size={32} color="black" />
+        <TextInput
+          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white"
+          placeholder="Mobile No"
+          value={mobile}
+          onChangeText={setMobile}
+          keyboardType="phone-pad"
+        />
+      </View>
+      <View className="flex-row items-center p-4">
+        <Entypo name="list" size={32} color="black" />
+        <DropDownPicker
+          className="h-12 w-80 border-2 border-gray-600 px-3 rounded-3xl ml-4 bg-white"
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+          placeholder="Select an option"
+          dropDownContainerStyle={{
+            backgroundColor: "white",
+            borderRadius: 15,
+            borderColor: "#4A5568",
+            borderWidth: 1,
+            width: "90%",
+            maxWidth: "10rem",
+            marginTop: 4,
+          }}
+          listItemContainerStyle={{
+            borderBottomWidth: 1,
+            borderColor: "#E2E8F0",
+          }}
+          listItemLabelStyle={{
+            color: "#2D3748",
+            paddingVertical: 8,
+          }}
+        />
+      </View>
+
+      <View className="flex-row items-center p-4">
+        <MaterialIcons name="password" size={32} color="black" />
+        <TextInput
+          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white"
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          autoCapitalize="none"
+        />
+      </View>
+      <TouchableOpacity
+        onPress={handleSubmit}
+        className="bg-violet-800 py-2 px-5 rounded-3xl items-center mt-2 w-32 self-center"
+      >
+        <Text className="text-white font-bold text-lg">Register</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
