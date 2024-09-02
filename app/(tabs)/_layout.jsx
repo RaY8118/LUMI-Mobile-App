@@ -82,6 +82,7 @@ const TabsLayout = () => {
           name="profile"
           options={{
             tabBarButton: () => null,
+            headerTitle: "Profile",
           }}
         />
       </Tabs>

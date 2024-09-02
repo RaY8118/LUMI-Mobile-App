@@ -59,16 +59,16 @@ const Login = () => {
           className="self-center"
         />
       </View>
-      <Text className="text-5xl py-2 mb-3 text-center font-bold text-violet-800">
+      <Text className="text-5xl py-2 mb-3 text-center font-mbold text-violet-800">
         Login
       </Text>
-      <Text className="text-xl py-3 mb-4 text-center font-bold">
+      <Text className="text-2xl py-3 mb-4 text-center font-mbold">
         Sign in to continue
       </Text>
       <View className="flex-row items-center p-4">
         <Fontisto name="email" size={32} color="black" className="mr-4" />
         <TextInput
-          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white"
+          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-mregular"
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -78,7 +78,7 @@ const Login = () => {
       <View className="flex-row items-center p-4">
         <MaterialIcons name="password" size={32} color="black" />
         <TextInput
-          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white"
+          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white font-mregular"
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
@@ -91,12 +91,12 @@ const Login = () => {
         onPress={handleLogin}
         className="bg-violet-800 py-2 px-5 rounded-3xl  items-center mt-2 w-32 self-center"
       >
-        <Text className="text-white font-bold text-lg">Login</Text>
+        <Text className="text-white font-mbold text-lg">Login</Text>
       </TouchableOpacity>
       <View className="mt-4 flex-row justify-center items-center">
-        <Text className="text-xl ">Don't have an account? </Text>
+        <Text className="font-mregular text-lg ">Don't have an account? </Text>
         <Link href="/register">
-          <Text className="text-violet-500 text-xl">Register</Text>
+          <Text className="text-violet-500 font-mregular text-lg">Register</Text>
         </Link>
       </View>
     </SafeAreaView>

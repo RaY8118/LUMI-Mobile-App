@@ -54,15 +54,15 @@ const Profile = () => {
   };
   return (
     <View className="flex-1 justify-center items-center p-4">
-      <Text className="text-2xl font-bold mb-4">Profile Page</Text>
+      <Text className="text-2xl font-mbold mb-4">Profile Page</Text>
       {user ? (
         <>
-          <Text className="text-3xl py-1 mb-5 text-center">
+          <Text className="text-3xl font-mregular py-1 mb-5 text-center">
             Welcome, {user.name}
           </Text>
-          <Text className="p-2">Email: {user.email}</Text>
-          <Text className="p-2">Mobile: {user.mobile}</Text>
-          <Text className="p-2 m-2">
+          <Text className="p-2 text-xl font-mregular">Email: {user.email}</Text>
+          <Text className="p-2 text-xl font-mregular">Mobile: {user.mobile}</Text>
+          <Text className="p-2 text-xl font-mregular m-2">
             Role:{' '}
             {user.role === 'CG'
               ? 'Care Giver'
@@ -90,7 +90,7 @@ const Profile = () => {
             onPress={handleLogout}
             className="bg-blue-500 py-2 px-4 rounded-md mt-4"
           >
-            <Text className="text-white font-bold">Logout</Text>
+            <Text className="text-white font-mbold">Logout</Text>
           </TouchableOpacity>
         </>
       ) : (

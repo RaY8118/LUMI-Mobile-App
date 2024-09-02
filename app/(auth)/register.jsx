@@ -79,22 +79,22 @@ const Register = () => {
         resizeMode="contain"
         className="self-center"
       />
-      <Text className="text-5xl py-2 mb-3 text-center font-bold text-violet-800">
+      <Text className="text-5xl py-2 mb-3 text-center font-mbold text-violet-800">
         Create New
       </Text>
-      <Text className="text-5xl py-2 mb-3 text-center font-bold text-violet-800">
+      <Text className="text-5xl py-2 mb-3 text-center font-mbold text-violet-800">
         Account
       </Text>
       <View className="mt-2 mb-6 flex-row justify-center items-center">
-        <Text className="text-xl">Already registered? </Text>
+        <Text className="text-xl font-mregular">Already registered? </Text>
         <Link href="/login">
-          <Text className="text-violet-500 text-xl">Login</Text>
+          <Text className="text-violet-500 text-xl font-mregular">Login</Text>
         </Link>
       </View>
       <View className="flex-row items-center p-4">
         <AntDesign name="user" size={32} color="black" />
         <TextInput
-          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white"
+          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white font-mregular text-base"
           placeholder="Name"
           value={name}
           onChangeText={setName}
@@ -103,7 +103,7 @@ const Register = () => {
       <View className="flex-row items-center p-4">
         <Fontisto name="email" size={32} color="black" className="mr-4" />
         <TextInput
-          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white"
+          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-mregular text-base"
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -113,7 +113,7 @@ const Register = () => {
       <View className="flex-row items-center p-4">
         <AntDesign name="mobile1" size={32} color="black" />
         <TextInput
-          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white"
+          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-mregular text-base"
           placeholder="Mobile No"
           value={mobile}
           onChangeText={setMobile}
@@ -123,7 +123,7 @@ const Register = () => {
       <View className="flex-row items-center p-4">
         <Entypo name="list" size={32} color="black" />
         <DropDownPicker
-          className="h-12 w-80 border-2 border-gray-600 px-3 rounded-3xl ml-4 bg-white"
+          className="h-12 w-80 border-2 border-gray-600 px-3 rounded-3xl ml-4 bg-white "
           open={open}
           value={value}
           items={items}
@@ -154,7 +154,7 @@ const Register = () => {
       <View className="flex-row items-center p-4">
         <MaterialIcons name="password" size={32} color="black" />
         <TextInput
-          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white"
+          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white font-mregular text-base"
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
@@ -166,7 +166,7 @@ const Register = () => {
         onPress={handleSubmit}
         className="bg-violet-800 py-2 px-5 rounded-3xl items-center mt-2 w-32 self-center"
       >
-        <Text className="text-white font-bold text-lg">Register</Text>
+        <Text className="text-white font-mregular text-lg">Register</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
