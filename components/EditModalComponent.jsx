@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Modal, Text, Pressable, View, TextInput } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
-import Entypo from '@expo/vector-icons/Entypo';
-
+import Checkbox from "expo-checkbox";
+import Entypo from "@expo/vector-icons/Entypo";
 
 const EditModalComponent = ({
   editModalVisible,
@@ -16,11 +16,16 @@ const EditModalComponent = ({
   setDate,
   status,
   setStatus,
+  isUrgent,
+  setIsUrgent,
+  isImportant,
+  setIsImportant,
   onSave,
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(status);
+
   const [items, setItems] = useState([
     { label: "Pending", value: "pending" },
     { label: "Completed", value: "completed" },
@@ -31,7 +36,9 @@ const EditModalComponent = ({
     setTitle(title);
     setDescription(description);
     setDate(date);
-  }, [title, description, date, status]);
+    setIsUrgent(isUrgent);
+    setIsImportant(isImportant);
+  }, [title, description, date, status, isUrgent, isImportant]);
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -40,7 +47,14 @@ const EditModalComponent = ({
   };
 
   const handleSave = () => {
-    onSave(); 
+    onSave({
+      title,
+      description,
+      date,
+      status: value,
+      isUrgent,
+      isImportant,
+    });
     setEditModalVisible(false);
   };
 
@@ -56,7 +70,7 @@ const EditModalComponent = ({
           <View className="m-5 bg-white rounded-xl p-20 items-center shadow-md shadow-black">
             <Pressable
               className="absolute top-3 right-5"
-              onPress={() => setAddModalVisible(false)}
+              onPress={() => setEditModalVisible(false)}
             >
               <Entypo name="circle-with-cross" size={30} color="black" />
             </Pressable>
@@ -107,6 +121,25 @@ const EditModalComponent = ({
                 onChange={onDateChange}
               />
             )}
+
+            <View className="flex-row mb-4">
+              <View className="flex-row w-30 p-2">
+                <Checkbox
+                  className="m-2 mr-1"
+                  value={isUrgent}
+                  onValueChange={setIsUrgent}
+                />
+                <Text className="m-2">Urgent</Text>
+              </View>
+              <View className="flex-row w-30 p-2">
+                <Checkbox
+                  className="m-2 mr-1"
+                  value={isImportant}
+                  onValueChange={setIsImportant}
+                />
+                <Text className="m-2">Important</Text>
+              </View>
+            </View>
 
             <Pressable
               className="bg-black rounded-xl p-3 mt-3"

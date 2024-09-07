@@ -73,28 +73,28 @@ const Register = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 justify-center p-4 m-3 mt-14 border border-x-2 border-violet-400 rounded-xl">
+    <SafeAreaView className="flex-1 p-6 mt-14 border border-x-2 border-violet-400 bg-violet-300 rounded-xl">
       <Image
         source={images.registerImg}
         resizeMode="contain"
         className="self-center"
       />
-      <Text className="text-5xl py-2 mb-3 text-center font-mbold text-violet-800">
+      <Text className="text-5xl py-2 mb-3 text-center font-pbold text-violet-800">
         Create New
       </Text>
-      <Text className="text-5xl py-2 mb-3 text-center font-mbold text-violet-800">
+      <Text className="text-5xl py-2 mb-3 text-center font-pbold text-violet-800">
         Account
       </Text>
       <View className="mt-2 mb-6 flex-row justify-center items-center">
-        <Text className="text-xl font-mregular">Already registered? </Text>
+        <Text className="text-lg font-plight">Already registered? </Text>
         <Link href="/login">
-          <Text className="text-violet-500 text-xl font-mregular">Login</Text>
+          <Text className="text-violet-500 text-lg font-pregular">Login</Text>
         </Link>
       </View>
       <View className="flex-row items-center p-4">
         <AntDesign name="user" size={32} color="black" />
         <TextInput
-          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white font-mregular text-base"
+          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white font-pmedium"
           placeholder="Name"
           value={name}
           onChangeText={setName}
@@ -103,7 +103,7 @@ const Register = () => {
       <View className="flex-row items-center p-4">
         <Fontisto name="email" size={32} color="black" className="mr-4" />
         <TextInput
-          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-mregular text-base"
+          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-pmedium"
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -113,7 +113,7 @@ const Register = () => {
       <View className="flex-row items-center p-4">
         <AntDesign name="mobile1" size={32} color="black" />
         <TextInput
-          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-mregular text-base"
+          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-pmedium"
           placeholder="Mobile No"
           value={mobile}
           onChangeText={setMobile}
@@ -136,8 +136,7 @@ const Register = () => {
             borderRadius: 15,
             borderColor: "#4A5568",
             borderWidth: 1,
-            width: "90%",
-            maxWidth: "10rem",
+            width: "84%",
             marginTop: 4,
           }}
           listItemContainerStyle={{
@@ -154,7 +153,7 @@ const Register = () => {
       <View className="flex-row items-center p-4">
         <MaterialIcons name="password" size={32} color="black" />
         <TextInput
-          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white font-mregular text-base"
+          className="h-12 w-80 border-2 border-black  px-3 rounded-3xl ml-4 bg-white font-pmedium"
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
@@ -166,7 +165,7 @@ const Register = () => {
         onPress={handleSubmit}
         className="bg-violet-800 py-2 px-5 rounded-3xl items-center mt-2 w-32 self-center"
       >
-        <Text className="text-white font-mregular text-lg">Register</Text>
+        <Text className="text-white font-pbold text-lg">Register</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

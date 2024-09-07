@@ -21,3 +21,4 @@ expo-env.d.ts
 .idea
 .env.*
 layouts
+%ProgramData%

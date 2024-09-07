@@ -53,50 +53,69 @@ const Profile = () => {
     router.replace("/login");
   };
   return (
-    <View className="flex-1 justify-center items-center p-4">
-      <Text className="text-2xl font-mbold mb-4">Profile Page</Text>
-      {user ? (
-        <>
-          <Text className="text-3xl font-mregular py-1 mb-5 text-center">
-            Welcome, {user.name}
-          </Text>
-          <Text className="p-2 text-xl font-mregular">Email: {user.email}</Text>
-          <Text className="p-2 text-xl font-mregular">Mobile: {user.mobile}</Text>
-          <Text className="p-2 text-xl font-mregular m-2">
-            Role:{' '}
-            {user.role === 'CG'
-              ? 'Care Giver'
-              : user.role === 'PAT'
-              ? 'Patient'
-              : 'Doctor'}
-          </Text>
-          {user.role === 'PAT' && (
+    <>
+      <View className="flex-row items-start m-3 mt-5">
+        <View className="ml-2 flex-1 border border-black pt-4 pl-4 rounded-2xl bg-cyan-300">
+          <Text className="text-3xl font-pbold mb-4">Profile Page</Text>
+          {user ? (
             <>
-              <Text className="text-lg font-bold mb-2">Caregivers:</Text>
-              <FlatList
-                data={user.caregivers}
-                keyExtractor={(item) => item.CGId}
-                renderItem={({ item }) => (
-                  <View className="p-4 border-b border-gray-300">
-                    <Text>Name: {item.name}</Text>
-                    <Text>Mobile: {item.mobile}</Text>
-                  </View>
-                )}
-                ListEmptyComponent={<Text className="text-gray-500">No caregivers available.</Text>}
-              />
+              <Text className="text-3xl font-pregular py-1 mb-5">
+                Welcome, {user.name}
+              </Text>
+              <Text className="p-2 text-xl font-pregular">
+                <Text className="text-xl font-pbold">Email:</Text> {user.email}
+              </Text>
+              <Text className="p-2 text-xl font-pregular">
+                <Text className="text-xl font-pbold">Mobile:</Text>{" "}
+                {user.mobile}
+              </Text>
+              <Text className="p-2 text-xl font-pregular">
+                <Text className="text-xl font-pbold">Role: </Text>
+                {user.role === "CG"
+                  ? "Care Giver"
+                  : user.role === "PAT"
+                  ? "Patient"
+                  : "Doctor"}
+              </Text>
+              {user.role === "PAT" && (
+                <>
+                  <Text className="text-xl font-pbold mb-2">Caregivers:</Text>
+                  <FlatList
+                    data={user.caregivers}
+                    keyExtractor={(item) => item.CGId}
+                    renderItem={({ item }) => (
+                      <View className="p-4 border-b border-gray-300">
+                        <Text className="font-pregular text-lg">
+                          <Text className="text-xl font-pmedium">Name:</Text>{" "}
+                          {item.name}
+                        </Text>
+                        <Text className="font-pregular text-lg">
+                          <Text className="text-xl font-pmedium">Mobile:</Text>{" "}
+                          {item.mobile}
+                        </Text>
+                      </View>
+                    )}
+                    ListEmptyComponent={
+                      <Text className="text-gray-500">
+                        No caregivers available.
+                      </Text>
+                    }
+                  />
+                </>
+              )}
             </>
+          ) : (
+            <Text>Loading user data...</Text>
           )}
-          <TouchableOpacity
-            onPress={handleLogout}
-            className="bg-blue-500 py-2 px-4 rounded-md mt-4"
-          >
-            <Text className="text-white font-mbold">Logout</Text>
-          </TouchableOpacity>
-        </>
-      ) : (
-        <Text>Loading user data...</Text>
-      )}
-    </View>
+        </View>
+        <TouchableOpacity
+          onPress={handleLogout}
+          className="bg-blue-500 p-2 m-2 rounded-md items-center"
+        >
+          <Text className="text-white font-pbold">Logout</Text>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
 

@@ -12,22 +12,23 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import AddModalComponent from "../../components/AddModalComponent";
 import EditModalComponent from "../../components/EditModalComponent";
-import Feather from "@expo/vector-icons/Feather";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Entypo from "@expo/vector-icons/Entypo";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Main = () => {
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [AddModalVisible, setAddModalVisible] = useState(false);
-  const [EditModalVisible, setEditModalVisible] = useState(false);
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedReminder, setSelectedReminder] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date());
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("pending");
+  const [isUrgent, setIsUrgent] = useState(false);
+  const [isImportant, setIsImportant] = useState(false);
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
   const getUserIdFromToken = async () => {
@@ -102,17 +103,33 @@ const Main = () => {
         return;
       }
 
+      if (
+        !title ||
+        !description ||
+        !date ||
+        !status ||
+        typeof isUrgent !== "boolean" ||
+        typeof isImportant !== "boolean"
+      ) {
+        Alert.alert("Error", "All fields must be filled out correctly");
+        return;
+      }
+
       const response = await axios.post(`${apiUrl}/postreminders`, {
         title,
         description,
         date: date.toISOString(),
         status,
+        isUrgent,
+        isImportant,
         userId: userId,
       });
       setTitle("");
       setDescription("");
       setDate("");
       setStatus("");
+      setIsUrgent(false);
+      setIsImportant(false);
       console.log("Response", response);
       Alert.alert("Success", response.data.message);
       onRefresh();
@@ -137,18 +154,20 @@ const Main = () => {
       }
 
       const response = await axios.post(`${apiUrl}/updatereminders`, {
-        remId: selectedReminder.remId, // Use the remId from selectedReminder
+        remId: selectedReminder.remId,
         title,
         description,
         date: date.toISOString(),
         status,
-        userId: userId, // Ensure userId is included as per backend requirement
+        isUrgent,
+        isImportant,
+        userId: userId,
       });
 
       if (response.status === 200) {
         Alert.alert("Success", response.data.message);
-        onRefresh(); // Refresh the list of reminders
-        handleEditModalClose(); // Close the modal and reset fields
+        onRefresh();
+        handleEditModalClose();
       } else {
         Alert.alert(
           "Error",
@@ -217,7 +236,6 @@ const Main = () => {
   }, []);
 
   const handleEdit = async (remId) => {
-    // Find the reminder with the given remId
     const reminder = reminders.find((rem) => rem._id === remId);
     if (reminder) {
       setSelectedReminder(reminder);
@@ -225,6 +243,8 @@ const Main = () => {
       setDescription(reminder.description);
       setDate(new Date(reminder.date));
       setStatus(reminder.status);
+      setIsUrgent(reminder.urgent);
+      setIsImportant(reminder.important);
       setEditModalVisible(true);
     } else {
       Alert.alert("Error", "Reminder not found");
@@ -236,6 +256,8 @@ const Main = () => {
     setDescription("");
     setDate(new Date());
     setStatus("");
+    setIsUrgent(null);
+    setIsImportant(null);
     setSelectedReminder(null);
   };
 
@@ -244,6 +266,27 @@ const Main = () => {
     setEditModalVisible(false);
   };
 
+  const getBackgroundColorClass = (urgent, important) => {
+    if (urgent && important) {
+      return "bg-red-300";
+    } else if (!urgent && important) {
+      return "bg-green-300";
+    } else if (urgent && !important) {
+      return "bg-yellow-300";
+    } else {
+      return "bg-gray-200";
+    }
+  };
+
+  const sortedReminders = reminders.slice().sort((a, b) => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+
+    if (a.status === "completed" && b.status === "pending") return 1;
+    if (a.status === "pending" && b.status === "completed") return -1;
+    return dateA - dateB;
+  });
+
   if (loading) {
     return <Text>Loading reminders...</Text>;
   }
@@ -251,36 +294,77 @@ const Main = () => {
   return (
     <>
       <ScrollView
-      className="border border-black"
+        className="border border-black bg-violet-500 rounded-lg"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View className="border border-black">
-          <Text className="text-3xl m-4">Reminders</Text>
+        <View className="flex-row flex-wrap justify-between ">
+          <View className="pt-2">
+            <Text className="text-3xl m-4 mt-6 font-psemibold">Reminders</Text>
+          </View>
+          <View className="mb-4">
+            <Text className="text-red-300 font-pextralight">
+              Urgent and Important
+            </Text>
+            <Text className="text-green-300 font-pextralight">
+              Not Urgent and Important
+            </Text>
+            <Text className="text-yellow-300 font-pextralight">
+              Urgent and Not Important
+            </Text>
+            <Text className="text-gray-200 font-pextralight">
+              Not Urgent and Not Important
+            </Text>
+          </View>
+        </View>
+        <View className="border border-black rounded-lg bg-violet-400 p-2 grid grid-cols-2 gap-2">
           {error ? (
-            <Text>{error}</Text>
+            <Text className="col-span-2">{error}</Text>
           ) : (
-            reminders.map((reminder) => (
-              <View key={reminder._id} className="m-4 p-2 border border-black">
-                <Text className="font-bold text-xl">
-                  Reminder {reminder.remId}
+            sortedReminders.map((reminder) => (
+              <View
+                key={reminder._id}
+                className={`p-2 border border-black rounded-xl ${getBackgroundColorClass(
+                  reminder.urgent,
+                  reminder.important
+                )}`}
+              >
+                <Text className="text-lg font-pmedium">{reminder.title}</Text>
+                <Text className="text-lg font-pmedium">
+                  {reminder.description}
                 </Text>
-                <Text>{reminder.title}</Text>
-                <Text>{reminder.description}</Text>
-                <Text>{new Date(reminder.date).toLocaleString()}</Text>
-                <Text>Status: {reminder.status}</Text>
+                <Text className="text-lg font-pmedium">
+                  {new Date(reminder.date).toLocaleDateString()}
+                </Text>
+                <Text className="text-lg font-pmedium">
+                  {new Date(reminder.date).toLocaleTimeString()}
+                </Text>
+                <Text className="text-lg font-pmedium">
+                  Status:{" "}
+                  {reminder.status === "pending" ? "Pending" : "Completed"}
+                </Text>
+                {/* <Text className="text-lg font-pmedium">
+                  Urgent: {reminder.urgent ? "Yes" : "No"}
+                </Text>
+                <Text className="text-lg font-pmedium">
+                  Important: {reminder.important ? "Yes" : "No"}
+                </Text> */}
                 <TouchableOpacity
                   onPress={() => handleEdit(reminder._id)}
                   className="absolute right-14 bottom-2"
                 >
-                  <Feather name="edit-2" size={30} color="green" />
+                  <FontAwesome6 name="edit" size={24} color="black" />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => deleteReminder(reminder.remId)}
-                  className="absolute right-4 bottom-2"
+                  className="absolute right-4 bottom-1"
                 >
-                  <AntDesign name="delete" size={30} color="red" />
+                  <MaterialIcons
+                    name="delete-outline"
+                    size={30}
+                    color="black"
+                  />
                 </TouchableOpacity>
               </View>
             ))
@@ -288,7 +372,7 @@ const Main = () => {
         </View>
         <View className="mt-2">
           <AddModalComponent
-            AddModalVisible={AddModalVisible}
+            addModalVisible={addModalVisible}
             setAddModalVisible={setAddModalVisible}
             title={title}
             setTitle={setTitle}
@@ -297,11 +381,15 @@ const Main = () => {
             date={date}
             setDate={setDate}
             setStatus={setStatus}
+            isUrgent={isUrgent}
+            setIsUrgent={setIsUrgent}
+            isImportant={isImportant}
+            setIsImportant={setIsImportant}
             onSave={postReminders}
           />
 
           <EditModalComponent
-            editModalVisible={EditModalVisible}
+            editModalVisible={editModalVisible}
             setEditModalVisible={handleEditModalClose}
             title={title}
             setTitle={setTitle}
@@ -311,13 +399,20 @@ const Main = () => {
             setDate={setDate}
             status={status}
             setStatus={setStatus}
+            isUrgent={isUrgent}
+            setIsUrgent={setIsUrgent}
+            isImportant={isImportant}
+            setIsImportant={setIsImportant}
             onSave={updateReminder}
           />
         </View>
       </ScrollView>
       <View className="justify-center items-center">
-        <TouchableOpacity onPress={() => setAddModalVisible(true)} className='absolute right-5 bottom-3'>
-          <Entypo name="add-to-list" size={44} color="black" />
+        <TouchableOpacity
+          onPress={() => setAddModalVisible(true)}
+          className="absolute right-6 bottom-5"
+        >
+          <MaterialIcons name="add-box" size={56} color="black" />
         </TouchableOpacity>
       </View>
     </>
