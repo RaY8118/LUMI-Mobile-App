@@ -268,13 +268,13 @@ const Main = () => {
 
   const getBackgroundColorClass = (urgent, important) => {
     if (urgent && important) {
-      return "bg-red-300";
+      return "bg-custom-red";
     } else if (!urgent && important) {
-      return "bg-green-300";
+      return "bg-custom-green";
     } else if (urgent && !important) {
-      return "bg-yellow-300";
+      return "bg-custom-yellow";
     } else {
-      return "bg-gray-200";
+      return "bg-custom-white";
     }
   };
 
@@ -294,16 +294,16 @@ const Main = () => {
   return (
     <>
       <ScrollView
-        className="border border-black bg-violet-500 rounded-lg"
+        className="border border-black bg-whiete rounded-lg"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View className="flex-row flex-wrap justify-between ">
+        <View className="flex-row flex-wrap justify-center items-center">
           <View className="pt-2">
-            <Text className="text-3xl m-4 mt-6 font-psemibold">Reminders</Text>
+            <Text className="text-3xl m-4 mt-6 font-ps2pregular">Reminders</Text>
           </View>
-          <View className="mb-4">
+          {/* <View className="mb-4">
             <Text className="text-red-300 font-pextralight">
               Urgent and Important
             </Text>
@@ -316,9 +316,9 @@ const Main = () => {
             <Text className="text-gray-200 font-pextralight">
               Not Urgent and Not Important
             </Text>
-          </View>
+          </View> */}
         </View>
-        <View className="border border-black rounded-lg bg-violet-400 p-2 grid grid-cols-2 gap-2">
+        <View className="border border-black rounded-lg bg-white p-2 grid grid-cols-2 gap-2">
           {error ? (
             <Text className="col-span-2">{error}</Text>
           ) : (
@@ -330,17 +330,17 @@ const Main = () => {
                   reminder.important
                 )}`}
               >
-                <Text className="text-lg font-pmedium">{reminder.title}</Text>
-                <Text className="text-lg font-pmedium">
+                <Text className="text-lg font-nsmmedium">{reminder.title}</Text>
+                <Text className="text-lg font-nsmmedium">
                   {reminder.description}
                 </Text>
-                <Text className="text-lg font-pmedium">
+                <Text className="text-lg font-nsmmedium">
                   {new Date(reminder.date).toLocaleDateString()}
                 </Text>
-                <Text className="text-lg font-pmedium">
+                <Text className="text-lg font-nsmmedium">
                   {new Date(reminder.date).toLocaleTimeString()}
                 </Text>
-                <Text className="text-lg font-pmedium">
+                <Text className="text-lg font-nsmmedium">
                   Status:{" "}
                   {reminder.status === "pending" ? "Pending" : "Completed"}
                 </Text>

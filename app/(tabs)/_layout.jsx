@@ -13,7 +13,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="main"
           options={({ navigation }) => ({
-            headerTitle: "Main",
+            headerTitle: "Reminders",
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="home" color={color} size={size} />
             ),

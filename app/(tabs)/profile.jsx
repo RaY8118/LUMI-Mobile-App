@@ -5,6 +5,7 @@ import {
   Alert,
   TouchableOpacity,
   FlatList,
+  SafeAreaView
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
@@ -34,6 +35,7 @@ const Profile = () => {
 
           if (response.data.status === "success") {
             setUser(response.data.userData);
+            console.log(response.data.userData);
           } else {
             console.error("Failed to fetch user data", response.data.message);
             router.replace("/login");
@@ -54,23 +56,24 @@ const Profile = () => {
   };
   return (
     <>
+    <SafeAreaView className="bg-indigo-300 h-full">
       <View className="flex-row items-start m-3 mt-5">
-        <View className="ml-2 flex-1 border border-black pt-4 pl-4 rounded-2xl bg-cyan-300">
-          <Text className="text-3xl font-pbold mb-4">Profile Page</Text>
+        <View className="ml-2 flex-1 justify-center items-start border border-black pt-4 pl-4 rounded-2xl bg-white">
+          {/* <Text className="text-3xl font-pbold mb-4">Profile Page</Text> */}
           {user ? (
             <>
-              <Text className="text-3xl font-pregular py-1 mb-5">
-                Welcome, {user.name}
+              <Text className="text-3xl font-pditalic py-1 pl-2">
+               {user.name}
               </Text>
-              <Text className="p-2 text-xl font-pregular">
-                <Text className="text-xl font-pbold">Email:</Text> {user.email}
+              <Text className="p-2 text-xl font-pditalic">
+                <Text className="text-xl font-pdbolditalic">Email:</Text> {user.email}
               </Text>
-              <Text className="p-2 text-xl font-pregular">
-                <Text className="text-xl font-pbold">Mobile:</Text>{" "}
+              <Text className="p-2 text-xl font-pditalic">
+                <Text className="text-xl font-pdbolditalic">Mobile:</Text>{" "}
                 {user.mobile}
               </Text>
-              <Text className="p-2 text-xl font-pregular">
-                <Text className="text-xl font-pbold">Role: </Text>
+              <Text className="p-2 text-xl font-pditalic">
+                <Text className="text-xl font-pdbolditalic">Role: </Text>
                 {user.role === "CG"
                   ? "Care Giver"
                   : user.role === "PAT"
@@ -79,7 +82,7 @@ const Profile = () => {
               </Text>
               {user.role === "PAT" && (
                 <>
-                  <Text className="text-xl font-pbold mb-2">Caregivers:</Text>
+                  <Text className="text-xl font-pdbolditalic mb-2">Caregivers:</Text>
                   <FlatList
                     data={user.caregivers}
                     keyExtractor={(item) => item.CGId}
@@ -103,6 +106,32 @@ const Profile = () => {
                   />
                 </>
               )}
+              {user.role === "CG" && (
+                <>
+                  <Text className="p-2 text-xl font-pdbolditalic">Patients:</Text>
+                  <FlatList
+                    data={user.patients}
+                    keyExtractor={(item) => item.PATId}
+                    renderItem={({ item }) => (
+                      <View className="pl-4 mb-2">
+                        <Text className="font-pditalic text-lg">
+                          <Text className="text-xl font-pdbolditalic">Name:</Text>{" "}
+                          {item.name}
+                        </Text>
+                        <Text className="font-pditalic text-lg">
+                          <Text className="text-xl font-pdbolditalic">Mobile:</Text>{" "}
+                          {item.mobile}
+                        </Text>
+                      </View>
+                    )}
+                    ListEmptyComponent={
+                      <Text className="text-gray-500 pl-2 mb-2">
+                        No patients available.
+                      </Text>
+                    }
+                  />
+                </>
+              )}
             </>
           ) : (
             <Text>Loading user data...</Text>
@@ -115,6 +144,7 @@ const Profile = () => {
           <Text className="text-white font-pbold">Logout</Text>
         </TouchableOpacity>
       </View>
+      </SafeAreaView>
     </>
   );
 };
