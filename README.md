@@ -1,50 +1,73 @@
-# Welcome to your Expo app 👋
+# 🌟 LUMI - Alzheimer's and Elderly Care App - Frontend (React Native)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This repository contains the **frontend code** for an application designed to assist Alzheimer's and elderly patients 🧓👵. Built using **Expo** and **React Native**, the app helps users manage tasks, recognize faces and objects, and track their location, providing essential support for individuals who may have memory challenges 🧠.
 
-## Get started
+## ✨ Features
 
-1. Install dependencies
+### 1. 📝 **Reminders**
+   - 🛎️ Allows users to create, edit, and delete reminders for important tasks.
+   - 📌 Supports both urgent and important tags for categorizing reminders.
 
+### 2. 👤 **Face Recognition**
+   - 📷 Utilizes facial recognition to help users identify familiar people.
+   - 🚫 Runs independently for all users, without communication with the database.
+
+### 3. 🧳 **Object Recognition**
+   - 🛠️ Assists users in recognizing everyday objects through the camera.
+   - 🚫 Like face recognition, it functions independently from the database.
+
+### 4. 🌍 **Location Tracking**
+   - 📍 Tracks the user’s current location to provide caregivers with updates.
+   - 🚨 Can alert caregivers if the patient is out of the safe zone.
+
+## ⚙️ Technology Stack
+
+- 💻 **React Native (Expo)**: The foundation for building the cross-platform mobile app.
+- 🎨 **NativeWindCSS**: Used for styling the app's components with Tailwind-like syntax.
+- 🗄️ **MongoDB**: Integrated to handle user authentication and data storage.
+
+## 🚀 Getting Started
+
+### 📋 Prerequisites
+- 🐍 [Node.js](https://nodejs.org/)
+- 📱 [Expo CLI](https://docs.expo.dev/get-started/create-a-project/)
+- 🛠️ [npm](https://docs.npmjs.com/cli/v10/commands/npm-install)
+
+### 🔧 Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/RaY8118/LUMI-Mobile-App.git
+   cd LUMI-Mobile-App
+   ```
+
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. **Start the Expo development server**:
    ```bash
-    npx expo start
+   npx expo
    ```
 
-In the output, you'll find options to open the app in a
+4. **Use the Expo Go app** on your mobile device to scan the QR code or run the project on an emulator.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🗂️ Folder Structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **/components**: Contains reusable UI components used across the app.
+- **/tabs**: Contains all the screens like `ReminderScreen`, `LocationTrackingScreen`, etc.
+- **/assets**: Holds static assets such as images or icons.
 
-## Get a fresh project
+## 🤝 Contributing
 
-When you're ready, run:
+1. **Fork the project**
+2. **Create your feature branch** (`git checkout -b feature/YourFeature`)
+3. **Commit your changes** (`git commit -m 'Add some YourFeature'`)
+4. **Push to the branch** (`git push origin feature/YourFeature`)
+5. **Open a pull request**
 
-```bash
-npm run reset-project
-```
+## 📜 License
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
