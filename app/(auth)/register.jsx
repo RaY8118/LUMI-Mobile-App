@@ -73,16 +73,16 @@ const Register = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 p-6 mt-14 border border-x-2 border-violet-400 bg-violet-300 rounded-xl">
+    <SafeAreaView className="flex-1 p-6 mt-14 border border-x-2 border-violet-400 bg-custom-primary rounded-xl">
       <Image
         source={images.registerImg}
         resizeMode="contain"
         className="self-center"
       />
-      <Text className="text-5xl py-2 mb-3 text-center font-pbold text-violet-800">
+      <Text className="text-5xl py-2 mb-3 text-center font-pbold text-custom-tertiary">
         Create New
       </Text>
-      <Text className="text-5xl py-2 mb-3 text-center font-pbold text-violet-800">
+      <Text className="text-5xl py-2 mb-3 text-center font-pbold text-custom-tertiary">
         Account
       </Text>
       <View className="mt-2 mb-6 flex-row justify-center items-center">

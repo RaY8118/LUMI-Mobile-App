@@ -330,17 +330,17 @@ const Main = () => {
                   reminder.important
                 )}`}
               >
-                <Text className="text-lg font-nsmmedium">{reminder.title}</Text>
-                <Text className="text-lg font-nsmmedium">
+                <Text className="text-3xl font-agdasimar">{reminder.title}</Text>
+                <Text className="text-2xl font-agdasimar">
                   {reminder.description}
                 </Text>
-                <Text className="text-lg font-nsmmedium">
+                <Text className="text-2xl font-agdasimar">
                   {new Date(reminder.date).toLocaleDateString()}
                 </Text>
-                <Text className="text-lg font-nsmmedium">
+                <Text className="text-2xl font-agdasimar">
                   {new Date(reminder.date).toLocaleTimeString()}
                 </Text>
-                <Text className="text-lg font-nsmmedium">
+                <Text className="text-2xl font-agdasimar">
                   Status:{" "}
                   {reminder.status === "pending" ? "Pending" : "Completed"}
                 </Text>

@@ -1,5 +1,5 @@
 import { Camera, CameraType } from "expo-camera/legacy";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   StyleSheet,
@@ -7,9 +7,10 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
-  Alert, // Import Alert
+  Alert,
 } from "react-native";
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native"; // Assuming you're using React Navigation
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
@@ -18,6 +19,17 @@ export default function App() {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [cameraRef, setCameraRef] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const navigation = useNavigation(); // To detect navigation away from the screen
+
+  useEffect(() => {
+    // Cleanup function to stop camera when navigating away
+    const unsubscribe = navigation.addListener('blur', () => {
+      setCameraRef(null); // Clear camera reference when navigating away
+    });
+
+    return unsubscribe; // Clean up the listener when component unmounts
+  }, [navigation]);
 
   if (!permission) {
     return <View />;
@@ -51,7 +63,7 @@ export default function App() {
     const formData = new FormData();
     formData.append("image", {
       uri,
-      type: "image/jpeg", // or the correct MIME type
+      type: "image/jpeg",
       name: "photo.jpg",
     });
 
@@ -64,7 +76,6 @@ export default function App() {
         },
       });
 
-      // Handle the response
       if (response.data.status === "success") {
         const nameMessage = response.data.name
           ? `Identified Name: ${response.data.name}`
@@ -72,10 +83,6 @@ export default function App() {
         
         // Show alert with the response message
         Alert.alert("Response", nameMessage);
-        
-        setTimeout(() => {
-          // Optionally clear any state after some time if needed
-        }, 5000); // Clear message after 5 seconds (not needed for alert)
       } else {
         Alert.alert("Error", `Error: ${response.data.message}`);
       }
@@ -142,27 +149,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-end",
-    paddingVertical:20
+    paddingVertical: 20,
   },
   camera: {
     flex: 1,
     alignSelf: "center",
     width: "90%",
-    marginBottom:20,
-    borderRadius:10,
-    margin:25
+    marginBottom: 20,
+    borderRadius: 10,
+    margin: 25,
   },
   buttonWrapper: {
-    alignItems: 'center', // Center each button horizontally
-    marginVertical: 10, // Add space between buttons vertically
+    alignItems: "center",
+    marginVertical: 10,
   },
   button: {
-    backgroundColor: '#007BFF', // Button background color
+    backgroundColor: "#007BFF",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 50,
-    elevation: 3, // For Android shadow effect
-    shadowColor: '#000', // For iOS shadow effect
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
@@ -172,5 +179,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
-  
 });

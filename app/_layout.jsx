@@ -33,6 +33,8 @@ export default function RootLayout() {
     "NotoSerif-Black": require("../assets/fonts/NotoSerif/NotoSerif-Black.ttf"),
     "NotoSerif-Thin": require("../assets/fonts/NotoSerif/NotoSerif-Thin.ttf"),
     "NotoSerif-Medium": require("../assets/fonts/NotoSerif/NotoSerif-Medium.ttf"),
+    "Agdasima-Bold": require("../assets/fonts/Agdasima/Agdasima-Bold.ttf"),
+    "Agdasima-Regular": require("../assets/fonts/Agdasima/Agdasima-Regular.ttf"),
   });
 
   useEffect(() => {
