@@ -21,6 +21,8 @@ const AddModalComponent = ({
   setDescription,
   date,
   setDate,
+  time,
+  setTime,
   setStatus,
   isUrgent,
   setIsUrgent,
@@ -29,6 +31,7 @@ const AddModalComponent = ({
   onSave,
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -40,6 +43,17 @@ const AddModalComponent = ({
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
+  };
+
+  const onTimeChange = (event, selectedTime) => {
+    const currentTime = selectedTime || time;
+    setShowTimePicker(false);
+    // Ensure currentTime is a Date object
+    if (currentTime instanceof Date) {
+      setTime(currentTime);
+    } else {
+      setTime(new Date()); // Fallback to current time if not valid
+    }
   };
 
   return (
@@ -105,6 +119,24 @@ const AddModalComponent = ({
                 mode="date"
                 display="default"
                 onChange={onChange}
+              />
+            )}
+
+            <TouchableOpacity
+              className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded justify-center"
+              onPress={() => setShowTimePicker(true)}
+            >
+              <Text className="text-gray-700">
+                {time instanceof Date ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Pick a time"}
+              </Text>
+            </TouchableOpacity>
+
+            {showTimePicker && (
+              <DateTimePicker
+                value={time instanceof Date ? time : new Date()} // Ensure a valid Date object is passed
+                mode="time"
+                display="default"
+                onChange={onTimeChange}
               />
             )}
 

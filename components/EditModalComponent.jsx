@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Text, Pressable, View, TextInput } from "react-native";
+import { Modal, Text, Pressable, View, TextInput, TouchableOpacity } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Checkbox from "expo-checkbox";
@@ -14,6 +14,8 @@ const EditModalComponent = ({
   setDescription,
   date,
   setDate,
+  time,
+  setTime,
   status,
   setStatus,
   isUrgent,
@@ -23,6 +25,7 @@ const EditModalComponent = ({
   onSave,
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(status);
 
@@ -38,7 +41,8 @@ const EditModalComponent = ({
     setDate(date);
     setIsUrgent(isUrgent);
     setIsImportant(isImportant);
-  }, [title, description, date, status, isUrgent, isImportant]);
+    setTime(time);
+  }, [title, description, date, status, isUrgent, isImportant, time]);
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -46,11 +50,23 @@ const EditModalComponent = ({
     setDate(currentDate);
   };
 
+  const onTimeChange = (event, selectedTime) => {
+    const currentTime = selectedTime || time;
+    setShowTimePicker(false);
+    // Ensure currentTime is a Date object
+    if (currentTime instanceof Date) {
+      setTime(currentTime);
+    } else {
+      setTime(new Date()); // Fallback to current time if not valid
+    }
+  };
+
   const handleSave = () => {
     onSave({
       title,
       description,
       date,
+      time,
       status: value,
       isUrgent,
       isImportant,
@@ -119,6 +135,24 @@ const EditModalComponent = ({
                 mode="date"
                 display="default"
                 onChange={onDateChange}
+              />
+            )}
+
+            <TouchableOpacity
+              className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded justify-center"
+              onPress={() => setShowTimePicker(true)}
+            >
+              <Text className="text-gray-700">
+                {time instanceof Date ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Pick a time"}
+              </Text>
+            </TouchableOpacity>
+
+            {showTimePicker && (
+              <DateTimePicker
+                value={time instanceof Date ? time : new Date()} // Ensure a valid Date object is passed
+                mode="time"
+                display="default"
+                onChange={onTimeChange}
               />
             )}
 

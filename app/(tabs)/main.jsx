@@ -26,6 +26,7 @@ const Main = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date().toLocaleTimeString());
   const [status, setStatus] = useState("pending");
   const [isUrgent, setIsUrgent] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
@@ -107,9 +108,8 @@ const Main = () => {
         !title ||
         !description ||
         !date ||
-        !status ||
-        typeof isUrgent !== "boolean" ||
-        typeof isImportant !== "boolean"
+        !time ||
+        !status
       ) {
         Alert.alert("Error", "All fields must be filled out correctly");
         return;
@@ -119,6 +119,7 @@ const Main = () => {
         title,
         description,
         date: date.toISOString(),
+        time: time.toISOString(),
         status,
         isUrgent,
         isImportant,
@@ -127,6 +128,7 @@ const Main = () => {
       setTitle("");
       setDescription("");
       setDate("");
+      setTime("");
       setStatus("");
       setIsUrgent(false);
       setIsImportant(false);
@@ -158,6 +160,7 @@ const Main = () => {
         title,
         description,
         date: date.toISOString(),
+        time: time.toISOString(),
         status,
         isUrgent,
         isImportant,
@@ -242,6 +245,7 @@ const Main = () => {
       setTitle(reminder.title);
       setDescription(reminder.description);
       setDate(new Date(reminder.date));
+      setTime(new Date(reminder.time));
       setStatus(reminder.status);
       setIsUrgent(reminder.urgent);
       setIsImportant(reminder.important);
@@ -255,6 +259,7 @@ const Main = () => {
     setTitle("");
     setDescription("");
     setDate(new Date());
+    setTime(new Date());
     setStatus("");
     setIsUrgent(null);
     setIsImportant(null);
@@ -338,7 +343,7 @@ const Main = () => {
                   {new Date(reminder.date).toLocaleDateString()}
                 </Text>
                 <Text className="text-2xl font-agdasimar">
-                  {new Date(reminder.date).toLocaleTimeString()}
+                  {new Date(reminder.time).toLocaleTimeString()}
                 </Text>
                 <Text className="text-2xl font-agdasimar">
                   Status:{" "}
@@ -380,6 +385,8 @@ const Main = () => {
             setDescription={setDescription}
             date={date}
             setDate={setDate}
+            time={time}
+            setTime={setTime}
             setStatus={setStatus}
             isUrgent={isUrgent}
             setIsUrgent={setIsUrgent}
@@ -397,6 +404,8 @@ const Main = () => {
             setDescription={setDescription}
             date={date}
             setDate={setDate}
+            time={time}
+            setTime={setTime}
             status={status}
             setStatus={setStatus}
             isUrgent={isUrgent}
