@@ -5,12 +5,52 @@ import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import * as TaskManager from 'expo-task-manager';
+import * as Notifications from 'expo-notifications';
+
+const BACKGROUND_LOCATION_TASK = 'BACKGROUND-LOCATION-TASK';
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
+// Define the background location task
+TaskManager.defineTask(BACKGROUND_LOCATION_TASK, async () => {
+  try {
+    const { coords } = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High,
+    });
+
+    const token = await SecureStore.getItemAsync("token");
+    if (!token) {
+      console.error("User not logged in");
+      return;
+    }
+
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken.sub.userId;
+
+    await axios.post(`${apiUrl}/findlocation`, {
+      userId,
+      coords,
+    });
+  } catch (error) {
+    console.error("Error in background location task:", error);
+  }
+});
+
+// Function to start background location tracking
+const startBackgroundLocationTracking = async () => {
+  await Location.requestForegroundPermissionsAsync();
+  await Location.requestBackgroundPermissionsAsync(); // Request background permissions
+  await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION_TASK, {
+    accuracy: Location.Accuracy.High,
+    timeInterval: 10000, // Send location every 10 seconds
+    distanceInterval: 0, // No distance interval
+  });
+};
 
 const LocationMap = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [homeLocation, setHomeLocation] = useState(null);
-
+  
   const fetchLocation = useCallback(async () => {
     console.log("Fetching location...");
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -34,6 +74,12 @@ const LocationMap = () => {
 
   useEffect(() => {
     fetchLocation();
+    startBackgroundLocationTracking(); // Start background tracking
+
+    return () => {
+      // Stop background location updates when component unmounts
+      Location.stopLocationUpdatesAsync(BACKGROUND_LOCATION_TASK);
+    };
   }, [fetchLocation]);
 
   const handleRefresh = () => {
@@ -52,7 +98,6 @@ const LocationMap = () => {
   }
 
   const saveLocation = useCallback(async () => {
-    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
     console.log("Fetching location...");
     Alert.alert("Saving Location", "Please wait while we save your location.");
 
@@ -75,20 +120,15 @@ const LocationMap = () => {
       }
 
       const decodedToken = jwtDecode(token);
-      console.log(decodedToken);
       const userId = decodedToken.sub.userId;
-      console.log(userId);
-      setHomeLocation(coords);
-      console.log("Current Location:", coords);
-      setErrorMsg(null);
 
       const response = await axios.post(`${apiUrl}/homelocation`, {
         userId,
         coords,
       });
-
-      console.log("Response:", response.data);
+      
       Alert.alert("Success", "Your location has been saved successfully.");
+      
     } catch (error) {
       console.error("Error saving location:", error.message);
       setErrorMsg(
@@ -96,10 +136,10 @@ const LocationMap = () => {
           (error.response?.data?.message || error.message)
       );
     }
-  }, [homeLocation]);
+  }, []);
 
   return (
-    <View className="flex-1 justify-center items-center p-4">
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 }}>
       {location ? (
         <View>
           <Text>Your Location</Text>
@@ -107,11 +147,12 @@ const LocationMap = () => {
           <Text>Longitude: {location.longitude}</Text>
         </View>
       ) : (
-        <Text>Fetching location</Text>
+        <Text>Fetching location...</Text>
       )}
-      {location ? (
+      
+      {location && (
         <MapView
-          className="w-full h-4/5"
+          style={{ width: '100%', height: '80%' }}
           initialRegion={{
             latitude: location.latitude,
             longitude: location.longitude,
@@ -127,37 +168,16 @@ const LocationMap = () => {
             title="You are here"
           />
         </MapView>
-      ) : (
-        <Text className="text-lg">{displayText}</Text>
       )}
-      <TouchableOpacity
-        onPress={handleRefresh}
-        style={{
-          backgroundColor: "#3b82f6",
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-          borderRadius: 8,
-          alignItems: "center",
-          marginTop: 10,
-        }}
-      >
+      
+      <TouchableOpacity onPress={handleRefresh} style={{ backgroundColor: "#3b82f6", paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8, alignItems: "center", marginTop: 10 }}>
         <Text style={{ color: "#ffffff", fontWeight: "bold" }}>Refresh</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={saveLocation}
-        style={{
-          backgroundColor: "#3b82f6",
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-          borderRadius: 8,
-          alignItems: "center",
-          marginTop: 10,
-        }}
-      >
-        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>
-          Save location
-        </Text>
+      
+      <TouchableOpacity onPress={saveLocation} style={{ backgroundColor: "#3b82f6", paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8, alignItems: "center", marginTop: 10 }}>
+        <Text style={{ color: "#ffffff", fontWeight: "bold" }}>Save Location</Text>
       </TouchableOpacity>
+      
     </View>
   );
 };

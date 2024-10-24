@@ -42,6 +42,7 @@
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
+    "expo-task-manager": "^11.8.2",
     "expo-web-browser": "~13.0.3",
     "jwt-decode": "^4.0.0",
     "nativewind": "^2.0.11",
