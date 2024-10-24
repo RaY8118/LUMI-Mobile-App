@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -14,6 +14,16 @@ import AddModalComponent from "../../components/AddModalComponent";
 import EditModalComponent from "../../components/EditModalComponent";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as Notifications from "expo-notifications"; // Added for notifications
+
+// Notification handler setup
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 const Main = () => {
   const [reminders, setReminders] = useState([]);
@@ -31,6 +41,10 @@ const Main = () => {
   const [isUrgent, setIsUrgent] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+  const [expoPushToken, setExpoPushToken] = useState(""); // Added for push token
+  const [notification, setNotification] = useState(undefined); // Added for notification
+  const notificationListener = useRef(); // Added for notification listener
+  const responseListener = useRef(); // Added for response listener
 
   const getUserIdFromToken = async () => {
     try {
@@ -60,6 +74,60 @@ const Main = () => {
   useEffect(() => {
     fetchUserData();
   }, [apiUrl]);
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(
+      (token) => token && setExpoPushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      notificationListener.current &&
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      responseListener.current &&
+        Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  // Function to schedule a notification
+  const scheduleNotification = async (
+    reminderTitle,
+    reminderBody,
+    reminderTime
+  ) => {
+    const triggerDate = new Date(reminderTime); // Use the reminder time passed as argument
+    const now = new Date();
+
+    // Calculate the time difference in seconds
+    const timeDifference = (triggerDate.getTime() - now.getTime()) / 1000;
+
+    // Schedule the notification only if the time is in the future
+    if (timeDifference > 0) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: reminderTitle,
+          body: reminderBody,
+          data: { data: "goes here" },
+        },
+        trigger: { seconds: timeDifference }, // Set the trigger to the calculated time difference
+      });
+    } else {
+      console.warn(
+        "The reminder time is in the past. Notification not scheduled."
+      );
+    }
+  };
 
   const fetchReminders = async (userId) => {
     try {
@@ -104,31 +172,45 @@ const Main = () => {
         return;
       }
 
-      if (
-        !title ||
-        !description ||
-        !date ||
-        !time ||
-        !status
-      ) {
+      if (!title || !description || !date || !time) {
         Alert.alert("Error", "All fields must be filled out correctly");
         return;
       }
+
+      // Ensure time is a string in "HH:mm" format
+      const timeString =
+        typeof time === "string"
+          ? time
+          : time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+      // Combine date and time into a single Date object
+      const reminderTime = new Date(date); // Use the date value
+      const [hours, minutes] = timeString.split(":"); // Assuming time is in "HH:mm" format
+      reminderTime.setHours(parseInt(hours), parseInt(minutes)); // Set hours and minutes
 
       const response = await axios.post(`${apiUrl}/postreminders`, {
         title,
         description,
         date: date.toISOString(),
-        time: time.toISOString(),
+        time: timeString, // Ensure time is sent as a string
         status,
         isUrgent,
         isImportant,
         userId: userId,
       });
+
+      // Schedule the notification for the reminder
+      await scheduleNotification(title, description, reminderTime); // Pass the reminder time
+
       setTitle("");
       setDescription("");
-      setDate("");
-      setTime("");
+      setDate(new Date());
+      setTime(
+        new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      ); // Reset to current time
       setStatus("");
       setIsUrgent(false);
       setIsImportant(false);
@@ -147,30 +229,54 @@ const Main = () => {
       Alert.alert("Error", "No reminder selected for update");
       return;
     }
-
+  
     try {
       const userId = await getUserIdFromToken();
       if (!userId) {
         Alert.alert("Error", "Failed to retrieve user ID");
         return;
       }
-
+  
+      if (!title || !description || !date || !time) {
+        Alert.alert("Error", "All fields must be filled out correctly");
+        return;
+      }
+  
+      // Ensure time is a string in "HH:mm" format
+      const timeString =
+        typeof time === "string"
+          ? time
+          : time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  
+      // Combine date and time into a single Date object
+      const reminderTime = new Date(date); // Use the date value
+      const [hours, minutes] = timeString.split(":"); // Assuming time is in "HH:mm" format
+      reminderTime.setHours(parseInt(hours), parseInt(minutes)); // Set hours and minutes
+  
+      // Ensure the reminderTime is valid before proceeding
+      if (isNaN(reminderTime.getTime())) {
+        Alert.alert("Error", "Invalid date and time. Please check your inputs.");
+        return;
+      }
+  
       const response = await axios.post(`${apiUrl}/updatereminders`, {
         remId: selectedReminder.remId,
         title,
         description,
         date: date.toISOString(),
-        time: time.toISOString(),
+        time: timeString, // Ensure time is sent as a string
         status,
         isUrgent,
         isImportant,
         userId: userId,
       });
-
+  
       if (response.status === 200) {
         Alert.alert("Success", response.data.message);
         onRefresh();
         handleEditModalClose();
+        // Schedule the notification for the updated reminder
+        await scheduleNotification(title, description, reminderTime); // Pass the reminder time
       } else {
         Alert.alert(
           "Error",
@@ -306,7 +412,9 @@ const Main = () => {
       >
         <View className="flex-row flex-wrap justify-center items-center">
           <View className="pt-2">
-            <Text className="text-3xl m-4 mt-6 font-ps2pregular">Reminders</Text>
+            <Text className="text-3xl m-4 mt-6 font-ps2pregular">
+              Reminders
+            </Text>
           </View>
           {/* <View className="mb-4">
             <Text className="text-red-300 font-pextralight">
@@ -335,16 +443,19 @@ const Main = () => {
                   reminder.important
                 )}`}
               >
-                <Text className="text-3xl font-agdasimar">{reminder.title}</Text>
+                <Text className="text-3xl font-agdasimar">
+                  {reminder.title}
+                </Text>
                 <Text className="text-2xl font-agdasimar">
                   {reminder.description}
                 </Text>
                 <Text className="text-2xl font-agdasimar">
                   {new Date(reminder.date).toLocaleDateString()}
                 </Text>
-                <Text className="text-2xl font-agdasimar">
+                {/* <Text className="text-2xl font-agdasimar">
                   {new Date(reminder.time).toLocaleTimeString()}
-                </Text>
+                </Text> */}
+                <Text className="text-2xl font-agdasimar">{reminder.time}</Text>
                 <Text className="text-2xl font-agdasimar">
                   Status:{" "}
                   {reminder.status === "pending" ? "Pending" : "Completed"}
@@ -427,5 +538,25 @@ const Main = () => {
     </>
   );
 };
+
+async function registerForPushNotificationsAsync() {
+  let token = null;
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+
+  if (existingStatus !== "granted") {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+
+  if (finalStatus !== "granted") {
+    throw new Error("Failed to get push token for push notification!");
+  }
+
+  token = (await Notifications.getExpoPushTokenAsync()).data;
+  console.log(token);
+
+  return token;
+}
 
 export default Main;
