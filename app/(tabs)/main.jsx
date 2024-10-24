@@ -106,7 +106,7 @@ const Main = () => {
     reminderBody,
     reminderTime
   ) => {
-    const triggerDate = new Date(reminderTime); // Use the reminder time passed as argument
+    const triggerDate = new Date(reminderTime); // Ensure it's a Date object
     const now = new Date();
 
     // Calculate the time difference in seconds
@@ -178,21 +178,28 @@ const Main = () => {
       }
 
       // Ensure time is a string in "HH:mm" format
-      const timeString =
-        typeof time === "string"
-          ? time
-          : time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      let timeString;
+      if (typeof time === "string" && time.includes(":")) {
+        timeString = time; // Use the string as is
+      } else {
+        timeString = new Date(time).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false, // Force 24-hour format
+        });
+      }
 
       // Combine date and time into a single Date object
-      const reminderTime = new Date(date); // Use the date value
-      const [hours, minutes] = timeString.split(":"); // Assuming time is in "HH:mm" format
-      reminderTime.setHours(parseInt(hours), parseInt(minutes)); // Set hours and minutes
+      const reminderTime = new Date(date); // Create a Date object from the date
+      const [hours, minutes] = timeString.split(":"); // Extract hours and minutes
+      reminderTime.setHours(parseInt(hours), parseInt(minutes), 0, 0); // Set hours and minutes with 0 seconds and milliseconds
 
+      // Send the reminder data to the server
       const response = await axios.post(`${apiUrl}/postreminders`, {
         title,
         description,
         date: date.toISOString(),
-        time: timeString, // Ensure time is sent as a string
+        time: timeString, // Send time as "HH:mm"
         status,
         isUrgent,
         isImportant,
@@ -200,8 +207,9 @@ const Main = () => {
       });
 
       // Schedule the notification for the reminder
-      await scheduleNotification(title, description, reminderTime); // Pass the reminder time
+      await scheduleNotification(title, description, reminderTime); // Pass the reminder time as a Date object
 
+      // Clear form fields and reset state
       setTitle("");
       setDescription("");
       setDate(new Date());
@@ -209,11 +217,14 @@ const Main = () => {
         new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
+          hour12: false, // Force 24-hour format for consistency
         })
-      ); // Reset to current time
+      );
       setStatus("");
       setIsUrgent(false);
       setIsImportant(false);
+
+      // Notify success
       console.log("Response", response);
       Alert.alert("Success", response.data.message);
       onRefresh();
@@ -229,36 +240,43 @@ const Main = () => {
       Alert.alert("Error", "No reminder selected for update");
       return;
     }
-  
+
     try {
       const userId = await getUserIdFromToken();
       if (!userId) {
         Alert.alert("Error", "Failed to retrieve user ID");
         return;
       }
-  
+
       if (!title || !description || !date || !time) {
         Alert.alert("Error", "All fields must be filled out correctly");
         return;
       }
-  
-      // Ensure time is a string in "HH:mm" format
+
+      // Ensure time is a string in "HH:mm" format (24-hour format)
       const timeString =
         typeof time === "string"
           ? time
-          : time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  
+          : time.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            });
+
       // Combine date and time into a single Date object
       const reminderTime = new Date(date); // Use the date value
       const [hours, minutes] = timeString.split(":"); // Assuming time is in "HH:mm" format
       reminderTime.setHours(parseInt(hours), parseInt(minutes)); // Set hours and minutes
-  
+
       // Ensure the reminderTime is valid before proceeding
       if (isNaN(reminderTime.getTime())) {
-        Alert.alert("Error", "Invalid date and time. Please check your inputs.");
+        Alert.alert(
+          "Error",
+          "Invalid date and time. Please check your inputs."
+        );
         return;
       }
-  
+
       const response = await axios.post(`${apiUrl}/updatereminders`, {
         remId: selectedReminder.remId,
         title,
@@ -270,11 +288,12 @@ const Main = () => {
         isImportant,
         userId: userId,
       });
-  
+
+      // Check if the response is successful
       if (response.status === 200) {
         Alert.alert("Success", response.data.message);
-        onRefresh();
-        handleEditModalClose();
+        onRefresh(); // Refresh the reminders list
+        handleEditModalClose(); // Close the edit modal
         // Schedule the notification for the updated reminder
         await scheduleNotification(title, description, reminderTime); // Pass the reminder time
       } else {
@@ -416,20 +435,6 @@ const Main = () => {
               Reminders
             </Text>
           </View>
-          {/* <View className="mb-4">
-            <Text className="text-red-300 font-pextralight">
-              Urgent and Important
-            </Text>
-            <Text className="text-green-300 font-pextralight">
-              Not Urgent and Important
-            </Text>
-            <Text className="text-yellow-300 font-pextralight">
-              Urgent and Not Important
-            </Text>
-            <Text className="text-gray-200 font-pextralight">
-              Not Urgent and Not Important
-            </Text>
-          </View> */}
         </View>
         <View className="border border-black rounded-lg bg-white p-2 grid grid-cols-2 gap-2">
           {error ? (
@@ -452,20 +457,11 @@ const Main = () => {
                 <Text className="text-2xl font-agdasimar">
                   {new Date(reminder.date).toLocaleDateString()}
                 </Text>
-                {/* <Text className="text-2xl font-agdasimar">
-                  {new Date(reminder.time).toLocaleTimeString()}
-                </Text> */}
                 <Text className="text-2xl font-agdasimar">{reminder.time}</Text>
                 <Text className="text-2xl font-agdasimar">
                   Status:{" "}
                   {reminder.status === "pending" ? "Pending" : "Completed"}
                 </Text>
-                {/* <Text className="text-lg font-pmedium">
-                  Urgent: {reminder.urgent ? "Yes" : "No"}
-                </Text>
-                <Text className="text-lg font-pmedium">
-                  Important: {reminder.important ? "Yes" : "No"}
-                </Text> */}
                 <TouchableOpacity
                   onPress={() => handleEdit(reminder._id)}
                   className="absolute right-14 bottom-2"

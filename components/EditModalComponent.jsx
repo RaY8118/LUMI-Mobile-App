@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Text, Pressable, View, TextInput, TouchableOpacity } from "react-native";
+import {
+  Modal,
+  Text,
+  Pressable,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Checkbox from "expo-checkbox";
@@ -51,11 +58,18 @@ const EditModalComponent = ({
   };
 
   const onTimeChange = (event, selectedTime) => {
-    const currentTime = selectedTime || time;
+    // Check if the user canceled the picker
+    if (event.type === "dismissed") {
+      setShowTimePicker(false);
+      return; // Exit if dismissed
+    }
+
+    const currentTime = selectedTime || time; // Use the selected time or fallback to the current time
     setShowTimePicker(false);
+
     // Ensure currentTime is a Date object
-    if (currentTime instanceof Date) {
-      setTime(currentTime);
+    if (currentTime instanceof Date && !isNaN(currentTime)) {
+      setTime(currentTime); // Set the valid Date object
     } else {
       setTime(new Date()); // Fallback to current time if not valid
     }
@@ -90,9 +104,7 @@ const EditModalComponent = ({
             >
               <Entypo name="circle-with-cross" size={30} color="black" />
             </Pressable>
-
             <Text className="text-lg font-bold mb-5">Edit Reminder</Text>
-
             <TextInput
               className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded"
               placeholder="Title"
@@ -105,7 +117,6 @@ const EditModalComponent = ({
               value={description}
               onChangeText={setDescription}
             />
-
             <DropDownPicker
               className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded"
               open={open}
@@ -119,7 +130,6 @@ const EditModalComponent = ({
               }}
               setItems={setItems}
             />
-
             <Pressable
               className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded justify-center"
               onPress={() => setShowDatePicker(true)}
@@ -128,7 +138,6 @@ const EditModalComponent = ({
                 {date ? date.toLocaleDateString() : "Pick a date"}
               </Text>
             </Pressable>
-
             {showDatePicker && (
               <DateTimePicker
                 value={date || new Date()}
@@ -143,19 +152,24 @@ const EditModalComponent = ({
               onPress={() => setShowTimePicker(true)}
             >
               <Text className="text-gray-700">
-                {time instanceof Date ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Pick a time"}
+                {time instanceof Date && !isNaN(time)
+                  ? time.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    }) // Ensure 24-hour format
+                  : "Pick a time"}
               </Text>
             </TouchableOpacity>
 
             {showTimePicker && (
               <DateTimePicker
-                value={time instanceof Date ? time : new Date()} // Ensure a valid Date object is passed
+                value={time instanceof Date && !isNaN(time) ? time : new Date()} // Ensure a valid Date object is passed
                 mode="time"
                 display="default"
                 onChange={onTimeChange}
               />
             )}
-
             <View className="flex-row mb-4">
               <View className="flex-row w-30 p-2">
                 <Checkbox
@@ -174,7 +188,6 @@ const EditModalComponent = ({
                 <Text className="m-2">Important</Text>
               </View>
             </View>
-
             <Pressable
               className="bg-black rounded-xl p-3 mt-3"
               onPress={handleSave}
