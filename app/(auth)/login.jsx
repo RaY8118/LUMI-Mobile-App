@@ -118,7 +118,7 @@ const Login = () => {
         <Image
           source={images.loginImg}
           resizeMode="contain"
-          className="self-center"
+          className="self-center mb-4 w-3/4 md:w-1/2" // Responsive width
         />
       </View>
       <Text className="text-5xl py-2 mb-3 text-center font-pbold text-custom-tertiary">
@@ -127,10 +127,11 @@ const Login = () => {
       <Text className="text-2xl py-3 mb-4 text-center font-pmedium text-custom-tertiary">
         Sign in to continue
       </Text>
+
       <View className="flex-row items-center p-4">
         <Fontisto name="email" size={32} color="black" className="mr-4" />
         <TextInput
-          className="h-12 w-80 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-pmedium"
+          className="h-12 flex-1 border-2 border-black px-3 rounded-3xl bg-white font-pmedium ml-4"
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -141,7 +142,7 @@ const Login = () => {
         <MaterialIcons name="password" size={32} color="black" />
         <View className="flex-row items-center flex-1 ml-4">
           <TextInput
-            className="h-12 w-80 flex-1 border-2 border-black px-3 rounded-3xl bg-white font-pmedium"
+            className="h-12 flex-1 border-2 border-black px-3 rounded-3xl bg-white font-pmedium"
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
@@ -160,7 +161,7 @@ const Login = () => {
 
       <TouchableOpacity
         onPress={handleLogin}
-        className="bg-violet-800 py-2 px-5 rounded-3xl  items-center mt-2 w-32 self-center"
+        className="bg-violet-800 py-2 px-5 rounded-3xl items-center mt-2 w-32 self-center"
       >
         <Text className="text-white font-pbold text-lg">Login</Text>
       </TouchableOpacity>
@@ -168,13 +169,13 @@ const Login = () => {
       {/* Add Manual Fingerprint Authentication Button */}
       <TouchableOpacity
         onPress={authenticateUser} // Manually trigger fingerprint authentication
-        className="bg-transparent py-2 px-2 rounded-full items-center mt-4  self-center"
+        className="bg-transparent py-2 px-2 rounded-full items-center mt-4 self-center"
       >
         <FontAwesome5 name="fingerprint" size={62} color="black" />
       </TouchableOpacity>
 
       <View className="mt-4 flex-row justify-center items-center">
-        <Text className="font-plight text-lg ">Don't have an account? </Text>
+        <Text className="font-plight text-lg">Don't have an account? </Text>
         <Link href="/register">
           <Text className="text-violet-500 font-pregular text-lg">
             Register

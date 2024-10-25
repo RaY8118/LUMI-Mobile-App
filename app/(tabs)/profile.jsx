@@ -96,7 +96,7 @@ const Profile = () => {
   return (
     <SafeAreaView className="bg-indigo-300 h-full">
       <View className="flex-row items-start m-3 mt-5">
-        <View className="ml-2 flex-1 justify-center items-start border border-black pt-4 pl-4 rounded-2xl bg-white">
+        <View className="ml-2 flex-1 justify-center items-start border border-black pt-4 pl-4 rounded-2xl bg-white w-full md:w-11/12 lg:w-10/12">
           {user ? (
             <>
               <Text className="text-3xl font-nsregular py-1 pl-2">
@@ -111,7 +111,7 @@ const Profile = () => {
                 {user.mobile}
               </Text>
               <Text className="p-2 text-xl font-nsregular">
-                <Text className="text-xl font-nsblack">Role: </Text>
+                <Text className="text-xl font-nsblack">Role:</Text>{" "}
                 {user.role === "CG"
                   ? "Care Giver"
                   : user.role === "PAT"
@@ -129,12 +129,7 @@ const Profile = () => {
                     placeholder="Patient ID"
                     value={patientId}
                     onChangeText={setPatientId}
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#ccc",
-                      marginBottom: 10,
-                      padding: 10,
-                    }}
+                    className="border border-gray-300 mb-2 p-2 w-full" // Responsive width
                   />
                   <TouchableOpacity
                     onPress={addPatient}
@@ -191,12 +186,12 @@ const Profile = () => {
           )}
         </View>
       </View>
-        <TouchableOpacity
-          onPress={handleLogout}
-          className="bg-blue-500 p-2 m-4 rounded-md items-center"
-        >
-          <Text className="text-white font-pbold">Logout</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={handleLogout}
+        className="bg-blue-500 p-2 m-4 rounded-md items-center"
+      >
+        <Text className="text-white font-pbold">Logout</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
