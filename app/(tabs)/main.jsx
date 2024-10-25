@@ -86,10 +86,10 @@ const Main = () => {
         setNotification(notification);
         const title = notification.request.content.title; // Get the title from the notification
 
-        // Add a delay of 10 seconds before speaking the title
+        // Add a delay of 5 seconds before speaking the title
         setTimeout(() => {
           speak(title); // Speak the title after the delay
-        }, 10000); // 10000 milliseconds = 10 seconds
+        }, 5000); // 5000 milliseconds = 5 seconds
       });
 
     responseListener.current =

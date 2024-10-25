@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native"; // Assuming you're using React Navigation
+import * as ImageManipulator from "expo-image-manipulator";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
@@ -24,7 +25,7 @@ export default function App() {
 
   useEffect(() => {
     // Cleanup function to stop camera when navigating away
-    const unsubscribe = navigation.addListener('blur', () => {
+    const unsubscribe = navigation.addListener("blur", () => {
       setCameraRef(null); // Clear camera reference when navigating away
     });
 
@@ -59,6 +60,20 @@ export default function App() {
     }
   }
 
+  async function resizeImage(uri) {
+    const resizedImage = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 816, height: 1088 } }],
+      { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG } // Adjust compression as needed
+    );
+
+    console.log("Resized Image URI:", resizedImage.uri); // Debugging line
+    console.log("Resized Image Width:", resizedImage.width); // Debugging line
+    console.log("Resized Image Height:", resizedImage.height); // Debugging line
+
+    return resizedImage.uri;
+  }
+
   async function uploadImage(uri, endpoint) {
     const formData = new FormData();
     formData.append("image", {
@@ -80,7 +95,7 @@ export default function App() {
         const nameMessage = response.data.name
           ? `Identified Name: ${response.data.name}`
           : "Found nothing.";
-        
+
         // Show alert with the response message
         Alert.alert("Response", nameMessage);
       } else {
@@ -97,14 +112,18 @@ export default function App() {
   async function handleFaceRecognition() {
     const uri = await takePicture();
     if (uri) {
-      uploadImage(uri, `${apiUrl}/send-name`);
+      // Resize the image for face recognition
+      const resizedUri = await resizeImage(uri);
+      uploadImage(resizedUri, `${apiUrl}/send-name`);
     }
   }
 
   async function handleObjectDetection() {
     const uri = await takePicture();
     if (uri) {
-      uploadImage(uri, `${apiUrl}/obj-detection`);
+      // Resize the image for object detection
+      const resizedUri = await resizeImage(uri);
+      uploadImage(resizedUri, `${apiUrl}/obj-detection`);
     }
   }
 
@@ -115,7 +134,7 @@ export default function App() {
         type={type}
         ref={(ref) => setCameraRef(ref)}
       />
-      
+
       <View style={styles.buttonWrapper}>
         <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
           <Text style={styles.text}>Flip Camera</Text>
