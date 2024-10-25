@@ -15,6 +15,7 @@ import EditModalComponent from "../../components/EditModalComponent";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Notifications from "expo-notifications"; // Added for notifications
+import * as Speech from "expo-speech"; // Added for speech
 
 // Notification handler setup
 Notifications.setNotificationHandler({
@@ -83,6 +84,12 @@ const Main = () => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
+        const title = notification.request.content.title; // Get the title from the notification
+
+        // Add a delay of 10 seconds before speaking the title
+        setTimeout(() => {
+          speak(title); // Speak the title after the delay
+        }, 10000); // 10000 milliseconds = 10 seconds
       });
 
     responseListener.current =
@@ -416,6 +423,10 @@ const Main = () => {
     if (a.status === "pending" && b.status === "completed") return -1;
     return dateA - dateB;
   });
+
+  const speak = (text) => {
+    Speech.speak(text); // Function to speak the text
+  };
 
   if (loading) {
     return <Text>Loading reminders...</Text>;
