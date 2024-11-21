@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "entryPoint": "./App.js",
     "ios": {
       "supportsTablet": true
     },
