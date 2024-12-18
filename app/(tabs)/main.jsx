@@ -138,9 +138,7 @@ const Main = () => {
 
   const fetchReminders = async (userId) => {
     try {
-      const response = await axios.post(`${apiUrl}/getreminders`, {
-        userId,
-      });
+      const response = await axios.get(`${apiUrl}/reminders?userId=${userId}`);
 
       if (response.status === 200 && response.data.status === "success") {
         if (response.data.reminders.length > 0) {
@@ -202,7 +200,7 @@ const Main = () => {
       reminderTime.setHours(parseInt(hours), parseInt(minutes), 0, 0); // Set hours and minutes with 0 seconds and milliseconds
 
       // Send the reminder data to the server
-      const response = await axios.post(`${apiUrl}/postreminders`, {
+      const response = await axios.post(`${apiUrl}/reminders`, {
         title,
         description,
         date: date.toISOString(),
@@ -284,7 +282,7 @@ const Main = () => {
         return;
       }
 
-      const response = await axios.post(`${apiUrl}/updatereminders`, {
+      const response = await axios.put(`${apiUrl}/reminders`, {
         remId: selectedReminder.remId,
         title,
         description,
@@ -333,9 +331,7 @@ const Main = () => {
           text: "Yes",
           onPress: async () => {
             try {
-              const response = await axios.post(`${apiUrl}/deletereminders`, {
-                remId,
-              });
+              const response = await axios.delete(`${apiUrl}/reminders/${remId}`);
 
               if (response.status === 200) {
                 Alert.alert("Success", response.data.message);

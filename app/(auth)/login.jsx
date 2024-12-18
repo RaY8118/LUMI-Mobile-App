@@ -182,6 +182,14 @@ const Login = () => {
           </Text>
         </Link>
       </View>
+      <View className="mt-4 flex-row justify-center items-center">
+        <Text className="font-plight text-lg">Forgot password </Text>
+        <Link href="/reset">
+          <Text className="text-violet-500 font-pregular text-lg">
+            click here!{" "}
+          </Text>
+        </Link>
+      </View>
     </SafeAreaView>
   );
 };
