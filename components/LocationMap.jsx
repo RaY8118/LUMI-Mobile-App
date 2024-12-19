@@ -56,20 +56,24 @@ const LocationMap = () => {
     }
   }, []);
 
-  // Function to fetch current location
-  const fetchCurrentLocation = useCallback(async () => {
-    console.log("Fetching current location...");
-
+  const getCurrentCoords = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       setErrorMsg("Permission to access location was denied");
       return;
     }
 
+    const { coords } = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High,
+    });
+
+    return coords;
+  };
+  // Function to fetch current location
+  const fetchCurrentLocation = useCallback(async () => {
+    console.log("Fetching current location...");
     try {
-      let { coords } = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
+      const coords = await getCurrentCoords();
       setLocation(coords); // Set current location on the map
     } catch (error) {
       console.error("Error fetching current location:", error.message);
@@ -85,18 +89,8 @@ const LocationMap = () => {
   const saveLocation = useCallback(async () => {
     console.log("Fetching location...");
     Alert.alert("Saving Location", "Please wait while we save your location.");
-
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied");
-      return;
-    }
-
     try {
-      let { coords } = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-
+      const coords = await getCurrentCoords();
       const token = await SecureStore.getItemAsync("token");
 
       if (!token) {
@@ -122,9 +116,45 @@ const LocationMap = () => {
     }
   }, []);
 
-  // Function to compare current location with saved location
+  useEffect(() => {
+    let locationSubscription;
+
+    const startLocationWatch = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission Denied", "Location access is required.");
+        return;
+      }
+
+      locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 5000, // Update every 5 seconds
+        },
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log("Current position:", latitude, longitude);
+          compareLocations({ latitude, longitude });
+        }
+      );
+    };
+
+    startLocationWatch();
+
+    return () => {
+      // Clean up the subscription when the component unmounts
+      if (locationSubscription) {
+        locationSubscription.remove();
+      }
+    };
+  }, [savedLocation]); // Re-run if the saved location changes
+
+  // The compareLocations function (as defined earlier)
   const compareLocations = (currentLocation) => {
-    if (!savedLocation) return;
+    if (!currentLocation || !savedLocation) {
+      console.warn("Cannot compare locations - missing data");
+      return;
+    }
 
     const distance = getDistanceFromLatLonInMeters(
       currentLocation.latitude,
@@ -133,7 +163,6 @@ const LocationMap = () => {
       savedLocation.longitude
     );
 
-    // Assuming a safe distance of 2000 meters
     if (distance > 2000) {
       Alert.alert("Warning", "You are outside the safe area!");
       setIsSafe(false);
@@ -144,70 +173,60 @@ const LocationMap = () => {
     }
   };
 
-  // Fetch current location periodically (e.g., every 10 seconds)
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      try {
-        let { coords } = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        setLocation(coords);
-        setErrorMsg(null);
-
-        compareLocations(coords); // Compare current location with saved location
-      } catch (error) {
-        setErrorMsg("Failed to fetch location");
-      }
-    }, 10000); // Fetch location every 10 seconds
-
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [savedLocation]);
-
   // Fetch saved location on component mount
   useEffect(() => {
     fetchSavedLocation();
   }, [fetchSavedLocation]);
 
+  const handleRefresh = () => {
+    Alert.alert(
+      "Refreshing Location",
+      "Please wait while we refresh your location."
+    );
+    fetchSavedLocation();
+    getCurrentCoords();
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.statusContainer}>
+    <View className="flex justify-start items-center p-2">
+      <View className="flex justify-start items-center">
         {errorMsg ? (
-          <Text style={styles.errorText}>{errorMsg}</Text>
+          <Text className="text-red-600 text-xl text-center">{errorMsg}</Text>
         ) : isSafe === null ? (
-          <Text style={styles.infoText}>
+          <Text className="text-gray-600 text-xl text-center">
             Checking if you are in a safe area...
           </Text>
         ) : isSafe ? (
-          <Text style={styles.safeText}>You are in a safe area.</Text>
+          <Text className="text-green-600 text-2xl text-center font-bold">
+            You are in a safe area.
+          </Text>
         ) : (
-          <Text style={styles.dangerText}>You are outside the safe area!</Text>
+          <Text className="text-red-600 text-2xl text-center font-bold">
+            You are outside the safe area!
+          </Text>
         )}
       </View>
 
-      <View style={styles.locationContainer}>
+      <View className="flex w-full justify-start items-center">
         {location ? (
-          <View style={styles.locationDetails}>
-            <Text style={styles.locationText}>Your Location</Text>
-            <Text style={styles.locationText}>
+          <View className="items-center">
+            <Text className="text-sm text-center">Your Location</Text>
+            <Text className="text-sm text-center">
               Latitude: {location.latitude}
             </Text>
-            <Text style={styles.locationText}>
+            <Text className="text-sm text-center">
               Longitude: {location.longitude}
             </Text>
           </View>
         ) : (
-          <Text style={styles.infoText}>Fetching location...</Text>
+          <Text className="text-gray-600 text-xl text-center">
+            Fetching location...
+          </Text>
         )}
 
         {location && (
           <MapView
-            style={styles.mapView}
+            className="w-full h-4/5"
             initialRegion={{
               latitude: location.latitude,
               longitude: location.longitude,
@@ -240,95 +259,23 @@ const LocationMap = () => {
         )}
       </View>
 
-      <View style={styles.actionsContainer}>
+      <View className="items-center">
         <TouchableOpacity
-          onPress={() => setLocation(null)} // Reset location for refresh
-          style={styles.button}
+          onPress={handleRefresh} // Reset location for refresh
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded border-b-4 border-blue-700 hover:border-blue-500 transition duration-200 ease-in-out"
         >
-          <Text style={styles.buttonText}>Refresh</Text>
+          <Text className="text-black font-bold text-lg">Refresh</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={saveLocation} style={styles.button}>
-          <Text style={styles.buttonText}>Save Location</Text>
+        <TouchableOpacity
+          onPress={saveLocation}
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded border-b-4 border-blue-700 hover:border-blue-500 transition duration-200 ease-in-out"
+        >
+          <Text className="text-black font-bold text-lg">Save Location</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
-};
-
-// Styling for components
-const styles = {
-  container: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    padding: 16,
-  },
-  statusContainer: {
-    marginBottom: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  infoText: {
-    color: "gray",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  safeText: {
-    color: "green",
-    fontSize: 18,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  dangerText: {
-    color: "red",
-    fontSize: 18,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  locationContainer: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  locationDetails: {
-    marginBottom: 16,
-    alignItems: "center",
-  },
-  locationText: {
-    fontSize: 14,
-    marginVertical: 2,
-    textAlign: "center",
-  },
-  mapView: {
-    width: "100%",
-    height: "80%",
-  },
-  actionsContainer: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 16,
-  },
-  button: {
-    backgroundColor: "#3b82f6",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-    width: "80%",
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
 };
 
 export default LocationMap;
