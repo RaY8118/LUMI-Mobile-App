@@ -1,9 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 // tailwind.config.js
-
 module.exports = {
-  content: [],
-  content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./app/**/*.{js,jsx,ts,tsx}",
+    "./components/**/*.{js,jsx,ts,tsx}"
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -28,14 +29,14 @@ module.exports = {
         pdblack: ["Playfair-Display-Black", "sans-serif"],
         pdbolditalic: ["Playfair-Display-BoldItalic", "sans-serif"],
         pditalic: ["Playfair-Display-Italic", "sans-serif"],
-        pdblackitalic: ["Playfair-Display-BlackItalic", "sans-serif"], 
+        pdblackitalic: ["Playfair-Display-BlackItalic", "sans-serif"],
         nsbold: ["NotoSerif-Bold", "sans-serif"],
         nsregular: ["NotoSerif-Regular", "sans-serif"],
         nsblack: ["NotoSerif-Black", "sans-serif"],
         nsthine: ["NotoSerif-Thin", "sans-serif"],
         nsmmedium: ["NotoSerif-Medium", "sans-serif"],
-        agdasimab: ["Agdasima-Bold","sans-serif"],
-        agdasimar: ["Agdasima-Regular","sans-serif"],
+        agdasimab: ["Agdasima-Bold", "sans-serif"],
+        agdasimar: ["Agdasima-Regular", "sans-serif"],
       },
       colors: {
         custom: {
@@ -43,11 +44,11 @@ module.exports = {
           white: '#d9d9d9',
           green: '#7db166',
           yellow: '#e1b240',
-          primary:"#FCBFD4",
-          secondary:"#FFD0E2",
-          tertiary:"#FDEEF5",
-          textprimary:"#DBDAEC",
-          textsecondary:"#E9EDF6"
+          primary: "#FCBFD4",
+          secondary: "#FFD0E2",
+          tertiary: "#FDEEF5",
+          textprimary: "#DBDAEC",
+          textsecondary: "#E9EDF6"
         },
       },
     },

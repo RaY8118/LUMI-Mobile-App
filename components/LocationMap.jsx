@@ -259,10 +259,10 @@ const LocationMap = () => {
         )}
       </View>
 
-      <View className="items-center">
+      <View className="items-center flex-row justify-center">
         <TouchableOpacity
           onPress={handleRefresh} // Reset location for refresh
-          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded border-b-4 border-blue-700 hover:border-blue-500 transition duration-200 ease-in-out"
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 mr-3 rounded border-b-4 border-blue-700 hover:border-blue-500 transition duration-200 ease-in-out"
         >
           <Text className="text-black font-bold text-lg">Refresh</Text>
         </TouchableOpacity>
