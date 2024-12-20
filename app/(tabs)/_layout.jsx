@@ -14,6 +14,7 @@ const TabsLayout = () => {
           name="main"
           options={({ navigation }) => ({
             headerTitle: "Reminders",
+            title: "Reminders",
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="home" color={color} size={size} />
             ),
@@ -31,6 +32,7 @@ const TabsLayout = () => {
           name="map"
           options={({ navigation }) => ({
             headerTitle: "Maps",
+            title: "Maps",
             tabBarIcon: ({ color, size }) => (
               <Entypo name="map" color={color} size={size} />
             ),
@@ -48,6 +50,7 @@ const TabsLayout = () => {
           name="chat"
           options={({ navigation }) => ({
             headerTitle: "Chat Room",
+            title: "Chat",
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="chat" color={color} size={size} />
             ),
@@ -62,9 +65,10 @@ const TabsLayout = () => {
           })}
         />
         <Tabs.Screen
-          name="cameraview"
+          name="camera"
           options={({ navigation }) => ({
             headerTitle: "Camera",
+            title: "Camera",
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="camera" color={color} size={size} />
             ),

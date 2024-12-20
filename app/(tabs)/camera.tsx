@@ -2,30 +2,26 @@ import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useState, useRef } from "react";
 import {
   Button,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
   ActivityIndicator,
-  Alert,
 } from "react-native";
-import axios from "axios";
-import * as ImageManipulator from "expo-image-manipulator";
+import { takePicture, resizeImage, uploadImage } from "../../utils/cameraUtils"; // Import utility functions
+
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-export default function App() {
+const Camera = () => {
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [loading, setLoading] = useState<boolean>(false);
   const cameraRef = useRef<CameraView>(null);
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View className="flex-1 justify-end p-5 relative">
         <Text className="text-center pb-3">
@@ -40,77 +36,21 @@ export default function App() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   };
 
-  const takePicture = async () => {
-    if (cameraRef.current) {
-      try {
-        const photo = await cameraRef.current.takePictureAsync();
-        if (photo) {
-          return photo.uri; // Return the URI for further processing
-        }
-      } catch (error) {
-        console.error("Error taking picture:", error);
-      }
-    }
-  };
-
-  const resizeImage = async (uri: string) => {
-    const resizedImage = await ImageManipulator.manipulateAsync(
-      uri,
-      [{ resize: { width: 816, height: 1088 } }],
-      { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
-    );
-    return resizedImage.uri;
-  };
-
-  const uploadImage = async (uri: string, endpoint: string) => {
-    const formData = new FormData();
-    formData.append("image", {
-      uri,
-      type: "image/jpeg",
-      name: "photo.jpg",
-    });
-
-    setLoading(true); // Show loading indicator
-
-    try {
-      const response = await axios.post(endpoint, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.data.status === "success") {
-        const nameMessage = response.data.name
-          ? `Identified Name: ${response.data.name}`
-          : "Found nothing.";
-        Alert.alert("Response", nameMessage);
-      } else {
-        Alert.alert("Error", `Error: ${response.data.message}`);
-      }
-    } catch (error) {
-      console.error("Upload failed:", error);
-      Alert.alert("Error", "Upload failed. Please try again.");
-    } finally {
-      setLoading(false); // Hide loading indicator
-    }
-  };
-
   const handleFaceRecognition = async () => {
-    const uri = await takePicture();
+    const uri = await takePicture(cameraRef);
     if (uri) {
       const resizedUri = await resizeImage(uri);
-      uploadImage(resizedUri, `${apiUrl}/send-name`);
+      uploadImage(resizedUri, `${apiUrl}/send-name`, setLoading);
     }
   };
 
   const handleObjectDetection = async () => {
-    const uri = await takePicture();
+    const uri = await takePicture(cameraRef);
     if (uri) {
       const resizedUri = await resizeImage(uri);
-      uploadImage(resizedUri, `${apiUrl}/obj-detection`);
+      uploadImage(resizedUri, `${apiUrl}/obj-detection`, setLoading);
     }
   };
-
   return (
     <View className="flex-1 justify-end p-5 relative">
       <CameraView
@@ -157,4 +97,5 @@ export default function App() {
       )}
     </View>
   );
-}
+};
+export default Camera;

@@ -9,108 +9,51 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { Link } from "expo-router";
-import * as SecureStore from "expo-secure-store";
-import * as LocalAuthentication from "expo-local-authentication"; // For local authentication
-import { useNavigation } from "@react-navigation/native";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import images from "../../constants/images";
-
+import {
+  handleLogin,
+  checkBiometricSupport,
+  authenticate,
+  autofill,
+} from "../../utils/auth";
 const Login = () => {
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isAutofilled, setIsAutofilled] = useState(false);
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    checkBiometricSupport(); // Check for biometrics and attempt autofill on mount
-  }, []);
-
-  const handleLogin = async () => {
-    try {
-      const response = await axios.post(`${apiUrl}/login`, {
-        email,
-        password,
-      });
-
-      const token = response.data.token;
-      await SecureStore.setItemAsync("token", token);
-
-      // Save email and password to SecureStore for future logins
-      await SecureStore.setItemAsync("email", email);
-      await SecureStore.setItemAsync("password", password);
-
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "index" }],
-      });
-      setEmail("");
-      setPassword("");
-      Alert.alert("Success", response.data.message);
-      router.push("/main");
-    } catch (error) {
-      if (error.response && error.response.data) {
-        Alert.alert("Error", error.response.data.message || "Failed to login");
-      } else {
-        Alert.alert("Error", "Failed to login");
-      }
-    }
-  };
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  // Check if the device supports biometric authentication
-  const checkBiometricSupport = async () => {
-    const compatible = await LocalAuthentication.hasHardwareAsync();
-    const enrolled = await LocalAuthentication.isEnrolledAsync();
-
-    if (compatible && enrolled) {
-      authenticateUser(); // If biometrics are supported and set up, try authenticating the user
-    } else {
-      Alert.alert("Biometric authentication not available or set up.");
-    }
+  const autofillCredentials = async () => {
+    await autofill(setEmail, setPassword, setIsAutofilled);
   };
 
-  // Authenticate user using fingerprint/face recognition
-  const authenticateUser = async () => {
-    const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: "Authenticate to autofill credentials",
-    });
+  // Trigger biometric support check on mount
+  useEffect(() => {
+    const initBiometricCheck = async () => {
+      await checkBiometricSupport(async () => {
+        await authenticate(autofillCredentials);
+      });
+    };
 
-    if (result.success) {
-      autofillCredentials(); // If authentication succeeds, autofill credentials
-    } else {
-      Alert.alert("Authentication failed. Cannot autofill credentials.");
-    }
-  };
+    initBiometricCheck(); // Initialize biometric check
+  }, []);
 
-  // Autofill email and password if stored
+  // Handle autofill-triggered login
   useEffect(() => {
     if (isAutofilled) {
-      handleLogin();
-      setIsAutofilled(false); // Reset after handling login
+      handleLogin(email, password, router);
+      setIsAutofilled(false); // Reset to prevent repeated logins
     }
-  }, [isAutofilled]);
-
-  const autofillCredentials = async () => {
-    const storedEmail = await SecureStore.getItemAsync("email");
-    const storedPassword = await SecureStore.getItemAsync("password");
-
-    if (storedEmail && storedPassword) {
-      setEmail(storedEmail);
-      setPassword(storedPassword);
-      setIsAutofilled(true); // Trigger login attempt
-    }
-  };
+  }, [isAutofilled, email, password, router]);
 
   return (
     <SafeAreaView className="flex-1 justify-center p-6 pt-2 mt-14 border border-x-2 bg-custom-primary rounded-xl">
@@ -160,7 +103,7 @@ const Login = () => {
       </View>
 
       <TouchableOpacity
-        onPress={handleLogin}
+        onPress={() => handleLogin(email, password, router)}
         className="bg-violet-800 py-2 px-5 rounded-3xl items-center mt-2 w-32 self-center"
       >
         <Text className="text-white font-pbold text-lg">Login</Text>
@@ -168,7 +111,7 @@ const Login = () => {
 
       {/* Add Manual Fingerprint Authentication Button */}
       <TouchableOpacity
-        onPress={authenticateUser} // Manually trigger fingerprint authentication
+        onPress={() => authenticate(autofillCredentials)} // Manually trigger fingerprint authentication
         className="bg-transparent py-2 px-2 rounded-full items-center mt-4 self-center"
       >
         <FontAwesome5 name="fingerprint" size={62} color="black" />

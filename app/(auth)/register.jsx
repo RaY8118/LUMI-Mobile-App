@@ -16,7 +16,7 @@ import Fontisto from "@expo/vector-icons/Fontisto";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Entypo from "@expo/vector-icons/Entypo";
 import images from "../../constants/images";
-
+import { handleRegister } from "../../utils/auth";
 const Register = () => {
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   const router = useRouter();
@@ -34,42 +34,7 @@ const Register = () => {
   ]);
 
   const handleSubmit = async () => {
-    try {
-      console.log("Submitting form with:", {
-        name,
-        email,
-        mobile,
-        password,
-        value,
-      });
-
-      const response = await axios.post(`${apiUrl}/register`, {
-        name,
-        email,
-        mobile,
-        password,
-        value,
-      });
-
-      setName("");
-      setEmail("");
-      setPassword("");
-      setMobile("");
-
-      console.log("Response:", response);
-      Alert.alert("Success", response.data.message);
-      router.push("/(auth)/login");
-    } catch (error) {
-      console.error("Error:", error.response || error.message);
-      if (error.response && error.response.data) {
-        Alert.alert(
-          "Error",
-          error.response.data.message || "Failed to submit form"
-        );
-      } else {
-        Alert.alert("Error", "Failed to submit form");
-      }
-    }
+    handleRegister(name, email, mobile, password, value, router);
   };
 
   return (
