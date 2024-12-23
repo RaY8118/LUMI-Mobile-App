@@ -1,10 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import Entypo from "@expo/vector-icons/Entypo";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { StatusBar } from "expo-status-bar";
-
+import { Icon } from "@/constants/Icons";
 const TabsLayout = () => {
   return (
     <>
@@ -16,14 +13,20 @@ const TabsLayout = () => {
             headerTitle: "Reminders",
             title: "Reminders",
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="home" color={color} size={size} />
+              <Icon
+                name="home"
+                color={color}
+                size={size}
+                library="MaterialCommunityIcons"
+              />
             ),
             headerRight: () => (
-              <Ionicons
+              <Icon
                 name="person-circle-outline"
                 size={30}
                 style={{ marginRight: 15 }}
                 onPress={() => navigation.navigate("profile")}
+                library="Ionicons"
               />
             ),
           })}
@@ -34,14 +37,15 @@ const TabsLayout = () => {
             headerTitle: "Maps",
             title: "Maps",
             tabBarIcon: ({ color, size }) => (
-              <Entypo name="map" color={color} size={size} />
+              <Icon name="map" color={color} size={size} library="Entypo" />
             ),
             headerRight: () => (
-              <Ionicons
+              <Icon
                 name="person-circle-outline"
                 size={30}
                 style={{ marginRight: 15 }}
                 onPress={() => navigation.navigate("profile")}
+                library="Ionicons"
               />
             ),
           })}
@@ -52,14 +56,20 @@ const TabsLayout = () => {
             headerTitle: "Chat Room",
             title: "Chat",
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="chat" color={color} size={size} />
+              <Icon
+                name="chat"
+                color={color}
+                size={size}
+                library="MaterialCommunityIcons"
+              />
             ),
             headerRight: () => (
-              <Ionicons
+              <Icon
                 name="person-circle-outline"
                 size={30}
                 style={{ marginRight: 15 }}
                 onPress={() => navigation.navigate("profile")}
+                library="Ionicons"
               />
             ),
           })}
@@ -70,14 +80,20 @@ const TabsLayout = () => {
             headerTitle: "Camera",
             title: "Camera",
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="camera" color={color} size={size} />
+              <Icon
+                name="camera"
+                color={color}
+                size={size}
+                library="MaterialCommunityIcons"
+              />
             ),
             headerRight: () => (
-              <Ionicons
+              <Icon
                 name="person-circle-outline"
                 size={30}
                 style={{ marginRight: 15 }}
                 onPress={() => navigation.navigate("profile")}
+                library="Ionicons"
               />
             ),
           })}

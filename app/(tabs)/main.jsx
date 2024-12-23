@@ -12,11 +12,9 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import AddModalComponent from "../../components/AddModalComponent";
 import EditModalComponent from "../../components/EditModalComponent";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Notifications from "expo-notifications"; // Added for notifications
 import * as Speech from "expo-speech"; // Added for speech
-
+import { Icon } from "@/constants/Icons";
 // Notification handler setup
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -331,7 +329,9 @@ const Main = () => {
           text: "Yes",
           onPress: async () => {
             try {
-              const response = await axios.delete(`${apiUrl}/reminders/${remId}`);
+              const response = await axios.delete(
+                `${apiUrl}/reminders/${remId}`
+              );
 
               if (response.status === 200) {
                 Alert.alert("Success", response.data.message);
@@ -473,16 +473,22 @@ const Main = () => {
                   onPress={() => handleEdit(reminder._id)}
                   className="absolute right-14 bottom-2"
                 >
-                  <FontAwesome6 name="edit" size={24} color="black" />
+                  <Icon
+                    name="edit"
+                    size={24}
+                    color="black"
+                    library="FontAwesome6"
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => deleteReminder(reminder.remId)}
                   className="absolute right-4 bottom-1"
                 >
-                  <MaterialIcons
+                  <Icon
                     name="delete-outline"
                     size={30}
                     color="black"
+                    library="MaterialIcons"
                   />
                 </TouchableOpacity>
               </View>
@@ -535,7 +541,12 @@ const Main = () => {
           onPress={() => setAddModalVisible(true)}
           className="absolute right-6 bottom-5"
         >
-          <MaterialIcons name="add-box" size={56} color="black" />
+          <Icon
+            name="add-box"
+            size={56}
+            color="black"
+            library="MaterialIcons"
+          />
         </TouchableOpacity>
       </View>
     </>

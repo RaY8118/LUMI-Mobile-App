@@ -8,15 +8,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
-import axios from "axios";
 import { useRouter, Link } from "expo-router";
 import DropDownPicker from "react-native-dropdown-picker";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Fontisto from "@expo/vector-icons/Fontisto";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Entypo from "@expo/vector-icons/Entypo";
 import images from "../../constants/images";
-import { handleRegister } from "../../utils/auth";
+import { handleRegister } from "../../services/authService";
+import { Icon } from "@/constants/Icons";
 const Register = () => {
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   const router = useRouter();
@@ -59,7 +55,7 @@ const Register = () => {
 
       {/* Name Input */}
       <View className="flex-row items-center p-4">
-        <AntDesign name="user" size={32} color="black" />
+        <Icon name="user" size={32} color="black" library="AntDesign" />
         <TextInput
           className="h-12 flex-1 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-pmedium"
           placeholder="Name"
@@ -70,7 +66,7 @@ const Register = () => {
 
       {/* Email Input */}
       <View className="flex-row items-center p-4">
-        <Fontisto name="email" size={32} color="black" className="mr-4" />
+        <Icon name="email" size={32} color="black" library="Fontisto" />
         <TextInput
           className="h-12 flex-1 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-pmedium"
           placeholder="Email"
@@ -82,7 +78,7 @@ const Register = () => {
 
       {/* Mobile Input */}
       <View className="flex-row items-center p-4">
-        <AntDesign name="mobile1" size={32} color="black" />
+        <Icon name="mobile1" size={32} color="black" library="AntDesign" />
         <TextInput
           className="h-12 flex-1 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-pmedium"
           placeholder="Mobile No"
@@ -94,7 +90,7 @@ const Register = () => {
 
       {/* Dropdown Picker */}
       <View className="flex-row items-center p-4">
-        <Entypo name="list" size={32} color="black" />
+        <Icon name="list" size={32} color="black" library="Entypo" />
         <DropDownPicker
           className="h-12 w-96 flex-1 border-2 border-gray-600 px-3 rounded-3xl ml-4 bg-white"
           open={open}
@@ -125,7 +121,7 @@ const Register = () => {
 
       {/* Password Input */}
       <View className="flex-row items-center p-4">
-        <MaterialIcons name="password" size={32} color="black" />
+        <Icon name="password" size={32} color="black" library="MaterialIcons" />
         <TextInput
           className="h-12 flex-1 border-2 border-black px-3 rounded-3xl ml-4 bg-white font-pmedium"
           placeholder="Password"

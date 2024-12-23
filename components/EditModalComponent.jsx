@@ -10,7 +10,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Checkbox from "expo-checkbox";
-import Entypo from "@expo/vector-icons/Entypo";
+import { Icon } from "@/constants/Icons";
 
 const EditModalComponent = ({
   editModalVisible,
@@ -102,7 +102,12 @@ const EditModalComponent = ({
               className="absolute top-3 right-5"
               onPress={() => setEditModalVisible(false)}
             >
-              <Entypo name="circle-with-cross" size={30} color="black" />
+              <Icon
+                name="circle-with-cross"
+                size={30}
+                color="black"
+                library="Entypo"
+              />
             </Pressable>
             <Text className="text-lg font-bold mb-5">Edit Reminder</Text>
             <TextInput

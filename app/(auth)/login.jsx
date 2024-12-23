@@ -1,33 +1,22 @@
-import {
-  View,
-  TextInput,
-  Alert,
-  Text,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { View, TextInput, Text, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { router } from "expo-router";
-import { Link } from "expo-router";
-import Fontisto from "@expo/vector-icons/Fontisto";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Ionicons } from "@expo/vector-icons";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { Link, router } from "expo-router";
 import images from "../../constants/images";
+import { Icon } from "@/constants/Icons";
 import {
   handleLogin,
   checkBiometricSupport,
   authenticate,
   autofill,
-} from "../../utils/auth";
+} from "../../services/authService";
+import { useUser } from "@/contexts/userContext";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isAutofilled, setIsAutofilled] = useState(false);
-
+  const { refetch } = useUser();
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
@@ -49,10 +38,14 @@ const Login = () => {
 
   // Handle autofill-triggered login
   useEffect(() => {
-    if (isAutofilled) {
-      handleLogin(email, password, router);
-      setIsAutofilled(false); // Reset to prevent repeated logins
-    }
+    const login = async () => {
+      if (isAutofilled) {
+        await handleLogin(email, password, router); // Ensure async call is awaited
+        setIsAutofilled(false); // Reset after successful login
+      }
+    };
+
+    login(); // Call the async function
   }, [isAutofilled, email, password, router]);
 
   return (
@@ -72,7 +65,7 @@ const Login = () => {
       </Text>
 
       <View className="flex-row items-center p-4">
-        <Fontisto name="email" size={32} color="black" className="mr-4" />
+        <Icon name="email" size={32} color="black" library="Fontisto" />
         <TextInput
           className="h-12 flex-1 border-2 border-black px-3 rounded-3xl bg-white font-pmedium ml-4"
           placeholder="Email"
@@ -82,7 +75,7 @@ const Login = () => {
         />
       </View>
       <View className="flex-row items-center p-4">
-        <MaterialIcons name="password" size={32} color="black" />
+        <Icon name="password" size={32} color="black" library="MaterialIcons" />
         <View className="flex-row items-center flex-1 ml-4">
           <TextInput
             className="h-12 flex-1 border-2 border-black px-3 rounded-3xl bg-white font-pmedium"
@@ -93,17 +86,18 @@ const Login = () => {
             autoCapitalize="none"
           />
           <TouchableOpacity onPress={togglePasswordVisibility} className="ml-6">
-            <Ionicons
+            <Icon
               name={isPasswordVisible ? "eye" : "eye-off"}
               size={28}
               color="black"
+              library="Ionicons"
             />
           </TouchableOpacity>
         </View>
       </View>
 
       <TouchableOpacity
-        onPress={() => handleLogin(email, password, router)}
+        onPress={() => handleLogin(email, password, router, refetch)}
         className="bg-violet-800 py-2 px-5 rounded-3xl items-center mt-2 w-32 self-center"
       >
         <Text className="text-white font-pbold text-lg">Login</Text>
@@ -114,7 +108,12 @@ const Login = () => {
         onPress={() => authenticate(autofillCredentials)} // Manually trigger fingerprint authentication
         className="bg-transparent py-2 px-2 rounded-full items-center mt-4 self-center"
       >
-        <FontAwesome5 name="fingerprint" size={62} color="black" />
+        <Icon
+          name="fingerprint"
+          size={62}
+          color="black"
+          library="FontAwesome5"
+        />
       </TouchableOpacity>
 
       <View className="mt-4 flex-row justify-center items-center">
@@ -127,7 +126,7 @@ const Login = () => {
       </View>
       <View className="mt-4 flex-row justify-center items-center">
         <Text className="font-plight text-lg">Forgot password </Text>
-        <Link href="/reset">
+        <Link href="/forgot-password">
           <Text className="text-violet-500 font-pregular text-lg">
             click here!{" "}
           </Text>
