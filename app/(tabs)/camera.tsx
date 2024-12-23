@@ -7,11 +7,16 @@ import {
   View,
   ActivityIndicator,
 } from "react-native";
-import { takePicture, resizeImage, uploadImage } from "../../utils/cameraUtils"; // Import utility functions
-
+import {
+  takePicture,
+  resizeImage,
+  uploadImage,
+} from "@/services/cameraService"; // Import utility functions
+import { useUser } from "@/contexts/userContext";
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 const Camera = () => {
+  const { user } = useUser();
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +45,11 @@ const Camera = () => {
     const uri = await takePicture(cameraRef);
     if (uri) {
       const resizedUri = await resizeImage(uri);
-      uploadImage(resizedUri, `${apiUrl}/send-name`, setLoading);
+      uploadImage(
+        resizedUri,
+        `${apiUrl}/detect_faces/${user.familyId}`,
+        setLoading
+      );
     }
   };
 

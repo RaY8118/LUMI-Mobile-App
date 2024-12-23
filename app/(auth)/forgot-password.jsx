@@ -1,41 +1,12 @@
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import axios from "axios";
-
-const Reset = () => {
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+import { handleReset } from "@/services/authService";
+import { Link } from "expo-router";
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const handleReset = async () => {
-    if (!validateEmail(email)) {
-      Alert.alert("Invalid Email", "Please enter a valid email address.");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const response = await axios.post(`${apiUrl}/reset-password`, { email });
-      setEmail("");
-      Alert.alert("Success", response.data.message);
-    } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        (error.response
-          ? "Unable to process your request. Please try again."
-          : "Check your internet connection and try again.");
-      Alert.alert("Error", message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <SafeAreaView className="flex-1 justify-center p-6 bg-custom-primary rounded-xl">
@@ -58,7 +29,7 @@ const Reset = () => {
         />
       </View>
       <TouchableOpacity
-        onPress={handleReset}
+        onPress={() => handleReset(email, setIsLoading, setEmail)}
         disabled={isLoading}
         className={`${
           isLoading ? "bg-gray-400" : "bg-violet-800"
@@ -68,8 +39,17 @@ const Reset = () => {
           {isLoading ? "Sending..." : "Send"}
         </Text>
       </TouchableOpacity>
+
+      <View className="mt-4 flex-row justify-center items-center">
+        <Text className="font-plight text-lg">Back to Login </Text>
+        <Link href="/login">
+          <Text className="text-violet-500 font-pregular text-lg">
+            click here!{" "}
+          </Text>
+        </Link>
+      </View>
     </SafeAreaView>
   );
 };
 
-export default Reset;
+export default ForgotPassword;
