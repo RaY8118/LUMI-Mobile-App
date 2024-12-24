@@ -29,39 +29,32 @@ export const handleLogin = async (email, password, router, refetch) => {
     }
 };
 
-// Check if the device supports biometric authentication
-export const checkBiometricSupport = async () => {
+// Combined function to handle authentication and autofill
+export const authenticateAndAutofill = async (setEmail, setPassword, setIsAutofilled) => {
     const compatible = await LocalAuthentication.hasHardwareAsync();
     const enrolled = await LocalAuthentication.isEnrolledAsync();
 
     if (compatible && enrolled) {
-        authenticate(); // If biometrics are supported and set up, try authenticating the user
-    }
-};
+        const result = await LocalAuthentication.authenticateAsync({
+            promptMessage: "Authenticate to autofill credentials",
+        });
 
-// Authenticate user using fingerprint/face recognition
-export const authenticate = async (autofillCredentials) => {
-    const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Authenticate to autofill credentials",
-    });
-
-    if (result.success) {
-        if (autofillCredentials) await autofillCredentials(); // Call autofill credentials if provided
+        if (result.success) {
+            // If authentication is successful, autofill the credentials
+            const storedEmail = await SecureStore.getItemAsync("email");
+            const storedPassword = await SecureStore.getItemAsync("password");
+            if (storedEmail && storedPassword) {
+                setEmail(storedEmail);
+                setPassword(storedPassword);
+                setIsAutofilled(true);
+            }
+        } else {
+            Alert.alert("Authentication failed. Cannot autofill credentials.");
+        }
     } else {
-        Alert.alert("Authentication failed. Cannot autofill credentials.");
+        Alert.alert("Biometric authentication is not supported or not enrolled.");
     }
-};
-
-
-export const autofill = async (setEmail, setPassword, setIsAutofilled) => {
-    const storedEmail = await SecureStore.getItemAsync("email");
-    const storedPassword = await SecureStore.getItemAsync("password");
-    if (storedEmail && storedPassword) {
-        setEmail(storedEmail);
-        setPassword(storedPassword);
-        setIsAutofilled(true);
-    }
-};
+};;
 
 // Function to handle registration of new users
 export const handleRegister = async (

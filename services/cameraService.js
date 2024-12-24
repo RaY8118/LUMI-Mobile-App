@@ -1,4 +1,3 @@
-// utils/cameraUtils.ts
 import * as ImageManipulator from "expo-image-manipulator";
 import axios from "axios";
 import { Alert } from "react-native";
@@ -55,5 +54,21 @@ export const uploadImage = async (uri, endpoint, setLoading) => {
     Alert.alert("Error", "Upload failed. Please try again.");
   } finally {
     setLoading(false);
+  }
+};
+
+export const handleFaceRecognition = async (cameraRef, user, setLoading, apiUrl) => {
+  const uri = await takePicture(cameraRef);
+  if (uri) {
+    const resizedUri = await resizeImage(uri);
+    uploadImage(resizedUri, `${apiUrl}/detect_faces/${user.familyId}`, setLoading);
+  }
+};
+
+export const handleObjectDetection = async (cameraRef, setLoading, apiUrl) => {
+  const uri = await takePicture(cameraRef);
+  if (uri) {
+    const resizedUri = await resizeImage(uri);
+    uploadImage(resizedUri, `${apiUrl}/obj-detection`, setLoading);
   }
 };

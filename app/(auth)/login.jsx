@@ -6,8 +6,7 @@ import images from "../../constants/images";
 import { Icon } from "@/constants/Icons";
 import {
   handleLogin,
-  checkBiometricSupport,
-  authenticate,
+  authenticateAndAutofill,
   autofill,
 } from "../../services/authService";
 import { useUser } from "@/contexts/userContext";
@@ -21,26 +20,11 @@ const Login = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  const autofillCredentials = async () => {
-    await autofill(setEmail, setPassword, setIsAutofilled);
-  };
-
-  // Trigger biometric support check on mount
-  useEffect(() => {
-    const initBiometricCheck = async () => {
-      await checkBiometricSupport(async () => {
-        await authenticate(autofillCredentials);
-      });
-    };
-
-    initBiometricCheck(); // Initialize biometric check
-  }, []);
-
   // Handle autofill-triggered login
   useEffect(() => {
     const login = async () => {
       if (isAutofilled) {
-        await handleLogin(email, password, router); // Ensure async call is awaited
+        await handleLogin(email, password, router, refetch);
         setIsAutofilled(false); // Reset after successful login
       }
     };
@@ -48,6 +32,10 @@ const Login = () => {
     login(); // Call the async function
   }, [isAutofilled, email, password, router]);
 
+  // Handle Biometric Authentication & Autofill Combined
+  const handleBiometricAuthentication = async () => {
+    await authenticateAndAutofill(setEmail, setPassword, setIsAutofilled);
+  };
   return (
     <SafeAreaView className="flex-1 justify-center p-6 pt-2 mt-14 border border-x-2 bg-custom-primary rounded-xl">
       <View>
@@ -105,7 +93,7 @@ const Login = () => {
 
       {/* Add Manual Fingerprint Authentication Button */}
       <TouchableOpacity
-        onPress={() => authenticate(autofillCredentials)} // Manually trigger fingerprint authentication
+        onPress={() => handleBiometricAuthentication()} // Manually trigger fingerprint authentication
         className="bg-transparent py-2 px-2 rounded-full items-center mt-4 self-center"
       >
         <Icon
