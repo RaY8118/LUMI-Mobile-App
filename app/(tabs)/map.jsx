@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
   getDistanceFromLatLonInMeters,
   fetchSavedLocation,
@@ -8,7 +8,11 @@ import {
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
+import { Icon } from "@/constants/Icons";
+import { useUser } from "@/contexts/userContext";
 const Map = () => {
+  const { user } = useUser();
+  const userId = user.userId;
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [isSafe, setIsSafe] = useState(null);
@@ -16,11 +20,6 @@ const Map = () => {
 
   // Function to compare current location with the saved location
   const compareLocations = (currentLocation) => {
-    if (!currentLocation || !savedLocation) {
-      console.warn("Cannot compare locations - missing data");
-      return;
-    }
-
     const distance = getDistanceFromLatLonInMeters(
       currentLocation.latitude,
       currentLocation.longitude,
@@ -52,15 +51,15 @@ const Map = () => {
   useEffect(() => {
     const fetchLocationData = async () => {
       try {
-        const homeLocation = await fetchSavedLocation();
+        const homeLocation = await fetchSavedLocation(userId, setErrorMsg);
         setSavedLocation(homeLocation);
       } catch (error) {
-        setErrorMsg(error.message);
+        console.error(error.message);
       }
     };
 
     fetchLocationData();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     let locationSubscription;
@@ -91,21 +90,25 @@ const Map = () => {
 
   const handleSaveLocation = async () => {
     try {
-      await saveLocation();
-      Alert.alert("Success", "Your location has been saved successfully.");
+      const successMessage = await saveLocation(setErrorMsg);
+      Alert.alert("Success", successMessage);
     } catch (error) {
-      setErrorMsg(error.message);
+      console.error(error.message);
+      Alert.alert("Error", error.message);
     }
   };
 
   const handleRefresh = async () => {
     try {
-      const homeLocation = await fetchSavedLocation();
+      setErrorMsg(null);
+      Alert.alert("Refresh", "Refreshing, please wait...");
+      const homeLocation = await fetchSavedLocation(userId, setErrorMsg);
       setSavedLocation(homeLocation);
       const currentCoords = await getCurrentCoords();
       setLocation(currentCoords);
+      setErrorMsg(null);
     } catch (error) {
-      setErrorMsg(error.message);
+      console.error(error.message);
     }
   };
 
@@ -132,51 +135,53 @@ const Map = () => {
 
       {/* Map Section */}
       {location && (
-        <MapView
-          className="w-full h-4/5"
-          initialRegion={{
-            latitude: location.latitude,
-            longitude: location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        >
-          {savedLocation && (
-            <Circle
-              center={{
-                latitude: savedLocation.latitude,
-                longitude: savedLocation.longitude,
-              }}
-              radius={2000}
-              strokeWidth={2}
-              strokeColor="green"
-              fillColor="rgba(0, 255, 0, 0.3)"
-            />
-          )}
-          <Marker
-            coordinate={{
+        <View className="w-full h-5/6 border-2 border-black m-3 shadow-lg shadow-black overflow-hidden rounded-3xl">
+          <MapView
+            className="w-full h-full"
+            initialRegion={{
               latitude: location.latitude,
               longitude: location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
             }}
-            title="You are here"
-          />
-        </MapView>
+          >
+            {savedLocation && (
+              <Circle
+                center={{
+                  latitude: savedLocation.latitude,
+                  longitude: savedLocation.longitude,
+                }}
+                radius={2000}
+                strokeWidth={2}
+                strokeColor="green"
+                fillColor="rgba(0, 255, 0, 0.3)"
+              />
+            )}
+            <Marker
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+              title="You are here"
+            />
+          </MapView>
+        </View>
       )}
 
       {/* Buttons */}
-      <View className="items-center flex-row justify-center">
+      <View className="items-center flex-row justify-center space-x-6">
         <TouchableOpacity
           onPress={handleRefresh}
-          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 mr-3 rounded border-b-4 border-blue-700 hover:border-blue-500 transition duration-200 ease-in-out"
+          className="bg-slate-200 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit"
         >
-          <Text className="text-black font-bold text-lg">Refresh</Text>
+          <Icon name="refresh" library="FontAwesome" size={48} />
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={handleSaveLocation}
-          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded border-b-4 border-blue-700 hover:border-blue-500 transition duration-200 ease-in-out"
+          className="bg-green-500 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit"
         >
-          <Text className="text-black font-bold text-lg">Save Location</Text>
+          <Icon name="add-location-alt" library="MaterialIcons" size={48} />
         </TouchableOpacity>
       </View>
     </View>

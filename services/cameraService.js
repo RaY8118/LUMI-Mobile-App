@@ -1,6 +1,7 @@
 import * as ImageManipulator from "expo-image-manipulator";
 import axios from "axios";
 import { Alert } from "react-native";
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 export const takePicture = async (cameraRef) => {
   if (cameraRef.current) {
@@ -24,7 +25,7 @@ export const resizeImage = async (uri) => {
   return resizedImage.uri;
 };
 
-export const uploadImage = async (uri, endpoint, setLoading) => {
+export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition = true) => {
   const formData = new FormData();
   formData.append("image", {
     uri,
@@ -42,33 +43,42 @@ export const uploadImage = async (uri, endpoint, setLoading) => {
     });
 
     if (response.data.status === "success") {
-      const nameMessage = response.data.name
-        ? `Identified Name: ${response.data.name}`
-        : "Found nothing.";
+      let nameMessage;
+      if (isFaceRecognition) {
+        // Handle face recognition response
+        nameMessage = response.data.name && response.data.name.length > 0
+          ? `Identified Name: ${response.data.name.join(', ')}`
+          : "No faces found.";
+      } else {
+        // Handle object detection response
+        nameMessage = response.data.name && response.data.name.length > 0
+          ? `Identified Objects: ${response.data.name.join(', ')}`
+          : "No objects found.";
+      }
       Alert.alert("Response", nameMessage);
     } else {
       Alert.alert("Error", `Error: ${response.data.message}`);
     }
   } catch (error) {
-    console.error("Upload failed:", error);
-    Alert.alert("Error", "Upload failed. Please try again.");
+    Alert.alert("Error", error.response?.data?.message);
   } finally {
     setLoading(false);
   }
 };
 
-export const handleFaceRecognition = async (cameraRef, user, setLoading, apiUrl) => {
+
+export const handleFaceRecognition = async (cameraRef, user, setLoading) => {
   const uri = await takePicture(cameraRef);
   if (uri) {
     const resizedUri = await resizeImage(uri);
-    uploadImage(resizedUri, `${apiUrl}/detect_faces/${user.familyId}`, setLoading);
+    uploadImage(resizedUri, `${apiUrl}/detect_faces/${user.familyId}`, setLoading, true);
   }
 };
 
-export const handleObjectDetection = async (cameraRef, setLoading, apiUrl) => {
+export const handleObjectDetection = async (cameraRef, setLoading) => {
   const uri = await takePicture(cameraRef);
   if (uri) {
     const resizedUri = await resizeImage(uri);
-    uploadImage(resizedUri, `${apiUrl}/obj-detection`, setLoading);
+    uploadImage(resizedUri, `${apiUrl}/obj-detection`, setLoading, false);
   }
 };

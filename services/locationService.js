@@ -1,4 +1,3 @@
-const { useCallback } = require("react");
 import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
 import axios from "axios";
@@ -37,37 +36,60 @@ export const getCurrentCoords = async () => {
 };
 
 // Function to fetch the saved home location
-export const fetchSavedLocation = async () => {
-    const token = await SecureStore.getItemAsync("token");
-    if (!token) throw new Error("User not logged in");
+export const fetchSavedLocation = async (userId, setErrorMsg) => {
+    try {
+        if (!userId) {
+            const message = "User ID is not available.";
+            setErrorMsg(message);
+            throw new Error(message);
+        }
 
-    const decodedToken = jwtDecode(token);
-    const userId = decodedToken.sub.userId;
+        const response = await axios.get(`${apiUrl}/safe-location?userId=${userId}`);
 
-    const response = await axios.get(`${apiUrl}/safe-location?userId=${userId}`);
-    if (response.data.status === "success") {
-        return response.data.coords; // {latitude, longitude}
-    } else {
-        throw new Error("Home location not found");
+        if (response.data?.status === "success") {
+            return response.data.coords; // Return the coordinates
+        } else {
+            const message = response.data?.message;
+            setErrorMsg(message);
+            throw new Error(message);
+        }
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
+        setErrorMsg(errorMessage); // Use setErrorMsg for displaying the error
+        throw new Error(errorMessage);
     }
 };
 
 
 
 // Function to save the current location as a safe location
-export const saveLocation = async () => {
-    const coords = await getCurrentCoords();
-    const token = await SecureStore.getItemAsync("token");
+export const saveLocation = async (setErrorMsg) => {
+    try {
+        const coords = await getCurrentCoords();
+        const token = await SecureStore.getItemAsync("token");
 
-    if (!token) throw new Error("User not logged in");
+        if (!token) throw new Error("User not logged in");
 
-    const decodedToken = jwtDecode(token);
-    const userId = decodedToken.sub.userId;
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.sub.userId;
 
-    await axios.post(`${apiUrl}/safe-location`, {
-        userId,
-        coords,
-    });
+        const response = await axios.post(`${apiUrl}/safe-location`, {
+            userId,
+            coords,
+        });
 
-    return coords;
+        if (response.data?.status === "success") {
+            return response.data.message; // Return the success message from the backend
+        } else {
+            const message = response.data?.message || "Failed to save location.";
+            setErrorMsg(message); // Display error message to user
+            throw new Error(message);
+        }
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
+        setErrorMsg(errorMessage); // Use setErrorMsg for displaying the error
+        throw new Error(errorMessage);
+    }
+
+
 };

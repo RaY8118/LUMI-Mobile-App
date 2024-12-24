@@ -5,13 +5,13 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
-  ActivityIndicator, // Import ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import React from "react";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
-import { useUser } from "@/contexts/userContext"; // Import the context hook
-
+import { useUser } from "@/contexts/userContext";
+import { Icon } from "@/constants/Icons";
 const Profile = () => {
   const { user, setUser, isLoading, refetch } = useUser(); // Access user from context
   const router = useRouter();
@@ -85,9 +85,14 @@ const Profile = () => {
       </View>
       <TouchableOpacity
         onPress={handleLogout}
-        className="bg-blue-500 p-2 m-4 rounded-md items-center"
+        className="inline-flex items-center justify-center p-4 bg-blue-500 rounded-full border-2 border-white w-1/3"
       >
-        <Text className="text-white font-pbold">Logout</Text>
+        <Icon
+          name="logout"
+          size={50}
+          library="MaterialCommunityIcons"
+          color="white"
+        />
       </TouchableOpacity>
     </SafeAreaView>
   );

@@ -10,9 +10,10 @@ import {
 import {
   handleFaceRecognition,
   handleObjectDetection,
-} from "@/services/cameraService"; // Import utility functions
+} from "@/services/cameraService";
+import { Icon } from "@/constants/Icons";
 import { useUser } from "@/contexts/userContext";
-const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+import * as Animatable from "react-native-animatable";
 
 const Camera = () => {
   const { user } = useUser();
@@ -20,6 +21,7 @@ const Camera = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const [loading, setLoading] = useState<boolean>(false);
   const cameraRef = useRef<CameraView>(null);
+  const rotateRef = useRef<any>(null); // Reference for the rotate animation
 
   if (!permission) {
     return <View />;
@@ -37,44 +39,76 @@ const Camera = () => {
   }
 
   const toggleCameraFacing = () => {
+    // Trigger the rotate animation
+    if (rotateRef.current) {
+      rotateRef.current.animate("rotate", 500);
+    }
+
+    // Toggle the camera facing
     setFacing((current) => (current === "back" ? "front" : "back"));
   };
+
   return (
-    <View className="flex-1 justify-end p-5 relative">
-      <CameraView
-        className="flex-1 w-full rounded-lg"
-        facing={facing}
-        ref={cameraRef}
-      >
-        {/* Camera feed is taking up the full screen */}
-      </CameraView>
-
-      <View className="items-center my-2">
-        <TouchableOpacity
-          className="bg-blue-500 py-4 px-8 rounded-full shadow-md"
-          onPress={toggleCameraFacing}
+    <View className="flex-1 justify-end p-5 relative bg-custom-white">
+      {/* Parent View with rounded edges */}
+      <View className="flex-1 rounded-3xl overflow-hidden shadow-xl shadow-black border-2 border-black">
+        <CameraView
+          style={{
+            flex: 1,
+            width: "100%", // Full width
+            backgroundColor: "black", // Optional: Background color for camera view
+          }}
+          facing={facing}
+          ref={cameraRef}
         >
-          <Text className="text-lg font-bold text-white">Flip Camera</Text>
-        </TouchableOpacity>
+          <View className="absolute right-6 bottom-3 my-2">
+            <TouchableOpacity>
+              <Animatable.View ref={rotateRef} duration={500}>
+                <Icon
+                  name="cameraswitch"
+                  library="MaterialIcons"
+                  color="white"
+                  size={70}
+                  onPress={toggleCameraFacing}
+                  className=""
+                  style={""}
+                />
+              </Animatable.View>
+            </TouchableOpacity>
+          </View>
+        </CameraView>
       </View>
 
-      <View className="items-center my-2">
+      <View className="items-center my-2 flex flex-row justify-around m-10">
         <TouchableOpacity
-          className="bg-blue-500 py-4 px-8 rounded-full shadow-md"
-          onPress={() =>
-            handleFaceRecognition(cameraRef, user, setLoading, apiUrl)
-          }
+          className="bg-blue-500 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit"
+          onPress={() => handleFaceRecognition(cameraRef, user, setLoading)}
+          activeOpacity={0.7}
         >
-          <Text className="text-lg font-bold text-white">Face Recognition</Text>
+          <Icon
+            name="face-recognition"
+            library="MaterialCommunityIcons"
+            size={60}
+            className=""
+            color="white"
+            style={""}
+            onPress={null}
+          />
         </TouchableOpacity>
-      </View>
-
-      <View className="items-center my-2">
         <TouchableOpacity
-          className="bg-blue-500 py-4 px-8 rounded-full shadow-md"
-          onPress={() => handleObjectDetection(cameraRef, setLoading, apiUrl)}
+          className="bg-green-500 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit"
+          onPress={() => handleObjectDetection(cameraRef, setLoading)}
+          activeOpacity={0.7}
         >
-          <Text className="text-lg font-bold text-white">Object Detection</Text>
+          <Icon
+            name="object-group"
+            library="FontAwesome"
+            size={60}
+            className=""
+            color="white"
+            style=""
+            onPress={null}
+          />
         </TouchableOpacity>
       </View>
 
@@ -88,4 +122,5 @@ const Camera = () => {
     </View>
   );
 };
+
 export default Camera;
