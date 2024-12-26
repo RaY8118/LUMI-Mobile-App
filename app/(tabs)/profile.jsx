@@ -11,17 +11,20 @@ import React from "react";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
 import { useUser } from "@/contexts/userContext";
-import { Icon } from "@/constants/Icons";
+import CustomButton from "@/components/CustomButton";
 const Profile = () => {
   const { user, setUser, isLoading, refetch } = useUser(); // Access user from context
   const router = useRouter();
 
   const handleLogout = async () => {
-    await SecureStore.deleteItemAsync("token");
-    Alert.alert("Success", "Logout Successful");
-    setUser(null);
-    router.replace("/login");
-    refetch(); // After logout refetch data to clear the user from the context
+    try {
+      await SecureStore.deleteItemAsync("token");
+      setUser(null); // Trigger conditional rendering in the layout
+      Alert.alert("Success", "Logout Successful");
+      router.replace("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   if (isLoading) {
@@ -32,8 +35,8 @@ const Profile = () => {
     );
   }
   return (
-    <SafeAreaView className="bg-indigo-300 h-full">
-      <View className="flex-row items-start m-3 mt-5">
+    <SafeAreaView className="bg-indigo-300">
+      <View className="flex-row items-center m-3 mt-5">
         <View className="ml-2 flex-1 justify-center items-start border border-black pt-4 pl-4 rounded-2xl bg-white w-full md:w-11/12 lg:w-10/12">
           {user ? (
             <View>
@@ -83,17 +86,17 @@ const Profile = () => {
           )}
         </View>
       </View>
-      <TouchableOpacity
-        onPress={handleLogout}
-        className="inline-flex items-center justify-center p-4 bg-blue-500 rounded-full border-2 border-white w-1/3"
-      >
-        <Icon
+      <View className="items-end  border border-black">
+        <CustomButton
+          onPress={handleLogout}
+          bgcolor="bg-red-500"
           name="logout"
-          size={50}
-          library="MaterialCommunityIcons"
+          library="AntDesign"
+          size={60}
+          activeOpacity={0.7}
           color="white"
         />
-      </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

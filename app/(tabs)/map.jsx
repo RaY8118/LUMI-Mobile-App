@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   getDistanceFromLatLonInMeters,
   fetchSavedLocation,
   getCurrentCoords,
   saveLocation,
 } from "@/services/locationService";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, Alert } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
-import { Icon } from "@/constants/Icons";
 import { useUser } from "@/contexts/userContext";
+import CustomButton from "@/components/CustomButton";
 const Map = () => {
   const { user } = useUser();
-  const userId = user.userId;
+  const userId = user?.userId;
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [isSafe, setIsSafe] = useState(null);
@@ -167,22 +167,22 @@ const Map = () => {
           </MapView>
         </View>
       )}
-
-      {/* Buttons */}
-      <View className="items-center flex-row justify-center space-x-6">
-        <TouchableOpacity
+      <View className="items-center flex-row justify-evenly w-full">
+        <CustomButton
           onPress={handleRefresh}
-          className="bg-slate-200 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit"
-        >
-          <Icon name="refresh" library="FontAwesome" size={48} />
-        </TouchableOpacity>
+          bgcolor="bg-slate-200"
+          name="refresh"
+          library="FontAwesome"
+          size={48}
+        />
 
-        <TouchableOpacity
+        <CustomButton
           onPress={handleSaveLocation}
-          className="bg-green-500 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit"
-        >
-          <Icon name="add-location-alt" library="MaterialIcons" size={48} />
-        </TouchableOpacity>
+          bgcolor="bg-green-400"
+          name="add-location-alt"
+          library="MaterialIcons"
+          size={48}
+        />
       </View>
     </View>
   );

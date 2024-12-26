@@ -1,4 +1,3 @@
-// contexts/userContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
@@ -17,7 +16,6 @@ export const UserProvider = ({ children }) => {
 
     const fetchUserData = async () => {
         const storedToken = await SecureStore.getItemAsync('token');
-        console.log('Stored Token:', storedToken);
 
         if (storedToken) {
             try {
@@ -29,7 +27,6 @@ export const UserProvider = ({ children }) => {
 
                 if (response.data.status === 'success') {
                     setUser(response.data.userData);
-                    console.log(user);
 
                 } else {
                     console.error('Failed to fetch user data', response.data.message);

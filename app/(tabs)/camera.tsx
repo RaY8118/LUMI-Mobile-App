@@ -12,6 +12,7 @@ import {
   handleObjectDetection,
 } from "@/services/cameraService";
 import { Icon } from "@/constants/Icons";
+import CustomButton from "@/components/CustomButton";
 import { useUser } from "@/contexts/userContext";
 import * as Animatable from "react-native-animatable";
 
@@ -51,7 +52,7 @@ const Camera = () => {
   return (
     <View className="flex-1 justify-end p-5 relative bg-custom-white">
       {/* Parent View with rounded edges */}
-      <View className="flex-1 rounded-3xl overflow-hidden shadow-xl shadow-black border-2 border-black">
+      <View className="flex-1 rounded-3xl overflow-hidden shadow-xl shadow-black border-4 border-black">
         <CameraView
           style={{
             flex: 1,
@@ -80,36 +81,25 @@ const Camera = () => {
       </View>
 
       <View className="items-center my-2 flex flex-row justify-around m-10">
-        <TouchableOpacity
-          className="bg-blue-500 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit"
+        <CustomButton
           onPress={() => handleFaceRecognition(cameraRef, user, setLoading)}
+          bgcolor="bg-blue-500"
+          name="face-recognition"
+          library="MaterialCommunityIcons"
+          size={60}
           activeOpacity={0.7}
-        >
-          <Icon
-            name="face-recognition"
-            library="MaterialCommunityIcons"
-            size={60}
-            className=""
-            color="white"
-            style={""}
-            onPress={null}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-green-500 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit"
+          color="white"
+        />
+
+        <CustomButton
           onPress={() => handleObjectDetection(cameraRef, setLoading)}
+          bgcolor="bg-green-500"
+          name="object-group"
+          library="FontAwesome"
+          size={60}
           activeOpacity={0.7}
-        >
-          <Icon
-            name="object-group"
-            library="FontAwesome"
-            size={60}
-            className=""
-            color="white"
-            style=""
-            onPress={null}
-          />
-        </TouchableOpacity>
+          color="white"
+        />
       </View>
 
       {loading && (
