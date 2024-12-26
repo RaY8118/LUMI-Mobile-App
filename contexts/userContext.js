@@ -2,17 +2,15 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
-
+import { Alert } from 'react-native';
 
 const UserContext = createContext(null);
-
 
 export const UserProvider = ({ children }) => {
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
-
 
     const fetchUserData = async () => {
         const storedToken = await SecureStore.getItemAsync('token');
@@ -27,7 +25,6 @@ export const UserProvider = ({ children }) => {
 
                 if (response.data.status === 'success') {
                     setUser(response.data.userData);
-
                 } else {
                     console.error('Failed to fetch user data', response.data.message);
                     Alert.alert("Error", response.data.message);
@@ -62,7 +59,6 @@ export const UserProvider = ({ children }) => {
     );
 };
 
-
 export const useUser = () => {
     const context = useContext(UserContext);
     if (context === null) {
@@ -70,4 +66,3 @@ export const useUser = () => {
     }
     return context;
 };
-

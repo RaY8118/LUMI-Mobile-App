@@ -4,6 +4,7 @@ import {
   fetchSavedLocation,
   getCurrentCoords,
   saveLocation,
+  saveCurrLocation,
 } from "@/services/locationService";
 import { View, Text, Alert } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
@@ -17,9 +18,25 @@ const Map = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [isSafe, setIsSafe] = useState(null);
   const [savedLocation, setSavedLocation] = useState(null);
+  const [previousLocation, setPreviousLocation] = useState(null);
 
+  const shouldSaveLocation = (currentLocation) => {
+    if (!previousLocation) return true;
+
+    const distance = getDistanceFromLatLonInMeters(
+      currentLocation.latitude,
+      currentLocation.longitude,
+      previousLocation.latitude,
+      previousLocation.longitude
+    );
+    return distance > 50;
+  };
   // Function to compare current location with the saved location
   const compareLocations = (currentLocation) => {
+    if (!savedLocation) {
+      Alert.alert("No Home Location", "Please save your home location first.");
+      return;
+    }
     const distance = getDistanceFromLatLonInMeters(
       currentLocation.latitude,
       currentLocation.longitude,
@@ -30,8 +47,15 @@ const Map = () => {
     if (distance > 2000) {
       Alert.alert("Warning", "You are outside the safe area!");
       setIsSafe(false);
+      console.log(isSafe);
     } else {
       setIsSafe(true);
+      console.log(isSafe);
+    }
+    // Save current location to database only if it has changed
+    if (shouldSaveLocation(currentLocation)) {
+      saveCurrLocation(setErrorMsg);
+      setPreviousLocation(currentLocation); // Update previous location
     }
   };
 
@@ -39,11 +63,16 @@ const Map = () => {
     try {
       const coords = await getCurrentCoords();
       setLocation(coords);
+
+      // Save the fetched location to the database if needed
+      if (shouldSaveLocation(coords)) {
+        saveCurrLocation(setErrorMsg);
+        setPreviousLocation(coords); // Update previous location
+      }
     } catch (error) {
       setErrorMsg(error.message);
     }
   }, []);
-
   useEffect(() => {
     fetchCurrentLocation();
   }, [fetchCurrentLocation]);
@@ -89,13 +118,30 @@ const Map = () => {
   }, [savedLocation]);
 
   const handleSaveLocation = async () => {
-    try {
-      const successMessage = await saveLocation(setErrorMsg);
-      Alert.alert("Success", successMessage);
-    } catch (error) {
-      console.error(error.message);
-      Alert.alert("Error", error.message);
-    }
+    Alert.alert(
+      "Confirm Save",
+      "Are you sure you want to save your current location?",
+      [
+        {
+          text: "Cancel",
+          onPress: async () => console.log("Save location canceled"),
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            try {
+              const successMessage = await saveLocation(setErrorMsg);
+              Alert.alert("Success", successMessage);
+            } catch (error) {
+              console.error(error.message);
+              Alert.alert("Error", error.message);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const handleRefresh = async () => {
@@ -106,6 +152,10 @@ const Map = () => {
       setSavedLocation(homeLocation);
       const currentCoords = await getCurrentCoords();
       setLocation(currentCoords);
+      if (shouldSaveLocation(currentCoords)) {
+        saveCurrLocation(setErrorMsg);
+        setPreviousLocation(currentCoords); // Update previous location
+      }
       setErrorMsg(null);
     } catch (error) {
       console.error(error.message);
@@ -153,8 +203,10 @@ const Map = () => {
                 }}
                 radius={2000}
                 strokeWidth={2}
-                strokeColor="green"
-                fillColor="rgba(0, 255, 0, 0.3)"
+                strokeColor={isSafe ? "green" : "red"}
+                fillColor={
+                  isSafe ? "rgba(0, 255, 0, 0.2)" : "rgba(255, 0, 0, 0.2)"
+                }
               />
             )}
             <Marker

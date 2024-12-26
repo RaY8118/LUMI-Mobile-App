@@ -93,3 +93,34 @@ export const saveLocation = async (setErrorMsg) => {
 
 
 };
+
+export const saveCurrLocation = async (setErrorMsg) => {
+    try {
+        const coords = await getCurrentCoords();
+        const token = await SecureStore.getItemAsync("token");
+
+        if (!token) throw new Error("User not logged in");
+
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.sub.userId;
+
+        const response = await axios.post(`${apiUrl}/curr-location`, {
+            userId,
+            coords,
+        });
+
+        if (response.data?.status === "success") {
+            return response.data.message; // Return the success message from the backend
+        } else {
+            const message = response.data?.message || "Failed to save location.";
+            setErrorMsg(message); // Display error message to user
+            throw new Error(message);
+        }
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
+        setErrorMsg(errorMessage); // Use setErrorMsg for displaying the error
+        throw new Error(errorMessage);
+    }
+
+
+};
