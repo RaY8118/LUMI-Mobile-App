@@ -41,8 +41,8 @@ const ForgotPassword = () => {
       </TouchableOpacity>
 
       <View className="mt-4 flex-row justify-center items-center">
-        <Text className="font-plight text-lg">Back to Login </Text>
-        <Link href="/login">
+        <Text className="font-plight text-lg">Back to Sign In </Text>
+        <Link href="/sign-in">
           <Text className="text-violet-500 font-pregular text-lg">
             click here!{" "}
           </Text>

@@ -74,7 +74,7 @@ export const handleRegister = async (
             value,
         });
         Alert.alert("Success", response.data.message);
-        router.push("/login");
+        router.push("/sign-in");
     } catch (error) {
         Alert.alert("Error", error.response?.data?.message || "Failed to register")
     }

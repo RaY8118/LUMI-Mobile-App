@@ -21,7 +21,7 @@ const Profile = () => {
       await SecureStore.deleteItemAsync("token");
       setUser(null); // Trigger conditional rendering in the layout
       Alert.alert("Success", "Logout Successful");
-      router.replace("/login");
+      router.replace("/sign-in");
     } catch (error) {
       console.error("Logout failed:", error);
     }

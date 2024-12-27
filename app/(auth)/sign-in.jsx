@@ -4,13 +4,10 @@ import React, { useState, useEffect } from "react";
 import { Link, router } from "expo-router";
 import images from "../../constants/images";
 import { Icon } from "@/constants/Icons";
-import {
-  handleLogin,
-  authenticateAndAutofill,
-  autofill,
-} from "../../services/authService";
+import { handleLogin, authenticateAndAutofill } from "@/services/authService";
 import { useUser } from "@/contexts/userContext";
-const Login = () => {
+import CustomInput from "@/components/CustomInput";
+const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -46,7 +43,7 @@ const Login = () => {
         />
       </View>
       <Text className="text-5xl py-2 mb-3 text-center font-pbold text-custom-tertiary">
-        Login
+        Sign In
       </Text>
       <Text className="text-2xl py-3 mb-4 text-center font-pmedium text-custom-tertiary">
         Sign in to continue
@@ -54,8 +51,7 @@ const Login = () => {
 
       <View className="flex-row items-center p-4">
         <Icon name="email" size={32} color="black" library="Fontisto" />
-        <TextInput
-          className="h-12 flex-1 border-2 border-black px-3 rounded-3xl bg-white font-pmedium ml-4"
+        <CustomInput
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -65,8 +61,7 @@ const Login = () => {
       <View className="flex-row items-center p-4">
         <Icon name="password" size={32} color="black" library="MaterialIcons" />
         <View className="flex-row items-center flex-1 ml-4">
-          <TextInput
-            className="h-12 flex-1 border-2 border-black px-3 rounded-3xl bg-white font-pmedium"
+          <CustomInput
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
@@ -106,10 +101,8 @@ const Login = () => {
 
       <View className="mt-4 flex-row justify-center items-center">
         <Text className="font-plight text-lg">Don't have an account? </Text>
-        <Link href="/register">
-          <Text className="text-violet-500 font-pregular text-lg">
-            Register
-          </Text>
+        <Link href="/sign-up">
+          <Text className="text-violet-500 font-pregular text-lg">Sign Up</Text>
         </Link>
       </View>
       <View className="mt-4 flex-row justify-center items-center">
@@ -124,4 +117,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignIn;

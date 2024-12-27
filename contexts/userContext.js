@@ -28,12 +28,12 @@ export const UserProvider = ({ children }) => {
                 } else {
                     console.error('Failed to fetch user data', response.data.message);
                     Alert.alert("Error", response.data.message);
-                    router.push('/login');
+                    router.push('/sign-in');
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 Alert.alert("Error", "Failed to fetch user data.");
-                router.push('/login');
+                router.push('/sign-in');
             } finally {
                 setIsLoading(false);
             }
