@@ -8,7 +8,7 @@ const TabsLayout = () => {
       <StatusBar backgroundColor="" style="dark" />
       <Tabs>
         <Tabs.Screen
-          name="main"
+          name="reminders"
           options={({ navigation }) => ({
             headerTitle: "Reminders",
             title: "Reminders",

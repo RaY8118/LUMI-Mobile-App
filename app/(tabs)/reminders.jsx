@@ -7,14 +7,18 @@ import {
   Alert,
 } from "react-native";
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import * as SecureStore from "expo-secure-store";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import AddModalComponent from "../../components/AddModalComponent";
 import EditModalComponent from "../../components/EditModalComponent";
 import * as Notifications from "expo-notifications"; // Added for notifications
 import * as Speech from "expo-speech"; // Added for speech
 import { Icon } from "@/constants/Icons";
+import { useUser } from "@/contexts/userContext";
+import {
+  deleteReminder,
+  fetchReminders,
+  postReminder,
+  updateReminder,
+} from "@/services/remindersService";
 // Notification handler setup
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -24,7 +28,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const Main = () => {
+const Reminders = () => {
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,32 +43,16 @@ const Main = () => {
   const [status, setStatus] = useState("pending");
   const [isUrgent, setIsUrgent] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   const [expoPushToken, setExpoPushToken] = useState(""); // Added for push token
   const [notification, setNotification] = useState(undefined); // Added for notification
   const notificationListener = useRef(); // Added for notification listener
   const responseListener = useRef(); // Added for response listener
-
-  const getUserIdFromToken = async () => {
-    try {
-      const storedToken = await SecureStore.getItemAsync("token");
-      if (storedToken) {
-        const decodedToken = jwtDecode(storedToken);
-        return decodedToken.sub.userId;
-      } else {
-        setError("No token found.");
-        return null;
-      }
-    } catch (error) {
-      setError("Error decoding token: " + error.message);
-      return null;
-    }
-  };
+  const { user } = useUser();
+  const userId = user?.userId;
 
   const fetchUserData = async () => {
-    const userId = await getUserIdFromToken();
     if (userId) {
-      fetchReminders(userId);
+      fetchReminders(userId, setReminders, setError, setLoading, setRefreshing);
     } else {
       setLoading(false);
     }
@@ -72,7 +60,7 @@ const Main = () => {
 
   useEffect(() => {
     fetchUserData();
-  }, [apiUrl]);
+  }, [userId]);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(
@@ -134,235 +122,72 @@ const Main = () => {
     }
   };
 
-  const fetchReminders = async (userId) => {
-    try {
-      const response = await axios.get(`${apiUrl}/patient/reminders`, {
-        params: { userId },
-        headers: { "Content-Type": "application/json" },
-      });
+  async function registerForPushNotificationsAsync() {
+    let token = null;
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
 
-      if (response.data.status === "success") {
-        if (response.data.reminders.length > 0) {
-          setReminders(response.data.reminders);
-          setError(null);
-        } else {
-          setReminders([]);
-          setError("No reminders for this user.");
-        }
-      } else {
-        setError(response.data.message || "Unexpected response from server");
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 500) {
-        setError("Internal server error: " + error.response.data.error);
-      } else {
-        setError("Error fetching reminders: " + error.message);
-      }
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
     }
-  };
+
+    if (finalStatus !== "granted") {
+      throw new Error("Failed to get push token for push notification!");
+    }
+
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    // console.log(token);
+
+    return token;
+  }
 
   const postReminders = async () => {
-    try {
-      const userId = await getUserIdFromToken();
-      if (!userId) {
-        Alert.alert("Error", "Failed to retrieve user ID");
-        return;
-      }
-
-      if (!title || !description || !date || !time) {
-        Alert.alert("Error", "All fields must be filled out correctly");
-        return;
-      }
-
-      // Ensure time is a string in "HH:mm" format
-      let timeString;
-      if (typeof time === "string" && time.includes(":")) {
-        timeString = time; // Use the string as is
-      } else {
-        timeString = new Date(time).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false, // Force 24-hour format
-        });
-      }
-
-      // Combine date and time into a single Date object
-      const reminderTime = new Date(date); // Create a Date object from the date
-      const [hours, minutes] = timeString.split(":"); // Extract hours and minutes
-      reminderTime.setHours(parseInt(hours), parseInt(minutes), 0, 0); // Set hours and minutes with 0 seconds and milliseconds
-
-      // Send the reminder data to the server
-      const response = await axios.post(`${apiUrl}/patient/reminders`, {
-        title,
-        description,
-        date: date.toISOString(),
-        time: timeString,
-        status,
-        isUrgent,
-        isImportant,
-        userId: userId,
-      });
-
-      // Schedule the notification for the reminder
-      await scheduleNotification(title, description, reminderTime); // Pass the reminder time as a Date object
-
-      // Clear form fields and reset state
-      setTitle("");
-      setDescription("");
-      setDate(new Date());
-      setTime(
-        new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false, // Force 24-hour format for consistency
-        })
-      );
-      setStatus("");
-      setIsUrgent(false);
-      setIsImportant(false);
-
-      // Notify success
-      // console.log("Response", response);
-      Alert.alert("Success", response.data.message);
-      onRefresh();
-      setAddModalVisible(false);
-    } catch (error) {
-      console.error("Error posting reminder", error);
-      Alert.alert("Error", "Failed to save the reminder. Please try again");
-    }
+    const reminderData = {
+      title,
+      description,
+      date,
+      time,
+      status,
+      isUrgent,
+      isImportant,
+      userId,
+      setTitle,
+      setDescription,
+      setDate,
+      setTime,
+      setStatus,
+      setIsUrgent,
+      setIsImportant,
+      setAddModalVisible,
+      onRefresh,
+    };
+    await postReminder(reminderData);
+    await scheduleNotification(title, description, new Date(date));
   };
 
-  const updateReminder = async () => {
-    if (!selectedReminder) {
-      Alert.alert("Error", "No reminder selected for update");
-      return;
-    }
+  const handleUpdateReminders = async () => {
+    const reminderData = {
+      selectedReminder,
+      userId,
+      title,
+      description,
+      time,
+      date,
+      status,
+      isUrgent,
+      isImportant,
+      onRefresh,
+      handleEditModalClose,
+      scheduleNotification,
+    };
 
-    try {
-      const userId = await getUserIdFromToken();
-      if (!userId) {
-        Alert.alert("Error", "Failed to retrieve user ID");
-        return;
-      }
-
-      if (!title || !description || !date || !time) {
-        Alert.alert("Error", "All fields must be filled out correctly");
-        return;
-      }
-
-      // Ensure time is a string in "HH:mm" format (24-hour format)
-      const timeString =
-        typeof time === "string"
-          ? time
-          : time.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            });
-
-      // Combine date and time into a single Date object
-      const reminderTime = new Date(date); // Use the date value
-      const [hours, minutes] = timeString.split(":"); // Assuming time is in "HH:mm" format
-      reminderTime.setHours(parseInt(hours), parseInt(minutes)); // Set hours and minutes
-
-      // Ensure the reminderTime is valid before proceeding
-      if (isNaN(reminderTime.getTime())) {
-        Alert.alert(
-          "Error",
-          "Invalid date and time. Please check your inputs."
-        );
-        return;
-      }
-      const response = await axios.put(
-        `${apiUrl}/patient/reminders/${selectedReminder.remId}`,
-        {
-          title,
-          description,
-          date: date.toISOString(),
-          time: timeString, // Ensure time is sent as a string
-          status,
-          isUrgent,
-          isImportant,
-          userId: userId,
-        }
-      );
-
-      // Check if the response is successful
-      if (response.status === 200) {
-        Alert.alert("Success", response.data.message);
-        onRefresh(); // Refresh the reminders list
-        handleEditModalClose(); // Close the edit modal
-        // Schedule the notification for the updated reminder
-        await scheduleNotification(title, description, reminderTime); // Pass the reminder time
-      } else {
-        Alert.alert(
-          "Error",
-          response.data.message || "Failed to update the reminder"
-        );
-      }
-    } catch (error) {
-      console.error("Error updating reminder", error);
-      Alert.alert("Error", "Failed to update the reminder. Please try again");
-    }
+    await updateReminder(reminderData);
   };
 
-  const deleteReminder = async (remId) => {
-    if (!remId) {
-      Alert.alert("Error", "Reminder ID is required");
-      return;
-    }
-    Alert.alert(
-      "Confirm Deletion",
-      "Are you sure you want to delete this reminder?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-          onPress: () => console.log("Deletion cancelled"),
-        },
-        {
-          text: "Yes",
-          onPress: async () => {
-            try {
-              const userId = await getUserIdFromToken();
-              const response = await axios.delete(
-                `${apiUrl}/patient/reminders/${userId}/${remId}`,
-                {
-                  userId,
-                }
-              );
-
-              if (response.status === 200) {
-                Alert.alert("Success", response.data.message);
-                onRefresh();
-              } else {
-                Alert.alert(
-                  "Error",
-                  response.data.message || "Failed to delete the reminder"
-                );
-              }
-            } catch (error) {
-              if (error.response && error.response.status === 404) {
-                Alert.alert("Error", "Reminder not found");
-              } else {
-                console.error(
-                  "Error deleting reminder",
-                  error.response.data.message
-                );
-                Alert.alert(
-                  "Error",
-                  "Failed to delete the reminder. Please try again"
-                );
-              }
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+  const handleDeleteReminder = async (remId) => {
+    await deleteReminder(userId, remId, onRefresh);
   };
 
   const onRefresh = useCallback(() => {
@@ -393,7 +218,7 @@ const Main = () => {
     setDescription("");
     setDate(new Date());
     setTime(new Date());
-    setStatus("");
+    setStatus("pending");
     setIsUrgent(null);
     setIsImportant(null);
     setSelectedReminder(null);
@@ -486,7 +311,7 @@ const Main = () => {
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => deleteReminder(reminder.remId)}
+                  onPress={() => handleDeleteReminder(reminder.remId)}
                   className="absolute right-4 bottom-1"
                 >
                   <Icon
@@ -537,7 +362,7 @@ const Main = () => {
             setIsUrgent={setIsUrgent}
             isImportant={isImportant}
             setIsImportant={setIsImportant}
-            onSave={updateReminder}
+            onSave={handleUpdateReminders}
           />
         </View>
       </ScrollView>
@@ -558,24 +383,4 @@ const Main = () => {
   );
 };
 
-async function registerForPushNotificationsAsync() {
-  let token = null;
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-
-  if (existingStatus !== "granted") {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
-
-  if (finalStatus !== "granted") {
-    throw new Error("Failed to get push token for push notification!");
-  }
-
-  token = (await Notifications.getExpoPushTokenAsync()).data;
-  // console.log(token);
-
-  return token;
-}
-
-export default Main;
+export default Reminders;

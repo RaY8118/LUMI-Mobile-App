@@ -15,7 +15,7 @@ const HomeScreen = () => {
         if (token) {
           const decodedToken = jwtDecode(token);
           if (decodedToken.sub.userId) {
-            router.replace("/main");
+            router.replace("/reminders");
           } else {
             router.replace("/sign-in");
           }

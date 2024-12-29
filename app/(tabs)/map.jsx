@@ -34,7 +34,7 @@ const Map = () => {
   // Function to compare current location with the saved location
   const compareLocations = (currentLocation) => {
     if (!savedLocation) {
-      Alert.alert("No Home Location", "Please save your home location first.");
+      setErrorMsg("No Home Location", "Please save your home location first.");
       return;
     }
     const distance = getDistanceFromLatLonInMeters(
@@ -147,7 +147,7 @@ const Map = () => {
   const handleRefresh = async () => {
     try {
       setErrorMsg(null);
-      Alert.alert("Refresh", "Refreshing, please wait...");
+      setErrorMsg("Refreshing, please wait...");
       const homeLocation = await fetchSavedLocation(userId, setErrorMsg);
       setSavedLocation(homeLocation);
       const currentCoords = await getCurrentCoords();
@@ -161,6 +161,10 @@ const Map = () => {
       console.error(error.message);
     }
   };
+
+  useEffect(() => {
+    handleRefresh();
+  }, []);
 
   return (
     <View className="flex justify-start items-center p-2">
