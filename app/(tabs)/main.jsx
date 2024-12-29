@@ -136,9 +136,12 @@ const Main = () => {
 
   const fetchReminders = async (userId) => {
     try {
-      const response = await axios.get(`${apiUrl}/reminders?userId=${userId}`);
+      const response = await axios.get(`${apiUrl}/patient/reminders`, {
+        params: { userId },
+        headers: { "Content-Type": "application/json" },
+      });
 
-      if (response.status === 200 && response.data.status === "success") {
+      if (response.data.status === "success") {
         if (response.data.reminders.length > 0) {
           setReminders(response.data.reminders);
           setError(null);
@@ -146,18 +149,12 @@ const Main = () => {
           setReminders([]);
           setError("No reminders for this user.");
         }
-      } else if (response.status === 204) {
-        setReminders([]);
-        setError("No reminders for this user.");
       } else {
         setError(response.data.message || "Unexpected response from server");
       }
     } catch (error) {
       if (error.response && error.response.status === 500) {
-        setError(
-          "Internal server error: " +
-            (error.response.data.details || "An unexpected error occurred")
-        );
+        setError("Internal server error: " + error.response.data.error);
       } else {
         setError("Error fetching reminders: " + error.message);
       }
@@ -198,11 +195,11 @@ const Main = () => {
       reminderTime.setHours(parseInt(hours), parseInt(minutes), 0, 0); // Set hours and minutes with 0 seconds and milliseconds
 
       // Send the reminder data to the server
-      const response = await axios.post(`${apiUrl}/reminders`, {
+      const response = await axios.post(`${apiUrl}/patient/reminders`, {
         title,
         description,
         date: date.toISOString(),
-        time: timeString, // Send time as "HH:mm"
+        time: timeString,
         status,
         isUrgent,
         isImportant,
@@ -228,7 +225,7 @@ const Main = () => {
       setIsImportant(false);
 
       // Notify success
-      console.log("Response", response);
+      // console.log("Response", response);
       Alert.alert("Success", response.data.message);
       onRefresh();
       setAddModalVisible(false);
@@ -279,18 +276,19 @@ const Main = () => {
         );
         return;
       }
-
-      const response = await axios.put(`${apiUrl}/reminders`, {
-        remId: selectedReminder.remId,
-        title,
-        description,
-        date: date.toISOString(),
-        time: timeString, // Ensure time is sent as a string
-        status,
-        isUrgent,
-        isImportant,
-        userId: userId,
-      });
+      const response = await axios.put(
+        `${apiUrl}/patient/reminders/${selectedReminder.remId}`,
+        {
+          title,
+          description,
+          date: date.toISOString(),
+          time: timeString, // Ensure time is sent as a string
+          status,
+          isUrgent,
+          isImportant,
+          userId: userId,
+        }
+      );
 
       // Check if the response is successful
       if (response.status === 200) {
@@ -329,8 +327,12 @@ const Main = () => {
           text: "Yes",
           onPress: async () => {
             try {
+              const userId = await getUserIdFromToken();
               const response = await axios.delete(
-                `${apiUrl}/reminders/${remId}`
+                `${apiUrl}/patient/reminders/${userId}/${remId}`,
+                {
+                  userId,
+                }
               );
 
               if (response.status === 200) {
@@ -346,7 +348,10 @@ const Main = () => {
               if (error.response && error.response.status === 404) {
                 Alert.alert("Error", "Reminder not found");
               } else {
-                console.error("Error deleting reminder", error);
+                console.error(
+                  "Error deleting reminder",
+                  error.response.data.message
+                );
                 Alert.alert(
                   "Error",
                   "Failed to delete the reminder. Please try again"
@@ -568,7 +573,7 @@ async function registerForPushNotificationsAsync() {
   }
 
   token = (await Notifications.getExpoPushTokenAsync()).data;
-  console.log(token);
+  // console.log(token);
 
   return token;
 }

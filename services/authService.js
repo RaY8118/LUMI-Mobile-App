@@ -7,7 +7,7 @@ const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 // Funtion to handle the logging of user
 export const handleLogin = async (email, password, router, refetch) => {
     try {
-        const response = await axios.post(`${apiUrl}/login`, {
+        const response = await axios.post(`${apiUrl}/sign-in`, {
             email,
             password,
         });
@@ -66,7 +66,7 @@ export const handleRegister = async (
     router
 ) => {
     try {
-        const response = await axios.post(`${apiUrl}/register`, {
+        const response = await axios.post(`${apiUrl}/sign-up`, {
             name,
             email,
             mobile,
