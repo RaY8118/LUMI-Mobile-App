@@ -2,7 +2,6 @@ import {
   View,
   Text,
   Alert,
-  TouchableOpacity,
   FlatList,
   SafeAreaView,
   ActivityIndicator,

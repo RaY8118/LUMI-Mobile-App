@@ -19,7 +19,8 @@ const Map = () => {
   const [isSafe, setIsSafe] = useState(null);
   const [savedLocation, setSavedLocation] = useState(null);
   const [previousLocation, setPreviousLocation] = useState(null);
-
+  const [address, setAddress] = useState(null);
+  const [distance, setDistance] = useState(0);
   const shouldSaveLocation = (currentLocation) => {
     if (!previousLocation) return true;
 
@@ -29,12 +30,13 @@ const Map = () => {
       previousLocation.latitude,
       previousLocation.longitude
     );
+    setDistance(distance);
     return distance > 50;
   };
   // Function to compare current location with the saved location
   const compareLocations = (currentLocation) => {
     if (!savedLocation) {
-      setErrorMsg("No Home Location", "Please save your home location first.");
+      setErrorMsg("No Home Location, Please save your home location first.");
       return;
     }
     const distance = getDistanceFromLatLonInMeters(
@@ -47,10 +49,8 @@ const Map = () => {
     if (distance > 2000) {
       Alert.alert("Warning", "You are outside the safe area!");
       setIsSafe(false);
-      console.log(isSafe);
     } else {
       setIsSafe(true);
-      console.log(isSafe);
     }
     // Save current location to database only if it has changed
     if (shouldSaveLocation(currentLocation)) {
@@ -152,6 +152,7 @@ const Map = () => {
       setSavedLocation(homeLocation);
       const currentCoords = await getCurrentCoords();
       setLocation(currentCoords);
+      await locationAddress();
       if (shouldSaveLocation(currentCoords)) {
         saveCurrLocation(setErrorMsg);
         setPreviousLocation(currentCoords); // Update previous location
@@ -164,10 +165,27 @@ const Map = () => {
 
   useEffect(() => {
     handleRefresh();
+    locationAddress();
   }, []);
 
+  const locationAddress = async () => {
+    const { latitude, longitude } = await getCurrentCoords();
+    try {
+      const geocode = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+      if (geocode.length > 0) {
+        const { formattedAddress } = geocode[0];
+        setAddress(`${formattedAddress}`);
+      }
+    } catch (error) {
+      setErrorMsg(error);
+    }
+  };
+
   return (
-    <View className="flex justify-start items-center p-2">
+    <View className="flex justify-start items-center p-2 bg-custom-white border border-black">
       {/* Message Section */}
       <View className="flex justify-start items-center">
         {errorMsg ? (
@@ -186,10 +204,16 @@ const Map = () => {
           </Text>
         )}
       </View>
-
+      <View className="flex justify-start items-start p-2 border-2 border-black rounded-lg bg-slate-200 shadow-black shadow-lg overflow-hidden">
+        <Text className="text-lg">You are currently here</Text>
+        <Text>{address}</Text>
+        <Text className="text-green-700">
+          {String(distance).slice(0, 1)} meters away from your home
+        </Text>
+      </View>
       {/* Map Section */}
       {location && (
-        <View className="w-full h-5/6 border-2 border-black m-3 shadow-lg shadow-black overflow-hidden rounded-3xl">
+        <View className="w-full h-3/4 border-2 border-black m-3 mb-2 shadow-lg shadow-black overflow-hidden rounded-3xl">
           <MapView
             className="w-full h-full"
             initialRegion={{
@@ -235,6 +259,13 @@ const Map = () => {
         <CustomButton
           onPress={handleSaveLocation}
           bgcolor="bg-green-400"
+          name="add-location-alt"
+          library="MaterialIcons"
+          size={48}
+        />
+        <CustomButton
+          onPress={locationAddress}
+          bgcolor="bg-cyan-400"
           name="add-location-alt"
           library="MaterialIcons"
           size={48}

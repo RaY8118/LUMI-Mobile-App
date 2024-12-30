@@ -9,10 +9,13 @@ const UserContext = createContext(null);
 export const UserProvider = ({ children }) => {
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
     const [user, setUser] = useState(null);
+    const [role, setRole] = useState("")
+    const [authState, setAuthState] = useState('unauthenticated');
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
     const fetchUserData = async () => {
+        setAuthState('authenticating');
         const storedToken = await SecureStore.getItemAsync('token');
 
         if (storedToken) {
@@ -25,20 +28,25 @@ export const UserProvider = ({ children }) => {
 
                 if (response.data.status === 'success') {
                     setUser(response.data.userData);
+                    setRole(response.data.userData.role)
+                    setAuthState('authenticated');
                 } else {
                     console.error('Failed to fetch user data', response.data.message);
                     Alert.alert("Error", response.data.message);
+                    setAuthState('unauthenticated');
                     router.push('/sign-in');
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 Alert.alert("Error", "Failed to fetch user data.");
+                setAuthState('unauthenticated');
                 router.push('/sign-in');
             } finally {
                 setIsLoading(false);
             }
         } else {
             console.log('No token found');
+            setAuthState('unauthenticated');
             setIsLoading(false);
         }
     };
@@ -52,8 +60,15 @@ export const UserProvider = ({ children }) => {
         await fetchUserData();
     };
 
+    const signOut = async () => {
+        await SecureStore.deleteItemAsync('token');
+        setUser(null);
+        setAuthState('unauthenticated');
+        router.push('/sign-in');
+    };
+
     return (
-        <UserContext.Provider value={{ user, setUser, isLoading, refetch, fetchUserData }}>
+        <UserContext.Provider value={{ user, setUser, role, setRole, authState, setAuthState, isLoading, refetch, signOut }}>
             {children}
         </UserContext.Provider>
     );
