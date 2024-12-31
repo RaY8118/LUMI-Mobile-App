@@ -261,14 +261,14 @@ const Reminders = () => {
   return (
     <>
       <ScrollView
-        className="border border-black bg-whiete rounded-lg"
+        className="border border-black bg-white rounded-lg"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         <View className="flex-row flex-wrap justify-center items-center">
           <View className="pt-2">
-            <Text className="text-3xl m-4 mt-6 font-ps2pregular">
+            <Text className="text-3xl m-4 mt-2 font-ps2pregular">
               Reminders
             </Text>
           </View>
