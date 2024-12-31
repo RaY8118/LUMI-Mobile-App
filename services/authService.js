@@ -18,7 +18,7 @@ export const handleLogin = async (email, password, router, refetch) => {
         await SecureStore.setItemAsync("email", email);
         await SecureStore.setItemAsync("password", password);
         Alert.alert("Success", response.data.message);
-        router.push("/reminders");
+        router.replace("/reminders");
         await refetch()
     } catch (error) {
         if (error.response && error.response.data) {

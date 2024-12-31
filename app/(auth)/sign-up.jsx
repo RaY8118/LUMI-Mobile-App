@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter, Link } from "expo-router";
 import DropDownPicker from "react-native-dropdown-picker";
 import images from "../../constants/images";
-import { handleRegister } from "../../services/authService";
+import { handleRegister } from "@/services/authService";
 import { Icon } from "@/constants/Icons";
 import CustomInput from "@/components/CustomInput";
 const Register = () => {
@@ -26,7 +26,7 @@ const Register = () => {
   };
 
   return (
-    <ScrollView className="flex-1 p-6 mt-14 border border-x-2 border-violet-400 bg-custom-primary rounded-xl">
+    <ScrollView className="flex-1 p-6 mt-14 border border-x-2 border-black bg-custom-primary rounded-xl">
       <View>
         <Image
           source={images.registerImg}

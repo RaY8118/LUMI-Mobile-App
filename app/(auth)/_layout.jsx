@@ -5,11 +5,20 @@ import { Stack } from "expo-router";
 const App = () => {
   return (
     <>
-      <StatusBar backgroundColor="" style="dark" hidden={false} />
+      <StatusBar style="dark" hidden={false} />
       <Stack>
-        <Stack.Screen name="sign-up" options={{ headerShown: false }} />
-        <Stack.Screen name="sign-in" options={{ headerShown: false }} />
-        <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="sign-up"
+          options={{ headerShown: false, animation: "fade_from_bottom" }}
+        />
+        <Stack.Screen
+          name="sign-in"
+          options={{ headerShown: false, animation: "fade_from_bottom" }}
+        />
+        <Stack.Screen
+          name="forgot-password"
+          options={{ headerShown: false, animation: "ios" }}
+        />
       </Stack>
     </>
   );

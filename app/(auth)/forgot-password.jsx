@@ -9,7 +9,7 @@ const ForgotPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <SafeAreaView className="flex-1 justify-center p-6 bg-custom-primary rounded-xl">
+    <SafeAreaView className="flex-1 justify-center p-6 pt-2 mt-14 border border-x-2 bg-custom-primary rounded-xl">
       <View>
         <Text className="text-5xl py-2 mb-3 text-center font-pbold text-custom-tertiary">
           Reset Password

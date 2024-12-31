@@ -42,10 +42,10 @@ const SignIn = () => {
           className="self-center mb-4 w-3/4 md:w-1/2" // Responsive width
         />
       </View>
-      <Text className="text-5xl py-2 mb-3 text-center font-pbold text-custom-tertiary">
+      <Text className="text-5xl py-2 mb-3 text-center font-bold text-custom-tertiary">
         Sign In
       </Text>
-      <Text className="text-2xl py-3 mb-4 text-center font-pmedium text-custom-tertiary">
+      <Text className="text-2xl py-3 mb-4 text-center font-medium text-custom-tertiary">
         Sign in to continue
       </Text>
 
