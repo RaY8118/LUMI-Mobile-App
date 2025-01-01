@@ -54,7 +54,7 @@ const Map = () => {
     }
     // Save current location to database only if it has changed
     if (shouldSaveLocation(currentLocation)) {
-      saveCurrLocation(setErrorMsg);
+      saveCurrLocation(userId, setErrorMsg);
       setPreviousLocation(currentLocation); // Update previous location
     }
   };
@@ -66,7 +66,7 @@ const Map = () => {
 
       // Save the fetched location to the database if needed
       if (shouldSaveLocation(coords)) {
-        saveCurrLocation(setErrorMsg);
+        saveCurrLocation(userId, setErrorMsg);
         setPreviousLocation(coords); // Update previous location
       }
     } catch (error) {
@@ -131,7 +131,7 @@ const Map = () => {
           text: "Yes",
           onPress: async () => {
             try {
-              const successMessage = await saveLocation(setErrorMsg);
+              const successMessage = await saveLocation(userId, setErrorMsg);
               Alert.alert("Success", successMessage);
             } catch (error) {
               console.error(error.message);
@@ -154,8 +154,8 @@ const Map = () => {
       setLocation(currentCoords);
       await locationAddress();
       if (shouldSaveLocation(currentCoords)) {
-        saveCurrLocation(setErrorMsg);
-        setPreviousLocation(currentCoords); // Update previous location
+        saveCurrLocation(userId, setErrorMsg);
+        setPreviousLocation(currentCoords);
       }
       setErrorMsg(null);
     } catch (error) {
@@ -171,13 +171,15 @@ const Map = () => {
   const locationAddress = async () => {
     const { latitude, longitude } = await getCurrentCoords();
     try {
+      setErrorMsg("Updating your current address");
       const geocode = await Location.reverseGeocodeAsync({
         latitude,
         longitude,
       });
       if (geocode.length > 0) {
         const { formattedAddress } = geocode[0];
-        setAddress(`${formattedAddress}`);
+        setAddress(formattedAddress);
+        setErrorMsg("");
       }
     } catch (error) {
       setErrorMsg(error);
@@ -204,7 +206,7 @@ const Map = () => {
           </Text>
         )}
       </View>
-      <View className="flex justify-start items-start p-2 border-2 border-black rounded-lg bg-slate-200 shadow-black shadow-lg overflow-hidden">
+      <View className="flex justify-start items-start p-2 border-2 h-24 min-h-24 w-full min-w-full border-black rounded-lg bg-slate-200 shadow-black shadow-lg overflow-hidden">
         <Text className="text-lg">You are currently here</Text>
         <Text>{address}</Text>
         <Text className="text-green-700">
@@ -213,7 +215,7 @@ const Map = () => {
       </View>
       {/* Map Section */}
       {location && (
-        <View className="w-full h-3/4 border-2 border-black m-3 mb-2 shadow-lg shadow-black overflow-hidden rounded-3xl">
+        <View className="w-full h-3/4 min-h-3/4 border-2 border-black m-3 mb-2 shadow-lg shadow-black overflow-hidden rounded-3xl">
           <MapView
             className="w-full h-full"
             initialRegion={{
@@ -247,7 +249,7 @@ const Map = () => {
           </MapView>
         </View>
       )}
-      <View className="items-center flex-row justify-evenly w-full">
+      <View className="items-center flex-row justify-evenly w-full h-24 min-h-24">
         <CustomButton
           onPress={handleRefresh}
           bgcolor="bg-slate-200"

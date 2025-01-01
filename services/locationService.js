@@ -1,8 +1,5 @@
-import * as SecureStore from "expo-secure-store";
 import * as Location from "expo-location";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 // Function to calculate distance between two coordinates (Haversine formula)
@@ -63,16 +60,9 @@ export const fetchSavedLocation = async (userId, setErrorMsg) => {
 
 
 // Function to save the current location as a safe location
-export const saveLocation = async (setErrorMsg) => {
+export const saveLocation = async (userId, setErrorMsg) => {
     try {
         const coords = await getCurrentCoords();
-        const token = await SecureStore.getItemAsync("token");
-
-        if (!token) throw new Error("User not logged in");
-
-        const decodedToken = jwtDecode(token);
-        const userId = decodedToken.sub.userId;
-
         const response = await axios.post(`${apiUrl}/safe-location`, {
             userId,
             coords,
@@ -94,16 +84,9 @@ export const saveLocation = async (setErrorMsg) => {
 
 };
 
-export const saveCurrLocation = async (setErrorMsg) => {
+export const saveCurrLocation = async (userId, setErrorMsg) => {
     try {
         const coords = await getCurrentCoords();
-        const token = await SecureStore.getItemAsync("token");
-
-        if (!token) throw new Error("User not logged in");
-
-        const decodedToken = jwtDecode(token);
-        const userId = decodedToken.sub.userId;
-
         const response = await axios.post(`${apiUrl}/curr-location`, {
             userId,
             coords,
@@ -124,3 +107,83 @@ export const saveCurrLocation = async (setErrorMsg) => {
 
 
 };
+
+
+export const getPatientCurrentLocation = async (CGId, PATId, setLocation, setErrorMsg) => {
+    try {
+        if (!CGId || !PATId) {
+            const message = "Cargiver ID or Patient ID is not available"
+            setErrorMsg(message)
+            throw new Error(message)
+        }
+
+        const response = await axios.get(`${apiUrl}/curr-location?CGId=${CGId}&PATId=${PATId}`)
+
+        if (response.data?.status === "success") {
+            setLocation(response.data.coords)
+        } else {
+            const message = response.data?.message
+            setErrorMsg(message)
+            throw new Error(message)
+        }
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message
+        setErrorMsg(errorMessage)
+        throw new Error(errorMessage)
+    }
+}
+
+
+
+export const getPatientCurrentAddress = async (
+    CGId,
+    PATId,
+    setLocation,
+    setAddress,
+    setErrorMsg
+) => {
+    try {
+        if (!CGId || !PATId) {
+            const message = "Caregiver ID or Patient ID is not available";
+            setErrorMsg(message);
+            throw new Error(message);
+        }
+
+        const response = await axios.get(
+            `${apiUrl}/curr-location?CGId=${CGId}&PATId=${PATId}`
+        );
+
+        if (response.data?.status === "success") {
+            const patientCoords = response.data.coords;
+            setLocation(patientCoords);
+
+            const patientLocLatitude = patientCoords?.latitude;
+            const patientLocLongitude = patientCoords?.longitude;
+
+            if (patientLocLatitude && patientLocLongitude) {
+                const geocode = await Location.reverseGeocodeAsync({
+                    latitude: patientLocLatitude,
+                    longitude: patientLocLongitude,
+                });
+
+                if (geocode.length > 0) {
+                    const { formattedAddress } = geocode[0];
+                    setAddress(formattedAddress);
+                }
+            }
+
+            // Clear the error message after successful fetch
+            setErrorMsg("");
+        } else {
+            const errorMessage = response.data.message || "Failed to fetch data.";
+            setErrorMsg(errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        const errorMessage = error.message || "An unknown error occurred.";
+        setErrorMsg(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+

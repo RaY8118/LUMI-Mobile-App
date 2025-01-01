@@ -36,6 +36,7 @@ const CgReminders = () => {
   const CGId = user?.userId;
   const patient = user?.patient?.[0] || null;
   const PATId = patient?.userId || null;
+  const PATName = patient?.name || null;
 
   const fetchPatientData = async () => {
     if (CGId && PATId) {
@@ -177,7 +178,7 @@ const CgReminders = () => {
       >
         <View className="flex-row flex-wrap justify-center items-center">
           <View className="pt-2">
-            <Text className="text-3xl m-4 mt-2">Patients Reminders</Text>
+            <Text className="text-3xl m-4 mt-2">{PATName} Reminders</Text>
           </View>
         </View>
         <View className="border border-black rounded-lg bg-white p-2 grid grid-cols-2 gap-2">
