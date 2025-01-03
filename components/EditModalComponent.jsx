@@ -48,8 +48,18 @@ const EditModalComponent = ({
     setDate(date);
     setIsUrgent(isUrgent);
     setIsImportant(isImportant);
-    setTime(time);
+    if (typeof time === "string" && time.includes(":")) {
+      const [hours, minutes] = time.split(":").map(Number);
+      const dateForTime = new Date(date || Date.now()); 
+      dateForTime.setHours(hours, minutes, 0, 0); 
+      setTime(dateForTime); 
+    } else if (time instanceof Date && !isNaN(time)) {
+      setTime(time); 
+    } else {
+      setTime(new Date()); 
+    }
   }, [title, description, date, status, isUrgent, isImportant, time]);
+  
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;

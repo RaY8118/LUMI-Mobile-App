@@ -4,6 +4,20 @@ import { Alert } from 'react-native';
 const apiUrl = process.env.EXPO_PUBLIC_API_URL
 
 
+export const sendTokenToBackend = async (userId, token) => {
+    try {
+        const response = await axios.post(`${apiUrl}/store-token`, {
+            token,
+            userId
+        })
+        console.log("Token send to backend: ", response.data.message);
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+
 export const fetchReminders = async (userId, setReminders, setError, setLoading, setRefreshing) => {
     try {
         const response = await axios.get(`${apiUrl}/patient/reminders`, {
@@ -65,38 +79,34 @@ export const postReminder = async ({
             return;
         }
 
-        // Ensure time is a string in "HH:mm" format
         let timeString;
         if (typeof time === "string" && time.includes(":")) {
-            timeString = time; // Use the string as is
+            timeString = time; 
         } else {
             timeString = new Date(time).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
-                hour12: false, // Force 24-hour format
+                hour12: false,
             });
         }
 
-        // Combine date and time into a single Date object
-        const reminderTime = new Date(date); // Create a Date object from the date
-        const [hours, minutes] = timeString.split(":"); // Extract hours and minutes
-        reminderTime.setHours(parseInt(hours), parseInt(minutes), 0, 0); // Set hours and minutes with 0 seconds and milliseconds
+        const formattedDate = new Date(date).toISOString().split("T")[0];
 
         const reminderData = {
             title,
             description,
-            date,
+            date: formattedDate, 
+            time: timeString,   
             status,
-            time: timeString, // Use formatted timeString
             isUrgent,
             isImportant,
             userId,
         };
 
-        // Make the API request to save the reminder
+
         const response = await axios.post(`${apiUrl}/patient/reminders`, reminderData);
 
-        // Clear form fields and reset state
+      
         setTitle("");
         setDescription("");
         setDate(new Date());
@@ -104,7 +114,7 @@ export const postReminder = async ({
             new Date().toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
-                hour12: false, // Force 24-hour format for consistency
+                hour12: false, 
             })
         );
         setStatus("pending");
@@ -118,7 +128,7 @@ export const postReminder = async ({
 
         return response;
     } catch (error) {
-        console.error("Error posting reminder", error.response.data.message);
+        console.error("Error posting reminder: ", error.response.data.error);
         Alert.alert("Error", "Failed to save the reminder. Please try again");
     }
 };
@@ -137,14 +147,13 @@ export const updateReminder = async ({
     isImportant,
     onRefresh,
     handleEditModalClose,
-    scheduleNotification,
 }) => {
-    if (!selectedReminder) {
-        Alert.alert("Error", "No reminder selected for update");
-        return;
-    }
-
     try {
+        if (!selectedReminder) {
+            Alert.alert("Error", "No reminder selected for update");
+            return;
+        }
+
         if (!userId) {
             Alert.alert("Error", "Failed to retrieve user ID");
             return;
@@ -155,61 +164,48 @@ export const updateReminder = async ({
             return;
         }
 
-        // Ensure time is a string in "HH:mm" format (24-hour format)
-        const timeString =
-            typeof time === "string"
-                ? time
-                : time.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                });
-
-        // Combine date and time into a single Date object
-        const reminderTime = new Date(date); // Use the date value
-        const [hours, minutes] = timeString.split(":"); // Assuming time is in "HH:mm" format
-        reminderTime.setHours(parseInt(hours), parseInt(minutes)); // Set hours and minutes
-
-        // Ensure the reminderTime is valid before proceeding
-        if (isNaN(reminderTime.getTime())) {
-            Alert.alert(
-                "Error",
-                "Invalid date and time. Please check your inputs."
-            );
-            return;
+        let timeString;
+        if (typeof time === "string" && time.includes(":")) {
+            timeString = time;
+        } else {
+            timeString = new Date(time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false, 
+            });
         }
+        const formattedDate = new Date(date).toISOString().split("T")[0];
+        const reminderData = {
+            title,
+            description,
+            date: formattedDate, 
+            time: timeString,    
+            status,
+            isUrgent,
+            isImportant,
+            userId,
+        };
+
         const response = await axios.put(
             `${apiUrl}/patient/reminders/${selectedReminder.remId}`,
-            {
-                title,
-                description,
-                date: date.toISOString(),
-                time: timeString, // Ensure time is sent as a string
-                status,
-                isUrgent,
-                isImportant,
-                userId
-            }
+            reminderData
         );
 
-        // Check if the response is successful
         if (response.status === 200) {
             Alert.alert("Success", response.data.message);
-            onRefresh(); // Refresh the reminders list
-            handleEditModalClose(); // Close the edit modal
-            // Schedule the notification for the updated reminder
-            await scheduleNotification(title, description, reminderTime); // Pass the reminder time
+            onRefresh();
+            handleEditModalClose();
+
+
         } else {
-            Alert.alert(
-                "Error",
-                response.data.message || "Failed to update the reminder"
-            );
+            Alert.alert("Error", response.data.message || "Failed to update the reminder");
         }
     } catch (error) {
-        console.error("Error updating reminder", error);
-        Alert.alert("Error", "Failed to update the reminder. Please try again");
+        console.error("Error updating reminder: ", error.response?.data || error.message);
+        Alert.alert("Error", "Failed to update the reminder. Please try again.");
     }
 };
+
 
 export const deleteReminder = async (userId, remId, onRefresh) => {
     if (!remId) {
@@ -435,7 +431,7 @@ export const updatePatientReminder = async ({
         // Combine date and time into a single Date object
         const reminderTime = new Date(date); // Use the date value
         const [hours, minutes] = timeString.split(":"); // Assuming time is in "HH:mm" format
-        reminderTime.setHours(parseInt(hours), parseInt(minutes)); // Set hours and minutes
+        reminderTime.setHours(parseInt(hours), parseInt(minutes), 0, 0); // Set hours and minutes
 
         // Ensure the reminderTime is valid before proceeding
         if (isNaN(reminderTime.getTime())) {

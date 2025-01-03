@@ -18,6 +18,7 @@ import {
   fetchReminders,
   postReminder,
   updateReminder,
+  sendTokenToBackend,
 } from "@/services/remindersService";
 // Notification handler setup
 Notifications.setNotificationHandler({
@@ -97,28 +98,30 @@ const Reminders = () => {
   const scheduleNotification = async (
     reminderTitle,
     reminderBody,
+    reminderDate,
     reminderTime
   ) => {
-    const triggerDate = new Date(reminderTime); // Ensure it's a Date object
-    const now = new Date();
-
-    // Calculate the time difference in seconds
-    const timeDifference = (triggerDate.getTime() - now.getTime()) / 1000;
+    const triggerDate = new Date(reminderDate); // Ensure it's a Date object
+    triggerDate.setHours(
+      reminderTime.getHours(),
+      reminderTime.getMinutes(),
+      0,
+      0
+    );
 
     // Schedule the notification only if the time is in the future
-    if (timeDifference > 0) {
+    const trigger = triggerDate.getTime() - Date.now(); // Time in milliseconds
+    if (trigger > 0) {
       await Notifications.scheduleNotificationAsync({
         content: {
           title: reminderTitle,
           body: reminderBody,
-          data: { data: "goes here" },
         },
-        trigger: { seconds: timeDifference }, // Set the trigger to the calculated time difference
+        trigger: triggerDate,
       });
+      console.log("Notification scheduled!");
     } else {
-      console.warn(
-        "The reminder time is in the past. Notification not scheduled."
-      );
+      console.log("Selected time is in the past. Please choose a future time.");
     }
   };
 
@@ -138,9 +141,10 @@ const Reminders = () => {
     }
 
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    // console.log(token);
+    console.log(token);
+    setExpoPushToken(token);
 
-    return token;
+    await sendTokenToBackend(userId, token);
   }
 
   const postReminders = async () => {
@@ -164,7 +168,7 @@ const Reminders = () => {
       onRefresh,
     };
     await postReminder(reminderData);
-    await scheduleNotification(title, description, new Date(date));
+    await scheduleNotification(title, description, date, time);
   };
 
   const handleUpdateReminders = async () => {
@@ -180,9 +184,9 @@ const Reminders = () => {
       isImportant,
       onRefresh,
       handleEditModalClose,
-      scheduleNotification,
     };
 
+    await scheduleNotification(title, description, date, time);
     await updateReminder(reminderData);
   };
 

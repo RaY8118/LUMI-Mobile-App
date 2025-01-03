@@ -43,17 +43,15 @@ const AddModalComponent = ({
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
+    console.log(currentDate);
+    
   };
 
   const onTimeChange = (event, selectedTime) => {
-    const currentTime = selectedTime || time;
     setShowTimePicker(false);
-    // Ensure currentTime is a Date object
-    if (currentTime instanceof Date) {
-      setTime(currentTime);
-    } else {
-      setTime(new Date()); // Fallback to current time if not valid
-    }
+    if (selectedTime) setTime(selectedTime);
+    console.log(selectedTime);
+    
   };
 
   return (
