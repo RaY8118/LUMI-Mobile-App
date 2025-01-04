@@ -5,6 +5,7 @@ import {
   getCurrentCoords,
   saveLocation,
   saveCurrLocation,
+  sendLocationAlert,
 } from "@/services/locationService";
 import { View, Text, Alert } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
@@ -14,6 +15,8 @@ import CustomButton from "@/components/CustomButton";
 const Map = () => {
   const { user } = useUser();
   const userId = user?.userId;
+  const memberId = user?.members[0].userId;
+
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [isSafe, setIsSafe] = useState(null);
@@ -21,6 +24,7 @@ const Map = () => {
   const [previousLocation, setPreviousLocation] = useState(null);
   const [address, setAddress] = useState(null);
   const [distance, setDistance] = useState(0);
+
   const shouldSaveLocation = (currentLocation) => {
     if (!previousLocation) return true;
 
@@ -49,6 +53,7 @@ const Map = () => {
     if (distance > 2000) {
       Alert.alert("Warning", "You are outside the safe area!");
       setIsSafe(false);
+      sendLocationAlert(memberId);
     } else {
       setIsSafe(true);
     }
@@ -59,35 +64,44 @@ const Map = () => {
     }
   };
 
-  const fetchCurrentLocation = useCallback(async () => {
-    try {
-      const coords = await getCurrentCoords();
-      setLocation(coords);
-
-      // Save the fetched location to the database if needed
-      if (shouldSaveLocation(coords)) {
-        saveCurrLocation(userId, setErrorMsg);
-        setPreviousLocation(coords); // Update previous location
-      }
-    } catch (error) {
-      setErrorMsg(error.message);
-    }
-  }, []);
-  useEffect(() => {
-    fetchCurrentLocation();
-  }, [fetchCurrentLocation]);
 
   useEffect(() => {
-    const fetchLocationData = async () => {
+    // Consolidated function to fetch required data and handle refresh
+    const initializeData = async () => {
       try {
-        const homeLocation = await fetchSavedLocation(userId, setErrorMsg);
+        setErrorMsg("Initializing data, please wait...");
+
+        // Fetch saved location and current coordinates in parallel
+        const [homeLocation, currentCoords] = await Promise.all([
+          fetchSavedLocation(userId, setErrorMsg),
+          getCurrentCoords(),
+        ]);
+
+        // Update state with fetched data
         setSavedLocation(homeLocation);
+        setLocation(currentCoords);
+
+        // Optionally reverse geocode to get the address
+        const geocode = await Location.reverseGeocodeAsync(currentCoords);
+        if (geocode.length > 0) {
+          const { formattedAddress } = geocode[0];
+          setAddress(formattedAddress);
+        }
+
+        // Save current location if necessary
+        if (shouldSaveLocation(currentCoords)) {
+          saveCurrLocation(userId, setErrorMsg);
+          setPreviousLocation(currentCoords);
+        }
+
+        setErrorMsg(null); 
       } catch (error) {
         console.error(error.message);
+        setErrorMsg(error.message);
       }
     };
 
-    fetchLocationData();
+    initializeData(); // Call the function on component load
   }, [userId]);
 
   useEffect(() => {
@@ -145,28 +159,44 @@ const Map = () => {
   };
 
   const handleRefresh = async () => {
+    setErrorMsg("Refreshing, please wait...");
+  
     try {
-      setErrorMsg(null);
-      setErrorMsg("Refreshing, please wait...");
-      const homeLocation = await fetchSavedLocation(userId, setErrorMsg);
+      // Fetch saved location and current coordinates in parallel
+      const [homeLocation, currentCoords] = await Promise.all([
+        fetchSavedLocation(userId, setErrorMsg),
+        getCurrentCoords()
+      ]);
+  
+      // Update state with fetched data
       setSavedLocation(homeLocation);
-      const currentCoords = await getCurrentCoords();
       setLocation(currentCoords);
-      await locationAddress();
+  
+      // Reverse geocode the location to get the address
+      try {
+        setErrorMsg("Updating your current address...");
+        const geocode = await Location.reverseGeocodeAsync(currentCoords);
+        if (geocode.length > 0) {
+          const { formattedAddress } = geocode[0];
+          setAddress(formattedAddress);
+        }
+      } catch (error) {
+        console.warn("Failed to fetch address:", error.message);
+      }
+  
+      // Save the current location to the database if needed
       if (shouldSaveLocation(currentCoords)) {
         saveCurrLocation(userId, setErrorMsg);
         setPreviousLocation(currentCoords);
       }
-      setErrorMsg(null);
+  
+      setErrorMsg(null); // Clear error message
     } catch (error) {
-      console.error(error.message);
+      console.error("Failed to refresh data:", error.message);
+      setErrorMsg("Failed to refresh data. Please try again.");
     }
   };
-
-  useEffect(() => {
-    handleRefresh();
-    locationAddress();
-  }, []);
+  
 
   const locationAddress = async () => {
     const { latitude, longitude } = await getCurrentCoords();
@@ -272,6 +302,13 @@ const Map = () => {
           library="MaterialIcons"
           size={48}
         />
+        {/* <CustomButton
+          onPress={() => sendLocationAlert(userId)}
+          bgcolor="bg-orange-400"
+          name="add-location-alt"
+          library="MaterialIcons"
+          size={48}
+        /> */}
       </View>
     </View>
   );

@@ -187,3 +187,27 @@ export const getPatientCurrentAddress = async (
 };
 
 
+export const sendLocationAlert = async (userId) => {
+    try {
+        response = await axios(`${apiUrl}/get-user-token?userId=${userId}`)
+        const token = response.data.token
+        console.log(token);
+        if (token) {
+            try {
+                response = await axios.post("https://exp.host/--/api/v2/push/send", {
+                    to: token,
+                    title: "Important message",
+                    body: "Patient out of safe area",
+                    sound: "default"
+                })
+            }
+            catch (error) {
+                console.error(error)
+            }
+        }
+
+    } catch (error) {
+        console.log(error);
+
+    }
+}
