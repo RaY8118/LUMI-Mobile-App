@@ -46,9 +46,23 @@ export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition =
       let nameMessage;
       if (isFaceRecognition) {
         // Handle face recognition response
-        nameMessage = response.data.name && response.data.name.length > 0
-          ? `Identified Name: ${response.data.name.join(', ')}`
-          : "No faces found.";
+        if (response.data.name && response.data.name.length > 0) {
+          const userId = response.data.name[0]; // Assuming the userId is the first element in the array
+          nameMessage = `Identified User ID: ${userId}`;
+        
+          // Fetch additional info for the identified userId
+          const additionalInfo = await fetchAdditionalInfo(userId);
+          console.log(additionalInfo);
+          
+          if (additionalInfo) {
+            nameMessage += `\nName: ${additionalInfo[0].name}\nRelation: ${additionalInfo[0].relation}\nTagline: ${additionalInfo[0].tagline}\nTrigger Memory: ${additionalInfo[0].triggerMemory}`;
+          } else {
+            nameMessage += "\nNo additional info found.";
+          }
+        } else {
+          nameMessage = "No faces found.";
+        }
+        
       } else {
         // Handle object detection response
         nameMessage = response.data.name && response.data.name.length > 0
@@ -82,3 +96,19 @@ export const handleObjectDetection = async (cameraRef, setLoading) => {
     uploadImage(resizedUri, `${apiUrl}/obj-detection`, setLoading, false);
   }
 };
+
+
+export const fetchAdditionalInfo = async (userId) => {
+  try {
+    response = await axios.get(`${apiUrl}/get-additional-info?userId=${userId}`)
+    if (response.data.status === "success") {
+      const userInfo = response.data.userInfo
+      return userInfo
+    } else {
+      return "No additional information found"
+    }
+  } catch (error) {
+    console.error(error);
+
+  }
+}

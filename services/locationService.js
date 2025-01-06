@@ -189,7 +189,7 @@ export const getPatientCurrentAddress = async (
 
 export const sendLocationAlert = async (userId) => {
     try {
-        response = await axios(`${apiUrl}/get-user-token?userId=${userId}`)
+        response = await axios.get(`${apiUrl}/get-user-token?userId=${userId}`)
         const token = response.data.token
         console.log(token);
         if (token) {
