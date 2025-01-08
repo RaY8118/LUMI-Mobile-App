@@ -5,15 +5,42 @@ import {
   FlatList,
   SafeAreaView,
   ActivityIndicator,
+  Button,
 } from "react-native";
 import React from "react";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
 import { useUser } from "@/contexts/userContext";
 import CustomButton from "@/components/CustomButton";
+import * as ImagePicker from "expo-image-picker"
+import { uploadProfileImg } from "@/services/userService"
 const Profile = () => {
-  const { user, setUser, isLoading, refetch } = useUser(); // Access user from context
+  const { user, setUser, isLoading } = useUser(); // Access user from context
   const router = useRouter();
+  const userId = user?.userId
+  const familyId = user?.familyId
+
+  const selectImage = async (useLibrary) => {
+    let result;
+    if (useLibrary) {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 0.75
+      })
+    } else {
+      await ImagePicker.requestCameraPermissionsAsync()
+      result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 0.75
+      })
+    }
+    if (!result.canceled) {
+      const uri = result.assets[0].uri
+      await uploadProfileImg(uri, userId, familyId)
+    }
+  }
 
   const handleLogout = async () => {
     try {
@@ -59,8 +86,8 @@ const Profile = () => {
                 {user.role === "CG"
                   ? "Care Giver"
                   : user.role === "PAT"
-                  ? "Patient"
-                  : "Doctor"}
+                    ? "Patient"
+                    : "Doctor"}
               </Text>
               <View className="h-1/4">
                 <FlatList
@@ -96,6 +123,13 @@ const Profile = () => {
           color="white"
         />
       </View>
+
+      <View>
+        <Button title="Photo library" onPress={() => selectImage(true)} />
+        <Button title="Capture image" onPress={() => selectImage(false)} />
+      </View>
+
+
     </SafeAreaView>
   );
 };
