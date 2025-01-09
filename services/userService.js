@@ -26,3 +26,22 @@ export const uploadProfileImg = async (uri, userId, familyId) => {
     console.error(error.response.data.message)
   }
 }
+
+export const editPersonalInfo = async (userId, name, setName, mobile, setMobile) => {
+
+  try {
+    const response = await axios.put(`${apiUrl}/update-info`, {
+      userId,
+      name,
+      mobile
+    })
+
+    setName("")
+    setMobile("")
+    console.log(response.data.message)
+    Alert.alert("Sucess", response.data.message)
+  } catch (error) {
+    console.error(error.response.data.message)
+    Alert.alert("Sucess", error.response.data.message)
+  }
+}
