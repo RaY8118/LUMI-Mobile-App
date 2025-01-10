@@ -30,11 +30,13 @@ export const uploadProfileImg = async (uri, userId, familyId) => {
 export const editPersonalInfo = async (userId, name, setName, mobile, setMobile) => {
 
   try {
-    const response = await axios.put(`${apiUrl}/update-info`, {
+    const updateData = {
       userId,
-      name,
-      mobile
-    })
+      ...(name && { name }),
+      ...(mobile && { mobile })
+    }
+
+    const response = await axios.put(`${apiUrl}/update-info`, updateData)
 
     setName("")
     setMobile("")
@@ -43,5 +45,23 @@ export const editPersonalInfo = async (userId, name, setName, mobile, setMobile)
   } catch (error) {
     console.error(error.response.data.message)
     Alert.alert("Sucess", error.response.data.message)
+  }
+}
+
+
+export const createFamily = async (CGId) => {
+  try {
+    const response = await axios.post(`${apiUrl}/family`, {
+      caregiverId: CGId
+    })
+    const { familyId } = response.data
+
+    if (!familyId)
+      throw new Error("Family ID not returned from the server")
+    return familyId
+  } catch (error) {
+    errorMessage = error.response.data.message
+    console.error(error.response.data.message)
+    throw new Error(errorMessage)
   }
 }

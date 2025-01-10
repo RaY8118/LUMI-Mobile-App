@@ -1,45 +1,53 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { sendCustomNotification } from "@/services/notificationService";
-import CustomButton from "@/components/CustomButton";
-import CustomInput from "@/components/CustomInput";
-import { useUser } from "@/contexts/userContext";
+import CustomNotifications from "@/components/CustomNotifications";
+import CreateFamily from "@/components/CreateFamily"
+import { Icon } from "@/constants/Icons";
+
 
 const Settings = () => {
-  const { user } = useUser();
-  const patient = user?.patient?.[0] || null;
-  const PATId = patient?.userId || null;
-  const [message, setMessage] = useState("");
+  const [isNotificationsVisible, setIsNotificationsVisible] = useState(false)
+  const [isFamilyVisible, setIsFamilyVisible] = useState(false)
+  const toggleNotificationsModal = () => {
+    setIsNotificationsVisible(!isNotificationsVisible)
+  }
+  const toggleFamilyModal = () => {
+    setIsFamilyVisible(!isFamilyVisible)
+  }
 
-  const sendMessage = async () => {
-    await sendCustomNotification(PATId, message);
-    setMessage("");
-  };
+
   return (
     <View>
+      <CustomNotifications isVisible={isNotificationsVisible} setIsVisible={setIsNotificationsVisible} toggleModal={toggleNotificationsModal} ></CustomNotifications>
       {/* <Text>Settings</Text> */}
-      <View>
-        <View className="flex items-center justify-center h-10">
-          <Text className="text-2xl text-emerald-500">
-            Custom priority Notifications
-          </Text>
-        </View>
-        <View className="flex-row items-center p-4">
-          <CustomInput
-            placeholder="Enter the message u need to send"
-            value={message}
-            onChangeText={setMessage}
-          />
-        </View>
-        <View className="items-center flex flex-row justify-center m-6 ">
-          <CustomButton
-            name="send"
-            library="FontAwesome"
-            size={54}
-            onPress={sendMessage}
-            bgcolor="bg-pink-400"
-          />
-        </View>
+      <CreateFamily isVisible={isFamilyVisible} setIsVisible={setIsFamilyVisible} toggleModal={toggleFamilyModal}></CreateFamily>
+      <View className="h-32 flex flex-col border border-black items-center justify-center">
+        <Text>Custom Notifications</Text>
+        <Text>Click here</Text>
+        <TouchableOpacity onPress={toggleNotificationsModal}>
+          <Icon library="MaterialIcons" name="edit-square" size={44} />
+        </TouchableOpacity>
+      </View>
+      <View className="h-32 flex flex-col border border-black items-center justify-center">
+        <Text>Create Family</Text>
+        <Text>Click here</Text>
+        <TouchableOpacity onPress={toggleFamilyModal}>
+          <Icon library="MaterialIcons" name="edit-square" size={44} />
+        </TouchableOpacity>
+      </View>
+      <View className="h-32 flex flex-col border border-black items-center justify-center">
+        <Text>Add members</Text>
+        <Text>Click here</Text>
+        <TouchableOpacity>
+          <Icon library="MaterialIcons" name="edit-square" size={44} />
+        </TouchableOpacity>
+      </View>
+      <View className="h-32 flex flex-col border border-black items-center justify-center">
+        <Text>Add patients</Text>
+        <Text>Click here</Text>
+        <TouchableOpacity>
+          <Icon library="MaterialIcons" name="edit-square" size={44} />
+        </TouchableOpacity>
       </View>
     </View>
   );

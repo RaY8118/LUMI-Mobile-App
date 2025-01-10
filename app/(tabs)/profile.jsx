@@ -4,9 +4,9 @@ import {
   Alert,
   FlatList,
   SafeAreaView,
-  ActivityIndicator, Image,
+  ActivityIndicator,
+  Image,
   TouchableOpacity,
-  Button
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
@@ -21,11 +21,11 @@ import { Icon } from "@/constants/Icons";
 import EditForm from "@/components/EditForm"
 
 const Profile = () => {
-  const { user, setUser, isLoading } = useUser(); // Access user from context
+  const { user, setUser, isLoading } = useUser();
   const [isModalVisible, setIsModalVisible] = useState(false)
   const router = useRouter();
-  const userId = user?.userId
-  const familyId = user?.familyId
+  const userId = user?.userId || null
+  const familyId = user?.familyId || null
   const [profileImg, setProfileImg] = useState("")
   const imgDir = FileSystem.documentDirectory + 'images/'
 
@@ -36,6 +36,7 @@ const Profile = () => {
   useEffect(() => {
     loadProfileImage()
   }, [user])
+
 
   const loadProfileImage = async () => {
     try {
@@ -175,8 +176,8 @@ const Profile = () => {
                 <View className=" flex flex-col ">
                   <Text className="text-2xl font-bold m-1">
                     Patient:</Text>
-                  <Text className="text-xl m-1">{user.patient[0].name}</Text>
-                  <Text className="text-xl m-1">{user.patient[0].userId}</Text>
+                  <Text className="text-xl m-1">{user?.patient[0]?.name}</Text>
+                  <Text className="text-xl m-1">{user?.patient[0]?.userId}</Text>
                 </View>
               ) : (<FlatList
                 data={user.members}
