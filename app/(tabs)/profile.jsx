@@ -25,10 +25,11 @@ const Profile = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const router = useRouter();
   const userId = user?.userId || null
-  const familyId = user?.familyId || null
+  const familyId = user?.familyId || "Not set"
   const [profileImg, setProfileImg] = useState("")
   const imgDir = FileSystem.documentDirectory + 'images/'
-
+  const PATName = user?.patient[0]?.name || "Not set"
+  const PATId = user?.patient[0]?.userId || "Not set"
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible)
   }
@@ -167,7 +168,7 @@ const Profile = () => {
               <View className=" flex flex-col ">
                 <Text className="text-2xl font-bold m-1">
                   Family ID:</Text>
-                <Text className="text-xl m-1">{user.familyId}</Text>
+                <Text className="text-xl m-1">{familyId}</Text>
               </View>
               <View className="border-b-2 border-gray-500 my-2" />
 
@@ -176,8 +177,8 @@ const Profile = () => {
                 <View className=" flex flex-col ">
                   <Text className="text-2xl font-bold m-1">
                     Patient:</Text>
-                  <Text className="text-xl m-1">{user?.patient[0]?.name}</Text>
-                  <Text className="text-xl m-1">{user?.patient[0]?.userId}</Text>
+                  <Text className="text-xl m-1">{PATName}</Text>
+                  <Text className="text-xl m-1">{PATId}</Text>
                 </View>
               ) : (<FlatList
                 data={user.members}
@@ -220,12 +221,6 @@ const Profile = () => {
           color="white"
         />
       </View>
-
-      {/*      <View>
-      <Button title="Photo library" onPress={() => selectImage(true)} />
-        <Button title="Capture image" onPress={() => selectImage(false)} />
-      </View>
-      */}
 
     </SafeAreaView>
   );
