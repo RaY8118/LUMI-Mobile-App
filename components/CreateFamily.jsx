@@ -4,7 +4,7 @@ import { Icon } from "@/constants/Icons";
 import { createFamily } from "@/services/userService"
 import { useUser } from "@/contexts/userContext"
 const CreateFamily = ({ isVisible, setIsVisible, toggleModal }) => {
-  const { user } = useUser()
+  const { user, refetch } = useUser()
   const userId = user?.userId
   const [isLoading, setIsLoading] = useState(false)
 
@@ -20,6 +20,7 @@ const CreateFamily = ({ isVisible, setIsVisible, toggleModal }) => {
       const familyId = await createFamily(userId)
       Alert.alert("Success", `Family ID created ${familyId}`)
       setIsVisible(false)
+      refetch()
     } catch (error) {
       console.error("Error creating family: ", error.message)
       Alert.alert("Error", error.message)

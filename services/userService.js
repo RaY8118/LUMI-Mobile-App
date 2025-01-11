@@ -65,3 +65,33 @@ export const createFamily = async (CGId) => {
     throw new Error(errorMessage)
   }
 }
+
+
+export const addPatient = async (userId, familyId) => {
+  try {
+    const response = await axios.post(`${apiUrl}/family/add_patient`, {
+      userId,
+      familyId
+    })
+
+    return response.data.message
+  } catch (error) {
+    errorMessage = error.response.data.message
+    throw new Error(errorMessage)
+  }
+}
+
+
+export const addMember = async (userId, familyId) => {
+  try {
+    const response = await axios.post(`${apiUrl}/family/add_user`, {
+      userId,
+      familyId
+    })
+
+    return response.data.message
+  } catch (error) {
+    errorMessage = error.response.data.message
+    throw new Error(errorMessage)
+  }
+}
