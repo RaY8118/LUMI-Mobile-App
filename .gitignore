@@ -22,3 +22,4 @@ expo-env.d.ts
 .env.*
 layouts
 %ProgramData%
+bun.lockb
