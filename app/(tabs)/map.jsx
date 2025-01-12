@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   getDistanceFromLatLonInMeters,
   fetchSavedLocation,
@@ -94,7 +94,7 @@ const Map = () => {
           setPreviousLocation(currentCoords);
         }
 
-        setErrorMsg(null); 
+        setErrorMsg(null);
       } catch (error) {
         console.error(error.message);
         setErrorMsg(error.message);
@@ -160,18 +160,18 @@ const Map = () => {
 
   const handleRefresh = async () => {
     setErrorMsg("Refreshing, please wait...");
-  
+
     try {
       // Fetch saved location and current coordinates in parallel
       const [homeLocation, currentCoords] = await Promise.all([
         fetchSavedLocation(userId, setErrorMsg),
         getCurrentCoords()
       ]);
-  
+
       // Update state with fetched data
       setSavedLocation(homeLocation);
       setLocation(currentCoords);
-  
+
       // Reverse geocode the location to get the address
       try {
         setErrorMsg("Updating your current address...");
@@ -183,20 +183,20 @@ const Map = () => {
       } catch (error) {
         console.warn("Failed to fetch address:", error.message);
       }
-  
+
       // Save the current location to the database if needed
       if (shouldSaveLocation(currentCoords)) {
         saveCurrLocation(userId, setErrorMsg);
         setPreviousLocation(currentCoords);
       }
-  
+
       setErrorMsg(null); // Clear error message
     } catch (error) {
       console.error("Failed to refresh data:", error.message);
       setErrorMsg("Failed to refresh data. Please try again.");
     }
   };
-  
+
 
   const locationAddress = async () => {
     const { latitude, longitude } = await getCurrentCoords();
@@ -288,7 +288,7 @@ const Map = () => {
           size={48}
         />
 
-        <CustomButton
+        {/*}<CustomButton
           onPress={handleSaveLocation}
           bgcolor="bg-green-400"
           name="add-location-alt"
@@ -298,13 +298,6 @@ const Map = () => {
         <CustomButton
           onPress={locationAddress}
           bgcolor="bg-cyan-400"
-          name="add-location-alt"
-          library="MaterialIcons"
-          size={48}
-        />
-        {/* <CustomButton
-          onPress={() => sendLocationAlert(userId)}
-          bgcolor="bg-orange-400"
           name="add-location-alt"
           library="MaterialIcons"
           size={48}
