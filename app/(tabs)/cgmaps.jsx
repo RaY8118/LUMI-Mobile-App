@@ -1,10 +1,11 @@
-import { View, Text, ActivityIndicator, SafeAreaView } from "react-native";
+import { View, Text, ActivityIndicator, SafeAreaView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { useUser } from "@/contexts/userContext";
 import {
   getPatientCurrentAddress,
   getCurrentCoords,
+  savePatientLocation
 } from "@/services/locationService";
 import CustomButton from "@/components/CustomButton";
 
@@ -58,7 +59,32 @@ const CgMaps = () => {
       setErrorMsg("Unable to fetch caregiver's coordinates.");
     }
   };
-
+  const handlePatientSaveLocation = async () => {
+    Alert.alert(
+      "Confirm Save",
+      "Are you sure you want to save your current location?",
+      [
+        {
+          text: "Cancel",
+          onPress: async () => console.log("Save location canceled"),
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            try {
+              const successMessage = await savePatientLocation(CGId, PATId, setErrorMsg);
+              Alert.alert("Success", successMessage);
+            } catch (error) {
+              console.error(error.message);
+              Alert.alert("Error", error.message);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  }
   const handleRefresh = async () => {
     setErrorMsg("Refreshing, please wait...");
     setRefreshing(true);
@@ -128,8 +154,9 @@ const CgMaps = () => {
             library="FontAwesome"
             size={48}
           />
-          {/* TODO: assign some function */}
+
           <CustomButton
+            onPress={() => handlePatientSaveLocation(CGId, PATId, setErrorMsg)}
             bgcolor="bg-cyan-400"
             name="add-location-alt"
             library="MaterialIcons"

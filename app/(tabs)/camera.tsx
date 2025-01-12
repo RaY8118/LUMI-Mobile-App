@@ -101,16 +101,6 @@ const Camera = () => {
           activeOpacity={0.7}
           color="white"
         />
-
-        <CustomButton
-          onPress={() => fetchAdditionalInfo()}
-          bgcolor="bg-red-500"
-          name="object-group"
-          library="FontAwesome"
-          size={60}
-          activeOpacity={0.7}
-          color="white"
-        />
       </View>
 
       {loading && (
