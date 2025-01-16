@@ -12,7 +12,7 @@ import EditModalComponent from "../../components/EditModalComponent";
 import * as Notifications from "expo-notifications"; // Added for notifications
 import * as Speech from "expo-speech"; // Added for speech
 import { Icon } from "@/constants/Icons";
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
 import {
   deleteReminder,
   fetchReminders,

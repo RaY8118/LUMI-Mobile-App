@@ -39,19 +39,19 @@ const AddModalComponent = ({
     { label: "Completed", value: "completed" },
   ]);
 
-  const onChange = (event, selectedDate) => {
+  const onChange = (selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
     console.log(currentDate);
-    
+
   };
 
-  const onTimeChange = (event, selectedTime) => {
+  const onTimeChange = (selectedTime) => {
     setShowTimePicker(false);
     if (selectedTime) setTime(selectedTime);
     console.log(selectedTime);
-    
+
   };
 
   return (
@@ -132,17 +132,17 @@ const AddModalComponent = ({
               <Text className="text-gray-700">
                 {time instanceof Date && !isNaN(time)
                   ? time.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    }) // Ensure 24-hour format
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })
                   : "Pick a time"}
               </Text>
             </TouchableOpacity>
 
             {showTimePicker && (
               <DateTimePicker
-                value={time instanceof Date ? time : new Date()} // Ensure a valid Date object is passed
+                value={time instanceof Date ? time : new Date()}
                 mode="time"
                 display="default"
                 onChange={onTimeChange}

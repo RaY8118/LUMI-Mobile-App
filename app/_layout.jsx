@@ -1,4 +1,4 @@
-import { Stack, SplashScreen } from "expo-router";
+import { Stack, } from "expo-router";
 import { UserProvider } from "@/contexts/userContext";
 
 export default function RootLayout() {

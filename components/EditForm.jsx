@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity } from 'react-native'
 import { editPersonalInfo } from "@/services/userService"
 import { Icon } from "@/constants/Icons";
-import { useUser } from "@/contexts/userContext"
+import { useUser } from "@/hooks/useUser"
 
 
 const EditForm = ({ userId, isVisible, setIsVisible, toggleModal }) => {

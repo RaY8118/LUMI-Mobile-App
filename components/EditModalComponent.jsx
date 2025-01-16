@@ -50,38 +50,36 @@ const EditModalComponent = ({
     setIsImportant(isImportant);
     if (typeof time === "string" && time.includes(":")) {
       const [hours, minutes] = time.split(":").map(Number);
-      const dateForTime = new Date(date || Date.now()); 
-      dateForTime.setHours(hours, minutes, 0, 0); 
-      setTime(dateForTime); 
+      const dateForTime = new Date(date || Date.now());
+      dateForTime.setHours(hours, minutes, 0, 0);
+      setTime(dateForTime);
     } else if (time instanceof Date && !isNaN(time)) {
-      setTime(time); 
+      setTime(time);
     } else {
-      setTime(new Date()); 
+      setTime(new Date());
     }
   }, [title, description, date, status, isUrgent, isImportant, time]);
-  
 
-  const onDateChange = (event, selectedDate) => {
+
+  const onDateChange = (selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
   };
 
   const onTimeChange = (event, selectedTime) => {
-    // Check if the user canceled the picker
     if (event.type === "dismissed") {
       setShowTimePicker(false);
-      return; // Exit if dismissed
+      return;
     }
 
-    const currentTime = selectedTime || time; // Use the selected time or fallback to the current time
+    const currentTime = selectedTime || time;
     setShowTimePicker(false);
 
-    // Ensure currentTime is a Date object
     if (currentTime instanceof Date && !isNaN(currentTime)) {
-      setTime(currentTime); // Set the valid Date object
+      setTime(currentTime);
     } else {
-      setTime(new Date()); // Fallback to current time if not valid
+      setTime(new Date());
     }
   };
 
@@ -169,17 +167,17 @@ const EditModalComponent = ({
               <Text className="text-gray-700">
                 {time instanceof Date && !isNaN(time)
                   ? time.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    }) // Ensure 24-hour format
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })
                   : "Pick a time"}
               </Text>
             </TouchableOpacity>
 
             {showTimePicker && (
               <DateTimePicker
-                value={time instanceof Date && !isNaN(time) ? time : new Date()} // Ensure a valid Date object is passed
+                value={time instanceof Date && !isNaN(time) ? time : new Date()}
                 mode="time"
                 display="default"
                 onChange={onTimeChange}

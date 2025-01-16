@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native'
 import { Icon } from "@/constants/Icons";
 import { addPatient } from "@/services/userService"
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
 const AddPatient = ({ isVisible, setIsVisible, toggleModal }) => {
   const [patientId, setPatientId] = useState("");
   const [familyId, setFamilyId] = useState("");

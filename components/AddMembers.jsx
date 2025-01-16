@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native'
 import { Icon } from "@/constants/Icons";
 import { addMember } from "@/services/userService"
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
 const AddMembers = ({ isVisible, setIsVisible, toggleModal }) => {
   const [memberId, setMemberId] = useState("");
   const [familyId, setFamilyId] = useState("");

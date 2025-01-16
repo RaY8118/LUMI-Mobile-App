@@ -2,7 +2,7 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Icon } from "@/constants/Icons";
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
 const TabsLayout = () => {
   const { role } = useUser();
   return (

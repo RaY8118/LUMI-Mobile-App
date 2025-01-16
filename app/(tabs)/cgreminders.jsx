@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { Icon } from "@/constants/Icons";
-import { useUser } from "@/contexts/userContext";
 import {
   fetchPatientReminders,
   postPatientReminder,
@@ -16,7 +15,7 @@ import {
 } from "@/services/remindersService";
 import EditModalComponent from "@/components/EditModalComponent";
 import AddModalComponent from "@/components/AddModalComponent";
-
+import { usePatient } from "@/hooks/usePatient"
 const CgReminders = () => {
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,11 +31,7 @@ const CgReminders = () => {
   const [status, setStatus] = useState("pending");
   const [isUrgent, setIsUrgent] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
-  const { user } = useUser();
-  const CGId = user?.userId;
-  const patient = user?.patient?.[0] || null;
-  const PATId = patient?.userId || null;
-  const PATName = patient?.name || null;
+  const { CGId, PATId, PATName } = usePatient()
 
   const fetchPatientData = async () => {
     if (CGId && PATId) {

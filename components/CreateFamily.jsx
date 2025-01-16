@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, View, Text, Alert, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { Icon } from "@/constants/Icons";
 import { createFamily } from "@/services/userService"
-import { useUser } from "@/contexts/userContext"
+import { useUser } from "@/hooks/useUser"
 const CreateFamily = ({ isVisible, setIsVisible, toggleModal }) => {
   const { user, refetch } = useUser()
   const userId = user?.userId

@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity } from 'react-native'
 import { Icon } from "@/constants/Icons";
 import { sendCustomNotification } from "@/services/notificationService"
-import { useUser } from "@/contexts/userContext"
+import { usePatient } from "@/hooks/usePatient"
 const CustomNotification = ({ isVisible, setIsVisible, toggleModal }) => {
+  const { PATId } = usePatient()
   const [message, setMessage] = useState("");
-  const { user } = useUser()
-  const patient = user?.patient?.[0] || null
-  const PATId = patient?.userId || null
   const handleSubmit = async () => {
     await sendCustomNotification(PATId, message)
     setIsVisible(!isVisible)

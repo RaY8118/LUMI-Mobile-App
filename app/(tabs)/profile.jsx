@@ -11,7 +11,8 @@ import {
 import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
+import { usePatient } from "@/hooks/usePatient";
 import CustomButton from "@/components/CustomButton";
 import * as ImagePicker from "expo-image-picker"
 import { uploadProfileImg } from "@/services/userService"
@@ -22,14 +23,13 @@ import EditForm from "@/components/EditForm"
 
 const Profile = () => {
   const { user, setUser, isLoading } = useUser();
+  const { PATId, PATName } = usePatient()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const router = useRouter();
   const userId = user?.userId || null
   const familyId = user?.familyId || "Not set"
   const [profileImg, setProfileImg] = useState("")
   const imgDir = FileSystem.documentDirectory + 'images/'
-  const PATName = user?.patient[0]?.name || "Not set"
-  const PATId = user?.patient[0]?.userId || "Not set"
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible)
   }

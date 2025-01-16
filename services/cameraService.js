@@ -47,13 +47,13 @@ export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition =
       if (isFaceRecognition) {
         // Handle face recognition response
         if (response.data.name && response.data.name.length > 0) {
-          const userId = response.data.name[0]; // Assuming the userId is the first element in the array
+          const userId = response.data.name[0];
           nameMessage = `Identified User ID: ${userId}`;
-        
+
           // Fetch additional info for the identified userId
           const additionalInfo = await fetchAdditionalInfo(userId);
           console.log(additionalInfo);
-          
+
           if (additionalInfo) {
             nameMessage += `\nName: ${additionalInfo[0].name}\nRelation: ${additionalInfo[0].relation}\nTagline: ${additionalInfo[0].tagline}\nTrigger Memory: ${additionalInfo[0].triggerMemory}`;
           } else {
@@ -62,7 +62,7 @@ export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition =
         } else {
           nameMessage = "No faces found.";
         }
-        
+
       } else {
         // Handle object detection response
         nameMessage = response.data.name && response.data.name.length > 0

@@ -10,11 +10,10 @@ import {
 import {
   handleFaceRecognition,
   handleObjectDetection,
-  fetchAdditionalInfo
 } from "@/services/cameraService";
 import { Icon } from "@/constants/Icons";
 import CustomButton from "@/components/CustomButton";
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
 import * as Animatable from "react-native-animatable";
 
 const Camera = () => {

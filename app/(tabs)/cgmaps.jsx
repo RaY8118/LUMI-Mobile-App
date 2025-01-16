@@ -1,7 +1,7 @@
 import { View, Text, ActivityIndicator, SafeAreaView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
-import { useUser } from "@/contexts/userContext";
+import { usePatient } from "@/hooks/usePatient";
 import {
   getPatientCurrentAddress,
   getCurrentCoords,
@@ -10,11 +10,7 @@ import {
 import CustomButton from "@/components/CustomButton";
 
 const CgMaps = () => {
-  const { user } = useUser();
-  const CGId = user?.userId;
-  const patient = user?.patient?.[0] || null;
-  const PATId = patient?.userId || null;
-  const PATName = patient?.name || null;
+  const { PATId, CGId, PATName } = usePatient()
   const [location, setLocation] = useState(null);
   const [Cglocation, setCgLocation] = useState(null);
   const [address, setAddress] = useState("");

@@ -52,7 +52,7 @@ export const fetchSavedLocation = async (userId, setErrorMsg) => {
     }
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
-    setErrorMsg(errorMessage); // Use setErrorMsg for displaying the error
+    setErrorMsg(errorMessage);
     throw new Error(errorMessage);
   }
 };
@@ -69,15 +69,15 @@ export const saveLocation = async (userId, setErrorMsg) => {
     });
 
     if (response.data?.status === "success") {
-      return response.data.message; // Return the success message from the backend
+      return response.data.message;
     } else {
       const message = response.data?.message || "Failed to save location.";
-      setErrorMsg(message); // Display error message to user
+      setErrorMsg(message);
       throw new Error(message);
     }
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
-    setErrorMsg(errorMessage); // Use setErrorMsg for displaying the error
+    setErrorMsg(errorMessage);
     throw new Error(errorMessage);
   }
 };
@@ -92,15 +92,15 @@ export const savePatientLocation = async (CGId, PATId, setErrorMsg) => {
     });
 
     if (response.data?.status === "success") {
-      return response.data.message; // Return the success message from the backend
+      return response.data.message;
     } else {
       const message = response.data?.message || "Failed to save location.";
-      setErrorMsg(message); // Display error message to user
+      setErrorMsg(message);
       throw new Error(message);
     }
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
-    setErrorMsg(errorMessage); // Use setErrorMsg for displaying the error
+    setErrorMsg(errorMessage);
     throw new Error(errorMessage);
   }
 }
@@ -114,15 +114,15 @@ export const saveCurrLocation = async (userId, setErrorMsg) => {
     });
 
     if (response.data?.status === "success") {
-      return response.data.message; // Return the success message from the backend
+      return response.data.message;
     } else {
       const message = response.data?.message || "Failed to save location.";
-      setErrorMsg(message); // Display error message to user
+      setErrorMsg(message);
       throw new Error(message);
     }
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
-    setErrorMsg(errorMessage); // Use setErrorMsg for displaying the error
+    setErrorMsg(errorMessage);
     throw new Error(errorMessage);
   }
 
@@ -192,8 +192,6 @@ export const getPatientCurrentAddress = async (
           setAddress(formattedAddress);
         }
       }
-
-      // Clear the error message after successful fetch
       setErrorMsg("");
     } else {
       const errorMessage = response.data.message || "Failed to fetch data.";

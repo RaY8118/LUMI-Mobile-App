@@ -5,7 +5,7 @@ import { Link, router } from "expo-router";
 import images from "../../constants/images";
 import { Icon } from "@/constants/Icons";
 import { handleLogin, authenticateAndAutofill } from "@/services/authService";
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
 import CustomInput from "@/components/CustomInput";
 const SignIn = () => {
   const [email, setEmail] = useState("");

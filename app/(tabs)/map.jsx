@@ -3,14 +3,13 @@ import {
   getDistanceFromLatLonInMeters,
   fetchSavedLocation,
   getCurrentCoords,
-  saveLocation,
   saveCurrLocation,
   sendLocationAlert,
 } from "@/services/locationService";
 import { View, Text, Alert } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
 import CustomButton from "@/components/CustomButton";
 const Map = () => {
   const { user } = useUser();
@@ -131,33 +130,6 @@ const Map = () => {
     };
   }, [savedLocation]);
 
-  const handleSaveLocation = async () => {
-    Alert.alert(
-      "Confirm Save",
-      "Are you sure you want to save your current location?",
-      [
-        {
-          text: "Cancel",
-          onPress: async () => console.log("Save location canceled"),
-          style: "cancel",
-        },
-        {
-          text: "Yes",
-          onPress: async () => {
-            try {
-              const successMessage = await saveLocation(userId, setErrorMsg);
-              Alert.alert("Success", successMessage);
-            } catch (error) {
-              console.error(error.message);
-              Alert.alert("Error", error.message);
-            }
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  };
-
   const handleRefresh = async () => {
     setErrorMsg("Refreshing, please wait...");
 
@@ -194,25 +166,6 @@ const Map = () => {
     } catch (error) {
       console.error("Failed to refresh data:", error.message);
       setErrorMsg("Failed to refresh data. Please try again.");
-    }
-  };
-
-
-  const locationAddress = async () => {
-    const { latitude, longitude } = await getCurrentCoords();
-    try {
-      setErrorMsg("Updating your current address");
-      const geocode = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude,
-      });
-      if (geocode.length > 0) {
-        const { formattedAddress } = geocode[0];
-        setAddress(formattedAddress);
-        setErrorMsg("");
-      }
-    } catch (error) {
-      setErrorMsg(error);
     }
   };
 
@@ -287,21 +240,6 @@ const Map = () => {
           library="FontAwesome"
           size={48}
         />
-
-        {/*}<CustomButton
-          onPress={handleSaveLocation}
-          bgcolor="bg-green-400"
-          name="add-location-alt"
-          library="MaterialIcons"
-          size={48}
-        />
-        <CustomButton
-          onPress={locationAddress}
-          bgcolor="bg-cyan-400"
-          name="add-location-alt"
-          library="MaterialIcons"
-          size={48}
-        /> */}
       </View>
     </View>
   );
