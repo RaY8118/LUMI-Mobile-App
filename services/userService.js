@@ -61,7 +61,6 @@ export const createFamily = async (CGId) => {
     return familyId
   } catch (error) {
     errorMessage = error.response.data.message
-    console.error(error.response.data.message)
     throw new Error(errorMessage)
   }
 }
@@ -89,6 +88,21 @@ export const addMember = async (userId, familyId) => {
       familyId
     })
 
+    return response.data.message
+  } catch (error) {
+    errorMessage = error.response.data.message
+    throw new Error(errorMessage)
+  }
+}
+
+export const addInfo = async (userId, relation, tagline, triggerMemory) => {
+  try {
+    const response = await axios.post(`${apiUrl}/save-additional-info`, {
+      userId,
+      relation,
+      tagline,
+      triggerMemory
+    })
     return response.data.message
   } catch (error) {
     errorMessage = error.response.data.message

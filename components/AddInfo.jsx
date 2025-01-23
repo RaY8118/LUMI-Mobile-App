@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native'
 import { Icon } from "@/constants/Icons";
-import { addMember } from "@/services/userService"
+import { addInfo } from "@/services/userService"
 import { useUser } from "@/hooks/useUser";
-const AddMembers = ({ isVisible, setIsVisible, toggleModal }) => {
-  const [memberId, setMemberId] = useState("");
-  const [familyId, setFamilyId] = useState("");
-  const { refetch } = useUser()
+const AddInfo = ({ isVisible, setIsVisible, toggleModal }) => {
+  const [relation, setRelation] = useState("");
+  const [tagLine, setTagLine] = useState("");
+  const [triggerMemory, setTriggerMemory] = useState("");
+  const { user } = useUser()
+  const userId = user?.userId || null
   const handleSubmit = async () => {
     try {
-      const message = await addMember(memberId, familyId)
+      const message = await addInfo(userId, relation, tagLine, triggerMemory)
       Alert.alert("Success", message)
       setIsVisible(false)
-      setMemberId("")
-      setFamilyId("")
-      refetch()
+      setRelation("")
+      setTagLine("")
+      setTriggerMemory("")
     }
     catch (error) {
       Alert.alert("Error", error.message)
@@ -42,22 +44,25 @@ const AddMembers = ({ isVisible, setIsVisible, toggleModal }) => {
                 library="Entypo"
               />
             </TouchableOpacity>
-            <Text className="text-lg font-bold mb-5">Add members</Text>
+            <Text className="text-lg font-bold mb-5">Add Additional Info</Text>
             <TextInput
               className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded"
-              placeholder="Enter member ID"
-              value={memberId}
-              onChangeText={setMemberId}
-              autoCapitalize="characters"
+              placeholder="Enter ur relation with patient"
+              value={relation}
+              onChangeText={setRelation}
             />
             <TextInput
               className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded"
-              placeholder="Enter family ID"
-              value={familyId}
-              onChangeText={setFamilyId}
+              placeholder="Enter some Tag Line"
+              value={tagLine}
+              onChangeText={setTagLine}
             />
-
-
+            <TextInput
+              className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded"
+              placeholder="Enter some trigger memory of urs"
+              value={triggerMemory}
+              onChangeText={setTriggerMemory}
+            />
             <TouchableOpacity
               className="bg-black rounded-xl p-3 mt-3"
               onPress={handleSubmit}
@@ -71,4 +76,4 @@ const AddMembers = ({ isVisible, setIsVisible, toggleModal }) => {
   )
 }
 
-export default AddMembers;
+export default AddInfo;

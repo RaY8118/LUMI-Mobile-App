@@ -4,6 +4,8 @@ import CustomNotifications from "@/components/CustomNotifications";
 import CreateFamily from "@/components/CreateFamily"
 import AddPatient from "@/components/AddPatient";
 import AddMembers from "@/components/AddMembers"
+import AddInfo from "@/components/AddInfo"
+import AboutUs from "@/components/AboutUs"
 import { Icon } from "@/constants/Icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -12,6 +14,9 @@ const Settings = () => {
   const [isFamilyVisible, setIsFamilyVisible] = useState(false)
   const [isPatientVisible, setIsPatientVisible] = useState(false)
   const [isMemberVisible, setIsMemberVisible] = useState(false)
+  const [isAboutVisible, setIsAboutVisible] = useState(false)
+  const [isInfoVisible, setIsInfoVisible] = useState(false)
+
   const toggleNotificationsModal = () => {
     setIsNotificationsVisible(!isNotificationsVisible)
   }
@@ -24,6 +29,12 @@ const Settings = () => {
   const toggleMemberModal = () => {
     setIsMemberVisible(!isMemberVisible)
   }
+  const toggleAboutModal = () => {
+    setIsAboutVisible(!isAboutVisible)
+  }
+  const toggleInfoModal = () => {
+    setIsInfoVisible(!isInfoVisible)
+  }
   const settingsOptions = [
     {
       title: "Custom Notifications",
@@ -32,7 +43,13 @@ const Settings = () => {
       name: "notification-important"
     },
     {
-      title: "Mange Family",
+      title: "Add Info",
+      onPress: toggleInfoModal,
+      library: "Entypo",
+      name: "info"
+    },
+    {
+      title: "Manage Family",
       onPress: toggleFamilyModal,
       library: "FontAwesome6",
       name: "people-roof"
@@ -51,14 +68,15 @@ const Settings = () => {
     },
     {
       title: "About Us",
-      onPress: () => { },
+      onPress: toggleAboutModal,
       library: "MaterialIcons",
       name: "feedback"
-    }
+    },
+
   ]
   return (
     <>
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="h-full">
         <View className="items-center justify-center py-4">
           <Text className="text-3xl font-bold">Settings</Text>
         </View>
@@ -86,9 +104,11 @@ const Settings = () => {
         </View>
       </SafeAreaView>
       <CustomNotifications isVisible={isNotificationsVisible} setIsVisible={setIsNotificationsVisible} toggleModal={toggleNotificationsModal} />
+      <AddInfo isVisible={isInfoVisible} setIsVisible={setIsInfoVisible} toggleModal={toggleInfoModal} />
       <CreateFamily isVisible={isFamilyVisible} setIsVisible={setIsFamilyVisible} toggleModal={toggleFamilyModal} />
       <AddPatient isVisible={isPatientVisible} setIsVisible={setIsPatientVisible} toggleModal={togglePatientModal} />
       <AddMembers isVisible={isMemberVisible} setIsVisible={setIsMemberVisible} toggleModal={toggleMemberModal} />
+      <AboutUs isVisible={isAboutVisible} setIsVisible={setIsAboutVisible} toggleModal={toggleAboutModal} />
     </>
   );
 };

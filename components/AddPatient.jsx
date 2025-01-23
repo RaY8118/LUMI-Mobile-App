@@ -27,13 +27,13 @@ const AddPatient = ({ isVisible, setIsVisible, toggleModal }) => {
         animationType="slide"
         transparent={true}
         visible={isVisible}
-        onRequestClose={() => setIsVisible()}
+        onRequestClose={toggleModal}
       >
         <View className="flex-1 justify-center items-center mt-6">
           <View className="m-5 bg-white rounded-3xl p-20 items-center shadow-md shadow-black">
             <TouchableOpacity
               className="absolute top-3 right-5"
-              onPress={() => toggleModal()}
+              onPress={toggleModal}
             >
               <Icon
                 name="circle-with-cross"

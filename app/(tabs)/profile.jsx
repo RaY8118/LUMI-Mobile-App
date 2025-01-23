@@ -174,36 +174,36 @@ const Profile = () => {
 
 
               {user.role === "CG" ? (
-                <View className=" flex flex-col ">
+                <View className=" flex flex-col">
                   <Text className="text-2xl font-bold m-1">
                     Patient:</Text>
                   <Text className="text-xl m-1">{PATName}</Text>
                   <Text className="text-xl m-1">{PATId}</Text>
                 </View>
-              ) : (<FlatList
-                data={user.members}
-                keyExtractor={(item) => item.userId}
-                renderItem={({ item, index }) => (
-                  <View>
-                    <Text className="text-2xl font-bold m-1 ">Caregivers: </Text>
-                    <Text className="text-2xl font-bold ml-8">
-                      {(index + 1)})  Name:
-                    </Text>
-                    <Text className="text-xl ml-16">
-                      {item.name}
-                    </Text>
-                  </View>
-                )
-                }
-                ListEmptyComponent={
-                  <Text>
-                    No caregivers added.
-                  </Text>
-                } />
+              ) : (
+                <View>
+                  <Text className="text-2xl font-bold m-1">Caregivers:</Text>
+                  <FlatList
+                    data={user.members}
+                    keyExtractor={(item) => item.userId}
+                    renderItem={({ item, index }) => (
+                      <View className="flex flex-row">
+                        <Text className="text-2xl font-bold ml-1">
+                          {(index + 1)})Name:
+                        </Text>
+                        <Text className="text-xl ml-2">
+                          {item.name}
+                        </Text>
+                      </View>
+                    )
+                    }
+                    ListEmptyComponent={
+                      <Text>
+                        No caregivers added.
+                      </Text>
+                    } />
+                </View>
               )}
-
-
-
             </View>
           ) : (
             <Text>Loading user data...</Text>
