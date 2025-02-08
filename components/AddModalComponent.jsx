@@ -112,7 +112,7 @@ const AddModalComponent = ({
               onPress={() => setShowDatePicker(true)}
             >
               <Text className="text-gray-700">
-                {date ? date.toLocaleDateString() : "Pick a date"}
+                {date instanceof Date && !isNaN(date) ? date.toLocaleDateString() : "Pick a date"}
               </Text>
             </TouchableOpacity>
 

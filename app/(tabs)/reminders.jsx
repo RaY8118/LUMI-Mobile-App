@@ -265,41 +265,41 @@ const Reminders = () => {
   return (
     <>
       <ScrollView
-        className="border border-black bg-white rounded-lg"
+        className="border border-black bg-white rounded-lg m-1"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         <View className="flex-row flex-wrap justify-center items-center">
-          <View className="pt-2">
-            <Text className="text-3xl m-4 mt-2 font-ps2pregular">
+          <View className="">
+            <Text className="text-3xl m-4 mt-2">
               Reminders
             </Text>
           </View>
         </View>
-        <View className="border border-black rounded-lg bg-white p-2 grid grid-cols-2 gap-2">
+        <View className="border border-black rounded-lg bg-white p-2  grid grid-cols-2 shadow-xl shadow-black h-full">
           {error ? (
-            <Text className="col-span-2">{error}</Text>
+            <Text className="col-span-2 text-2xl">{error}</Text>
           ) : (
             sortedReminders.map((reminder) => (
               <View
                 key={reminder._id}
-                className={`p-2 border border-black rounded-xl ${getBackgroundColorClass(
+                className={`p-2 border border-black rounded-xl shadow-xl shadow-gray-400 mb-2 ${getBackgroundColorClass(
                   reminder.urgent,
                   reminder.important
                 )}`}
               >
-                <Text className="text-3xl font-agdasimar">
+                <Text className="text-3xl ">
                   {reminder.title}
                 </Text>
-                <Text className="text-2xl font-agdasimar">
+                <Text className="text-2xl ">
                   {reminder.description}
                 </Text>
-                <Text className="text-2xl font-agdasimar">
+                <Text className="text-2xl ">
                   {new Date(reminder.date).toLocaleDateString()}
                 </Text>
-                <Text className="text-2xl font-agdasimar">{reminder.time}</Text>
-                <Text className="text-2xl font-agdasimar">
+                <Text className="text-2xl ">{reminder.time}</Text>
+                <Text className="text-2xl">
                   Status:{" "}
                   {reminder.status === "pending" ? "Pending" : "Completed"}
                 </Text>
