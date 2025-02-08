@@ -20,6 +20,11 @@ import * as FileSystem from "expo-file-system"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Icon } from "@/constants/Icons";
 import EditForm from "@/components/EditForm"
+import axios from "axios";
+
+const CLOUDINARY_URL = process.env.CLOUDINARY_URL
+const UPLOAD_PRESET =  process.env.UPLOAD_PRESET
+const UPLOAD_FOLDER =  process.env.UPLOAD_FOLDER
 
 const Profile = () => {
   const { user, setUser, isLoading } = useUser();
@@ -82,18 +87,45 @@ const Profile = () => {
 
   const saveProfileImage = async (uri, userId) => {
     await ensureDirExists()
+    const filename = new Date().getTime() + '.jpg'
+    const dest = imgDir + filename
     try {
-      const filename = new Date().getTime() + '.jpg'
-      const dest = imgDir + filename
       await FileSystem.copyAsync({ from: uri, to: dest })
       await AsyncStorage.setItem(`profileImg_${userId}`, dest)
       setProfileImg(dest)
-      console.log(dest)
+      console.log("Saved Locally:", dest)
+      uplaodToCloudinary(uri, userId)
     } catch (error) {
       console.error(error)
     }
   }
 
+  const uplaodToCloudinary = async (localUri, userId) => {
+    try {
+      const formData = new FormData()
+      formData.append("file", {
+        uri: localUri,
+        type: "image/jpeg",
+        name: `profileImg_${userId}.jpg`
+      })
+      formData.append("upload_preset", UPLOAD_PRESET)
+      formData.append("folder", UPLOAD_FOLDER)
+      const response = await axios.post(CLOUDINARY_URL, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      })
+
+      if (response.data.secure_url) {
+        await AsyncStorage.setItem(`profileImg_${userId}`, response.data.secure_url)
+        setProfileImg(response.data.secure_url)
+        console.log("Uploaded to cloudinary:", response.data.secure_url)
+      } else {
+        throw new Error("Failed to upload image")
+      }
+    } catch (error) {
+      console.error("Upload failed", error)
+      Alert.alert("Error", "Failed to upload image to cloudinary")
+    }
+  }
 
   const handleLogout = async () => {
     try {
