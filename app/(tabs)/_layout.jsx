@@ -200,6 +200,31 @@ const TabsLayout = () => {
           })}
         />
         <Tabs.Screen
+          name="psettings"
+          redirect={role !== "PAT"}
+          options={({ navigation }) => ({
+            headerTitle: "Tutorials",
+            title: "Tutorials",
+            tabBarIcon: ({ color, size }) => (
+              <Icon
+                name="play-video"
+                color={color}
+                size={size}
+                library="Foundation"
+              />
+            ),
+            headerRight: () => (
+              <Icon
+                name="person-circle-outline"
+                size={30}
+                style={{ marginRight: 15 }}
+                onPress={() => navigation.navigate("profile")}
+                library="Ionicons"
+              />
+            ),
+          })}
+        />
+        <Tabs.Screen
           name="profile"
           options={{
             tabBarButton: () => null,
