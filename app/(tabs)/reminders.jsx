@@ -61,6 +61,7 @@ const Reminders = () => {
 
   useEffect(() => {
     fetchUserData();
+    scheduleNotificationsForAllReminders(reminders)
   }, [userId]);
 
   useEffect(() => {
@@ -119,8 +120,10 @@ const Reminders = () => {
         },
         trigger: triggerDate,
       });
+      Alert.alert("Error", "Notification scheduled!")
       console.log("Notification scheduled!");
     } else {
+      Alert.alert("Error", "Selected time is in the past. Please choose a future time.")
       console.log("Selected time is in the past. Please choose a future time.");
     }
   };
@@ -147,6 +150,18 @@ const Reminders = () => {
     await sendTokenToBackend(userId, token);
   }
 
+  const scheduleNotificationsForAllReminders = async (reminders) => {
+    for (const reminder of reminders) {
+      const { title, body, date, time } = reminder;
+
+      const reminderDate = new Date(date);
+      const reminderTime = new Date(time);
+
+      reminderDate.setHours(reminderTime.getHours(), reminderTime.getMinutes(), 0, 0)
+
+      await scheduleNotification(title, body, reminderDate, reminderTime)
+    }
+  }
   const postReminders = async () => {
     const reminderData = {
       title,

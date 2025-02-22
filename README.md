@@ -5,20 +5,24 @@ This repository contains the **frontend code** for an application designed to as
 ## ✨ Features
 
 ### 1. 📝 **Reminders**
-   - 🛎️ Allows users to create, edit, and delete reminders for important tasks.
-   - 📌 Supports both urgent and important tags for categorizing reminders.
+
+- 🛎️ Allows users to create, edit, and delete reminders for important tasks.
+- 📌 Supports both urgent and important tags for categorizing reminders.
 
 ### 2. 👤 **Face Recognition**
-   - 📷 Utilizes facial recognition to help users identify familiar people.
-   - 🚫 Runs independently for all users, without communication with the database.
+
+- 📷 Utilizes facial recognition to help users identify familiar people.
+- 🚫 Runs independently for all users, without communication with the database.
 
 ### 3. 🧳 **Object Recognition**
-   - 🛠️ Assists users in recognizing everyday objects through the camera.
-   - 🚫 Like face recognition, it functions independently from the database.
+
+- 🛠️ Assists users in recognizing everyday objects through the camera.
+- 🚫 Like face recognition, it functions independently from the database.
 
 ### 4. 🌍 **Location Tracking**
-   - 📍 Tracks the user’s current location to provide caregivers with updates.
-   - 🚨 Can alert caregivers if the patient is out of the safe zone.
+
+- 📍 Tracks the user’s current location to provide caregivers with updates.
+- 🚨 Can alert caregivers if the patient is out of the safe zone.
 
 ## ⚙️ Technology Stack
 
@@ -29,6 +33,7 @@ This repository contains the **frontend code** for an application designed to as
 ## 🚀 Getting Started
 
 ### 📋 Prerequisites
+
 - 🐍 [Node.js](https://nodejs.org/)
 - 📱 [Expo CLI](https://docs.expo.dev/get-started/create-a-project/)
 - 🛠️ [npm](https://docs.npmjs.com/cli/v10/commands/npm-install)
@@ -36,17 +41,20 @@ This repository contains the **frontend code** for an application designed to as
 ### 🔧 Installation
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/RaY8118/LUMI-Mobile-App.git
    cd LUMI-Mobile-App
    ```
 
 2. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Start the Expo development server**:
+
    ```bash
    npx expo
    ```
@@ -70,4 +78,3 @@ This repository contains the **frontend code** for an application designed to as
 ## 📜 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-

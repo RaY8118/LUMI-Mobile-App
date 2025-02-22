@@ -39,18 +39,18 @@ const AddModalComponent = ({
     { label: "Completed", value: "completed" },
   ]);
 
-  const onChange = (selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowDatePicker(false);
-    setDate(currentDate);
-    console.log(currentDate);
-
+  const onDateChange = (event, selectedDate) => {
+    if (selectedDate) {
+      setDate(selectedDate)
+    }
+    setShowDatePicker(false)
   };
 
-  const onTimeChange = (selectedTime) => {
-    setShowTimePicker(false);
-    if (selectedTime) setTime(selectedTime);
-    console.log(selectedTime);
+  const onTimeChange = (event, selectedTime) => {
+    if (selectedTime) {
+      setTime(selectedTime)
+    }
+    setShowTimePicker(false)
 
   };
 
@@ -121,7 +121,7 @@ const AddModalComponent = ({
                 value={date || new Date()}
                 mode="date"
                 display="default"
-                onChange={onChange}
+                onChange={onDateChange}
               />
             )}
 

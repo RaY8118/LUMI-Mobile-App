@@ -61,26 +61,18 @@ const EditModalComponent = ({
   }, [title, description, date, status, isUrgent, isImportant, time]);
 
 
-  const onDateChange = (selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowDatePicker(false);
-    setDate(currentDate);
+  const onDateChange = (event, selectedDate) => {
+    if (selectedDate) {
+      setDate(selectedDate)
+    }
+    setShowDatePicker(false)
   };
 
   const onTimeChange = (event, selectedTime) => {
-    if (event.type === "dismissed") {
-      setShowTimePicker(false);
-      return;
+    if (selectedTime) {
+      setTime(selectedTime)
     }
-
-    const currentTime = selectedTime || time;
-    setShowTimePicker(false);
-
-    if (currentTime instanceof Date && !isNaN(currentTime)) {
-      setTime(currentTime);
-    } else {
-      setTime(new Date());
-    }
+    setShowTimePicker(false)
   };
 
   const handleSave = () => {
