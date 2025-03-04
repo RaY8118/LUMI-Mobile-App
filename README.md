@@ -28,7 +28,8 @@ This repository contains the **frontend code** for an application designed to as
 
 - 💻 **React Native (Expo)**: The foundation for building the cross-platform mobile app.
 - 🎨 **NativeWindCSS**: Used for styling the app's components with Tailwind-like syntax.
-- 🗄️ **MongoDB**: Integrated to handle user authentication and data storage.
+- 🗄️ **MongoDB**: Integrated to handle data storage.
+-   **Firebase**: Used Firebase Authentication for user authentication.
 
 ## 🚀 Getting Started
 
@@ -66,6 +67,7 @@ This repository contains the **frontend code** for an application designed to as
 - **/components**: Contains reusable UI components used across the app.
 - **/tabs**: Contains all the screens like `ReminderScreen`, `LocationTrackingScreen`, etc.
 - **/assets**: Holds static assets such as images or icons.
+- **/services**: Holds logical services for components and pages.
 
 ## 🤝 Contributing
 
