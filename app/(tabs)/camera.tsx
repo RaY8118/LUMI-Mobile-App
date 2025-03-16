@@ -10,6 +10,7 @@ import {
 import {
   handleFaceRecognition,
   handleObjectDetection,
+  handleGeminiDetection
 } from "@/services/cameraService";
 import { Icon } from "@/constants/Icons";
 import CustomButton from "@/components/CustomButton";
@@ -94,6 +95,16 @@ const Camera = () => {
         <CustomButton
           onPress={() => handleObjectDetection(cameraRef, setLoading)}
           bgcolor="bg-green-500"
+          name="object-group"
+          library="FontAwesome"
+          size={60}
+          activeOpacity={0.7}
+          color="white"
+        />
+
+        <CustomButton
+          onPress={() => handleGeminiDetection(cameraRef, setLoading)}
+          bgcolor="bg-red-500"
           name="object-group"
           library="FontAwesome"
           size={60}

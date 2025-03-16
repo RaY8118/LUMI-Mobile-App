@@ -1,6 +1,7 @@
 import * as ImageManipulator from "expo-image-manipulator";
 import axios from "axios";
-import { Alert } from "react-native";
+import * as Speech from "expo-speech";
+import { Alert } from "react-native"
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 export const takePicture = async (cameraRef) => {
@@ -52,7 +53,6 @@ export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition =
 
           // Fetch additional info for the identified userId
           const additionalInfo = await fetchAdditionalInfo(userId);
-          console.log(additionalInfo);
 
           if (additionalInfo) {
             nameMessage += `\nName: ${additionalInfo[0].name}\nRelation: ${additionalInfo[0].relation}\nTagline: ${additionalInfo[0].tagline}\nTrigger Memory: ${additionalInfo[0].triggerMemory}`;
@@ -68,6 +68,9 @@ export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition =
         nameMessage = response.data.name && response.data.name.length > 0
           ? `Identified Objects: ${response.data.name.join(', ')}`
           : "No objects found.";
+        setTimeout(() => {
+          speak(nameMessage)
+        }, 2000)
       }
       Alert.alert("Response", nameMessage);
     } else {
@@ -79,7 +82,6 @@ export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition =
     setLoading(false);
   }
 };
-
 
 export const handleFaceRecognition = async (cameraRef, user, setLoading) => {
   const uri = await takePicture(cameraRef);
@@ -97,6 +99,17 @@ export const handleObjectDetection = async (cameraRef, setLoading) => {
   }
 };
 
+export const handleGeminiDetection = async (cameraRef, setLoading) => {
+  const uri = await takePicture(cameraRef);
+  if (uri) {
+    const reseizedUri = await resizeImage(uri)
+    uploadImage(reseizedUri, `${apiUrl}/gemini-detection`, setLoading, false)
+  }
+}
+
+const speak = (text) => {
+  Speech.speak(text); // Function to speak the text
+};
 
 export const fetchAdditionalInfo = async (userId) => {
   try {
