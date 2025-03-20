@@ -109,3 +109,20 @@ export const addInfo = async (userId, relation, tagline, triggerMemory) => {
     throw new Error(errorMessage)
   }
 }
+
+
+export const createRoom = async () => {
+  try {
+    const response = await axios.post(`${apiUrl}/create-room`, {
+    })
+    const { room } = response.data
+    console.log(response)
+
+    if (!room)
+      throw new Error("Romm ID not returned from the server")
+    return room
+  } catch (error) {
+    errorMessage = error.response.data.message
+    throw new Error(errorMessage)
+  }
+}

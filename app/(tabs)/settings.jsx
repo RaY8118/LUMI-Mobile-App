@@ -8,6 +8,7 @@ import AddInfo from "@/components/AddInfo"
 import AboutUs from "@/components/AboutUs"
 import { Icon } from "@/constants/Icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CreateRoom from "@/components/CreateRoom";
 
 const Settings = () => {
   const [isNotificationsVisible, setIsNotificationsVisible] = useState(false)
@@ -16,6 +17,7 @@ const Settings = () => {
   const [isMemberVisible, setIsMemberVisible] = useState(false)
   const [isAboutVisible, setIsAboutVisible] = useState(false)
   const [isInfoVisible, setIsInfoVisible] = useState(false)
+  const [isRoomVisible, setIsRoomVisible] = useState(false)
 
   const toggleNotificationsModal = () => {
     setIsNotificationsVisible(!isNotificationsVisible)
@@ -34,6 +36,9 @@ const Settings = () => {
   }
   const toggleInfoModal = () => {
     setIsInfoVisible(!isInfoVisible)
+  }
+  const toogleRommModal = () => {
+    setIsRoomVisible(!isRoomVisible)
   }
   const settingsOptions = [
     {
@@ -72,6 +77,12 @@ const Settings = () => {
       library: "MaterialIcons",
       name: "feedback"
     },
+    {
+      title: "Create Room",
+      onPress: toogleRommModal,
+      library: "Ionicons",
+      name: "chatbox"
+    }
 
   ]
   return (
@@ -109,6 +120,7 @@ const Settings = () => {
       <AddPatient isVisible={isPatientVisible} setIsVisible={setIsPatientVisible} toggleModal={togglePatientModal} />
       <AddMembers isVisible={isMemberVisible} setIsVisible={setIsMemberVisible} toggleModal={toggleMemberModal} />
       <AboutUs isVisible={isAboutVisible} setIsVisible={setIsAboutVisible} toggleModal={toggleAboutModal} />
+      <CreateRoom isVisible={isRoomVisible} setIsVisible={setIsRoomVisible} toggleModal={toogleRommModal} />
     </>
   );
 };
