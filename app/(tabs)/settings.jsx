@@ -72,16 +72,16 @@ const Settings = () => {
       name: "people-alt"
     },
     {
-      title: "About Us",
-      onPress: toggleAboutModal,
-      library: "MaterialIcons",
-      name: "feedback"
-    },
-    {
       title: "Create Room",
       onPress: toogleRommModal,
       library: "Ionicons",
       name: "chatbox"
+    },
+    {
+      title: "About Us",
+      onPress: toggleAboutModal,
+      library: "MaterialIcons",
+      name: "feedback"
     }
 
   ]

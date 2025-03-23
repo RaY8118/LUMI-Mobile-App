@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { Icon } from '@/constants/Icons';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
+const apiUrl = process.env.EXPO_PUBLIC_API_URL
 
 const chat = () => {
   const [name, setName] = useState('');
@@ -10,6 +13,7 @@ const chat = () => {
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
 
+
   const handleJoinRoom = async () => {
     if (!name || !room) {
       alert('Please enter both name and room.');
@@ -17,15 +21,20 @@ const chat = () => {
     }
 
     try {
-      const response = await fetch('http://192.168.0.103:5000/join-room', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room, name }),
-      });
+      const response = await axios.post(`${apiUrl}/join-room`, { room, name });
+      const data = response.data;
 
-      const data = await response.json();
       if (data.status === 'success') {
-        const newSocket = io('http://192.168.0.103:5000', {
+        const oldMessages = data.messages.map((msg) => ({
+          _id: msg.id || Date.now() + Math.random(),
+          text: msg.message,
+          createdAt: new Date(msg.createdAt),
+          user: { _id: msg.name === name ? 1 : 2, name: msg.name },
+        }));
+
+        setMessages(oldMessages.reverse());
+
+        const newSocket = io(`${apiUrl}`, {
           transports: ['websocket'],
           withCredentials: true,
         });
@@ -40,12 +49,12 @@ const chat = () => {
         newSocket.on('message', (data) => {
           console.log('Message received:', data);
           const newMsg = {
-            _id: new Date().getTime() + Math.random(),
+            _id: Date.now() + Math.random(),
             text: data.message,
             createdAt: new Date(),
             user: { _id: data.name === name ? 1 : 2, name: data.name },
           };
-          setMessages((previous) => GiftedChat.append(previous, [newMsg]));
+          setMessages((prev) => GiftedChat.append(prev, [newMsg]));
         });
 
         newSocket.on('disconnect', () => {
@@ -60,31 +69,57 @@ const chat = () => {
     }
   };
 
-  const onSend = useCallback(
-    (msgs = []) => {
-      if (socket) {
-        const text = msgs[0].text;
-        socket.emit('message', { message: text });
-        const myMsg = {
-          _id: new Date().getTime(),
-          text,
-          createdAt: new Date(),
-          user: { _id: 1, name: name },
-        };
-        setMessages((previous) => GiftedChat.append(previous, [myMsg]));
-      }
-    },
-    [socket]
-  );
+  const handleSend = (newMessages = []) => {
+    if (socket && newMessages.length > 0) {
+      const message = newMessages[0];
+      socket.emit('message', {
+        message: message.text,
+        room,
+        name,
+        createdAt: new Date().toISOString()
+      });
+    }
+  };
 
-  useEffect(() => {
-    return () => {
-      if (socket) socket.disconnect();
-    };
-  }, [socket]);
+  const handleLeaveRoom = () => {
+    if (socket) {
+      socket.disconnect();
+      setSocket(null);
+    }
+    setMessages([]);
+    setRoom('');
+    setName('');
+    setJoined(false);
+  };
+
+  const renderInputToolbar = (props) => {
+    return (
+      <InputToolbar
+        {...props}
+        containerStyle={{
+          backgroundColor: "#e8e8e8",
+          borderTopWidth: 1,
+          borderTopColor: "#ccc",
+          padding: 10
+        }} />
+    )
+  }
+
+  const renderSend = (props) => {
+    return (
+      <Send {...props}>
+        <Icon name="send" library="FontAwesome" size={32} color="green" />
+      </Send>
+    )
+  }
+  // useEffect(() => {
+  //   return () => {
+  //     if (socket) socket.disconnect();
+  //   };
+  // }, [socket]);
 
   return (
-    <View>
+    <View className="flex-1">
       {!joined ? (
         <View className="flex-1 justify-center p-5">
           <Text className="text-2xl mb-5 text-center">Join Chat Room</Text>
@@ -98,16 +133,31 @@ const chat = () => {
             placeholder="Enter room code"
             value={room}
             onChangeText={setRoom}
+            autoCapitalize='characters'
             className="border border-gray-400 rounded-md my-2 p-2"
           />
-          <Button title="Join Room" onPress={handleJoinRoom} />
+          <TouchableOpacity
+            title="Join Room"
+            onPress={handleJoinRoom}
+            className="p-3 bg-blue-400 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit">
+            <Text className="text-xl font-bold">Join room</Text>
+          </TouchableOpacity>
         </View>
       ) : (
-        <GiftedChat
-          messages={messages}
-          onSend={(msgs) => onSend(msgs)}
-          user={{ _id: 1, name: name }}
-        />
+        <>
+          <TouchableOpacity
+            onPress={handleLeaveRoom}
+            className="bg-red-500 p-3 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black mx-4 my-2">
+            <Text className="text-xl font-bold text-white">Leave Room</Text>
+          </TouchableOpacity>
+          <GiftedChat
+            messages={messages}
+            onSend={(msgs) => handleSend(msgs)}
+            user={{ _id: 1, name: name }}
+            renderInputToolbar={renderInputToolbar}
+            renderSend={renderSend}
+          />
+        </>
       )}
     </View>
   );
