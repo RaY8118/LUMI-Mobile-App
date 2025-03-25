@@ -1,9 +1,11 @@
-import { Icon } from '@/constants/Icons';
+import { Icon } from '@/constants/Icons'
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
+import { usePatient } from '@/hooks/usePatient';
+import { useUser } from '@/hooks/useUser';
 const apiUrl = process.env.EXPO_PUBLIC_API_URL
 
 const chat = () => {
@@ -12,7 +14,9 @@ const chat = () => {
   const [joined, setJoined] = useState(false);
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
-
+  const { CGId, PATId } = usePatient();
+  const { role } = useUser();
+  const currentUserId = role === "caregiver" ? CGId : PATId
 
   const handleJoinRoom = async () => {
     if (!name || !room) {
@@ -21,7 +25,7 @@ const chat = () => {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/join-room`, { room, name });
+      const response = await axios.post(`${apiUrl}/join-room`, { room, name, CGId, PATId, role });
       const data = response.data;
 
       if (data.status === 'success') {
@@ -52,7 +56,7 @@ const chat = () => {
             _id: Date.now() + Math.random(),
             text: data.message,
             createdAt: new Date(),
-            user: { _id: data.name === name ? 1 : 2, name: data.name },
+            user: { _id: data.user, name: data.name },
           };
           setMessages((prev) => GiftedChat.append(prev, [newMsg]));
         });
@@ -153,7 +157,7 @@ const chat = () => {
           <GiftedChat
             messages={messages}
             onSend={(msgs) => handleSend(msgs)}
-            user={{ _id: 1, name: name }}
+            user={{ _id: currentUserId, name: name }}
             renderInputToolbar={renderInputToolbar}
             renderSend={renderSend}
           />
