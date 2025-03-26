@@ -7,6 +7,8 @@ import { createRoom } from "../services/userService";
 const CreateRoom = ({ isVisible, setIsVisible, toggleModal }) => {
   const { user, refetch } = useUser()
   const userId = user?.userId
+  const familyId = user?.familyId
+  console.log(user)
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async () => {
@@ -16,8 +18,8 @@ const CreateRoom = ({ isVisible, setIsVisible, toggleModal }) => {
     }
     setIsLoading(true)
     try {
-      const roomId = await createRoom();
-      Alert.alert("Success", `Room ID created ${roomId}`)
+      const request = await createRoom(familyId);
+      Alert.alert("Success", `Room ID created ${request.roomId} for family ${request.family}`)
       setIsVisible(false)
       refetch()
     } catch (error) {

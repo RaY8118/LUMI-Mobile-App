@@ -1,8 +1,11 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
+import { usePatient } from '@/hooks/usePatient';
+import { useUser } from '@/hooks/useUser';
+import { Icon } from '@/constants/Icons';
 const apiUrl = process.env.EXPO_PUBLIC_API_URL
 
 const CgChat = () => {
@@ -11,6 +14,9 @@ const CgChat = () => {
   const [joined, setJoined] = useState(false);
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
+  const { CGId, PATId } = usePatient();
+  const { role } = useUser();
+  const currentUserId = role === "CG" ? CGId : PATId
 
   const handleJoinRoom = async () => {
     if (!name || !room) {
@@ -19,7 +25,7 @@ const CgChat = () => {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/join-room`, { room, name });
+      const response = await axios.post(`${apiUrl}/join-room`, { room, name, CGId, PATId, role });
       const data = response.data;
 
       if (data.status === 'success') {
@@ -27,7 +33,7 @@ const CgChat = () => {
           _id: msg.id || Date.now() + Math.random(),
           text: msg.message,
           createdAt: new Date(msg.createdAt),
-          user: { _id: msg.name === name ? 1 : 2, name: msg.name },
+          user: { _id: msg.user, name: msg.name },
         }));
 
         setMessages(oldMessages.reverse());
@@ -50,8 +56,8 @@ const CgChat = () => {
             _id: Date.now() + Math.random(),
             text: data.message,
             createdAt: new Date(),
-            user: { _id: data.name === name ? 1 : 2, name: data.name },
-          };
+            user: { _id: data.user, name: data.name, avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${data.name}` }
+          }
           setMessages((prev) => GiftedChat.append(prev, [newMsg]));
         });
 
@@ -59,11 +65,15 @@ const CgChat = () => {
           console.log('Socket disconnected');
         });
       } else {
+        Alert.alert(error.message)
         alert(data.message);
       }
-    } catch (err) {
-      console.error(err);
-      alert('Error joining room');
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert("Error", error.response.data.message);
+      } else {
+        Alert.alert("Error", "Something went wrong!");
+      }
     }
   }
 
@@ -151,7 +161,7 @@ const CgChat = () => {
           <GiftedChat
             messages={messages}
             onSend={(msgs) => handleSend(msgs)}
-            user={{ _id: 1, name: name }}
+            user={{ _id: currentUserId, name: name }}
             renderInputToolbar={renderInputToolbar}
             renderSend={renderSend}
           />
