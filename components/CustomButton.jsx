@@ -9,11 +9,13 @@ const CustomButton = ({
   size,
   color,
   activeOpacity,
+  height,
+  width
 }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`${bgcolor} p-3 rounded-3xl shadow-lg shadow-black items-center justify-center h-fit w-fit`}
+      className={`${bgcolor} p-3 rounded-3xl shadow-md shadow-black items-center justify-center ${height} ${width} `}
       activeOpacity={activeOpacity}
     >
       <Icon name={name} library={library} size={size} color={color} />

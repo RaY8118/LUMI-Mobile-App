@@ -170,7 +170,7 @@ const Map = () => {
   };
 
   return (
-    <View className="flex justify-start items-center p-2 bg-custom-white border border-black">
+    <View className="flex justify-start items-center p-2 bg-white ">
       {/* Message Section */}
       <View className="flex justify-start items-center">
         {errorMsg ? (
@@ -189,7 +189,7 @@ const Map = () => {
           </Text>
         )}
       </View>
-      <View className="flex justify-start items-start p-2 border-2 h-24 min-h-24 w-full min-w-full border-black rounded-lg bg-slate-200 shadow-black shadow-lg overflow-hidden">
+      <View className="flex justify-start items-start p-2 h-24 min-h-24 w-full min-w-full rounded-3xl bg-slate-200 shadow-lg shadow-black overflow-hidden">
         <Text className="text-lg">You are currently here</Text>
         <Text>{address}</Text>
         <Text className="text-green-700">
@@ -198,7 +198,7 @@ const Map = () => {
       </View>
       {/* Map Section */}
       {location && (
-        <View className="w-full h-3/4 min-h-3/4 border-2 border-black m-3 mb-2 shadow-lg shadow-black overflow-hidden rounded-3xl">
+        <View className="w-full h-3/4 min-h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
           <MapView
             className="w-full h-full"
             initialRegion={{
@@ -239,6 +239,8 @@ const Map = () => {
           name="refresh"
           library="FontAwesome"
           size={48}
+          height="h-fit"
+          width="w-1/2"
         />
       </View>
     </View>

@@ -89,8 +89,8 @@ const CgMaps = () => {
 
   return (
     <SafeAreaView>
-      <View className="flex justify-start items-center p-2 bg-custom-white">
-        <View className="flex justify-start items-start h-24 min-h-24 min-w-full p-2 border-2 border-black rounded-lg bg-slate-200 shadow-black shadow-lg overflow-hidden">
+      <View className="flex justify-start items-center p-2">
+        <View className="flex justify-start items-start h-24 min-h-24 min-w-full p-2 bg-white rounded-lg shadow-lg shadow-black overflow-hidden">
           {errorMsg ? (
             <Text className="text-red-600 text-xl text-center">{errorMsg}</Text>
           ) : (
@@ -112,7 +112,7 @@ const CgMaps = () => {
         ) : (
           location &&
           Cglocation && (
-            <View className="w-full h-3/4 border-2 border-black m-3 mb-2 shadow-lg shadow-black overflow-hidden rounded-3xl">
+            <View className="w-full h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
               <MapView
                 className="w-full h-full"
                 initialRegion={{
