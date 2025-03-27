@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Modal,
   Text,
-  Pressable,
   View,
   TextInput,
   TouchableOpacity,
@@ -65,20 +64,20 @@ const AddModalComponent = ({
         }}
       >
         <View className="flex-1 justify-center items-center mt-6">
-          <View className="m-5 bg-white rounded-xl p-20 items-center shadow-md shadow-black">
+          <View className="m-5 bg-gray-50 rounded-xl p-20 items-center shadow-md shadow-black">
             <TouchableOpacity
-              className="absolute top-3 right-5"
+              className="absolute top-3 right-6"
               onPress={() => setAddModalVisible(false)}
             >
               <Icon
-                name="circle-with-cross"
-                size={30}
+                name="close"
+                size={38}
                 color="black"
-                library="Entypo"
+                library="FontAwesome"
               />
             </TouchableOpacity>
 
-            <Text className="text-lg font-bold mb-5">Add new reminder</Text>
+            <Text className="text-xl font-bold mb-5">Add new reminder</Text>
 
             <TextInput
               className="h-12 w-72 border border-gray-600 mb-4 px-3 rounded"
@@ -169,15 +168,15 @@ const AddModalComponent = ({
                 <Text className="m-2">Important</Text>
               </View>
             </View>
-            <Pressable
-              className="bg-black rounded-xl p-3 mt-3"
+            <TouchableOpacity
+              className="bg-green-500/80 rounded-xl p-3 mt-3 pl-5 pr-5"
               onPress={() => {
                 onSave();
                 setAddModalVisible(false);
               }}
             >
               <Text className="text-white font-bold text-center">Save</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

@@ -51,14 +51,14 @@ const Camera = () => {
   };
 
   return (
-    <View className="flex-1 justify-end p-5 relative bg-custom-white">
+    <View className="flex-1 justify-end p-5 relative bg-white">
       {/* Parent View with rounded edges */}
-      <View className="flex-1 rounded-3xl overflow-hidden shadow-xl shadow-black border-4 border-black">
+      <View className="flex-1 rounded-3xl overflow-hidden shadow-xl shadow-black">
         <CameraView
           style={{
             flex: 1,
-            width: "100%", // Full width
-            backgroundColor: "black", // Optional: Background color for camera view
+            width: "100%",
+            backgroundColor: "black",
           }}
           facing={facing}
           ref={cameraRef}
@@ -90,6 +90,8 @@ const Camera = () => {
           size={60}
           activeOpacity={0.7}
           color="white"
+          height="h-fit"
+          width="w-fit"
         />
 
         <CustomButton
@@ -100,6 +102,8 @@ const Camera = () => {
           size={60}
           activeOpacity={0.7}
           color="white"
+          height="h-fit"
+          width="w-fit"
         />
 
         <CustomButton
@@ -110,6 +114,8 @@ const Camera = () => {
           size={60}
           activeOpacity={0.7}
           color="white"
+          height="h-fit"
+          width="w-fit"
         />
       </View>
 
