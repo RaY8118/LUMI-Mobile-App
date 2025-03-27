@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Modal, View, Text, Alert, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { Icon } from "@/constants/Icons";
@@ -8,7 +7,6 @@ const CreateRoom = ({ isVisible, setIsVisible, toggleModal }) => {
   const { user, refetch } = useUser()
   const userId = user?.userId
   const familyId = user?.familyId
-  console.log(user)
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async () => {
@@ -18,8 +16,8 @@ const CreateRoom = ({ isVisible, setIsVisible, toggleModal }) => {
     }
     setIsLoading(true)
     try {
-      const request = await createRoom(familyId);
-      Alert.alert("Success", `Room ID created ${request.roomId} for family ${request.family}`)
+      const response = await createRoom(familyId);
+      Alert.alert("Success", `Room ID created ${response.room}`)
       setIsVisible(false)
       refetch()
     } catch (error) {

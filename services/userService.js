@@ -3,7 +3,7 @@ const apiUrl = process.env.EXPO_PUBLIC_API_URL
 import { Alert } from "react-native"
 
 
-export const uploadProfilefamilyIdImg = async (uri, userId, familyId) => {
+export const uploadProfileImg = async (uri, userId, familyId) => {
   const formData = new FormData()
   formData.append("image", {
     uri,
@@ -116,11 +116,7 @@ export const createRoom = async (familyId) => {
     const response = await axios.post(`${apiUrl}/create-room`, {
       familyId
     })
-    const { room } = response.data
-
-    if (!room)
-      throw new Error("Romm ID not returned from the server")
-    return room
+    return response.data
   } catch (error) {
     errorMessage = error.response.data.message
     throw new Error(errorMessage)

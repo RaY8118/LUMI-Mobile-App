@@ -13,7 +13,7 @@ const CustomButton = ({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`${bgcolor} p-3 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit`}
+      className={`${bgcolor} p-3 rounded-3xl shadow-lg shadow-black items-center justify-center h-fit w-fit`}
       activeOpacity={activeOpacity}
     >
       <Icon name={name} library={library} size={size} color={color} />

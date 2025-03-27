@@ -14,6 +14,7 @@ const TabsLayout = () => {
           redirect={role !== "PAT"}
           options={({ navigation }) => ({
             headerTitle: "Reminders",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Reminders",
             tabBarIcon: ({ color, size }) => (
               <Icon
@@ -109,6 +110,7 @@ const TabsLayout = () => {
           redirect={role !== "CG"}
           options={({ navigation }) => ({
             headerTitle: "CG Reminders",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "CG Reminders",
             tabBarIcon: ({ color, size }) => (
               <Icon

@@ -166,56 +166,63 @@ const CgReminders = () => {
   return (
     <>
       <ScrollView
-        className="border border-black bg-white rounded-lg "
+        className="bg-white rounded-lg"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View className="flex-row flex-wrap justify-center items-center">
-          <View className="pt-2">
-            <Text className="text-3xl m-4 mt-2">{PATName} Reminders</Text>
-          </View>
-        </View>
-        <View className="border border-black rounded-lg bg-white p-2 grid grid-cols-2 gap-2">
+        <View className="bg-white p-2 grid grid-cols-2 shadow-xl shadow-black h-full mt-0">
           {error ? (
-            <Text className="col-span-2">{error}</Text>
+            <Text className="col-span-2 text-2xl">{error}</Text>
           ) : (
             sortedReminders.map((reminder) => (
               <View
                 key={reminder._id}
-                className={`p-2 border border-black rounded-xl ${getBackgroundColorClass(
+                className={`p-4 pb-2 rounded-3xl shadow-xl shadow-black mb-3 ${getBackgroundColorClass(
                   reminder.urgent,
                   reminder.important
                 )}`}
               >
-                <Text className="text-3xl font-agdasimar">
+                <Text className="text-3xl ">
                   {reminder.title}
                 </Text>
-                <Text className="text-2xl font-agdasimar">
+                <Text className="text-xl ">
                   {reminder.description}
                 </Text>
-                <Text className="text-2xl font-agdasimar">
-                  {new Date(reminder.date).toLocaleDateString()}
-                </Text>
-                <Text className="text-2xl font-agdasimar">{reminder.time}</Text>
-                <Text className="text-2xl font-agdasimar">
-                  Status:{" "}
-                  {reminder.status === "pending" ? "Pending" : "Completed"}
-                </Text>
+
+                <View className="flex-1 flex-row items-center">
+                  <Icon name="date" size={20} library="Fontisto" />
+                  <Text className="text-xl ml-2 ">
+                    {new Date(reminder.date).toLocaleDateString()}
+                  </Text>
+                </View>
+                <View className="flex-1 flex-row items-center">
+                  <Icon name="clockcircleo" size={20} library="AntDesign" />
+                  <Text className="text-xl ml-2">{reminder.time}</Text>
+                </View>
+                <View className="flex-1 flex-row items-center">
+                  {reminder.status === "pending" ?
+                    <Icon name="pending" size={20} library="MaterialIcons" /> :
+                    <Icon name="pending" size={20} library="MaterialIcons" color="white" />}
+                  <Text className="text-xl ml-2">
+                    {reminder.status === "pending" ? "Pending" : "Completed"}
+                  </Text>
+                </View>
+
                 <TouchableOpacity
                   onPress={() => handleEdit(reminder._id)}
-                  className="absolute right-14 bottom-2"
+                  className="absolute right-14 bottom-4"
                 >
                   <Icon
-                    name="edit"
-                    size={24}
+                    name="edit-note"
+                    size={30}
                     color="black"
-                    library="FontAwesome6"
+                    library="MaterialIcons"
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => deletePatientReminders(reminder.remId)}
-                  className="absolute right-4 bottom-1"
+                  onPress={() => handleDeleteReminder(reminder.remId)}
+                  className="absolute right-4 bottom-4"
                 >
                   <Icon
                     name="delete-outline"
@@ -272,14 +279,14 @@ const CgReminders = () => {
       <View className="justify-center items-center">
         <TouchableOpacity
           onPress={() => setAddModalVisible(true)}
-          className="absolute right-6 bottom-5"
+          className="absolute bottom-5"
+          activeOpacity={0.9}
         >
-          <Icon
-            name="add-box"
-            size={56}
-            color="black"
-            library="MaterialIcons"
-          />
+          <View className="bg-blue-500 w-full shadow-md shadow-black p-4 pl-20 pr-20 justify-center rounded-xl">
+            <Text className="text-white font-bold text-xl">
+              Add new task
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
     </>
