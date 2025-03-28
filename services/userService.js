@@ -111,6 +111,19 @@ export const addInfo = async (userId, relation, tagline, triggerMemory) => {
 }
 
 
+export const getAddInfo = async(userId) => {
+  try {
+    const response = await axios.get(`${apiUrl}/get-additional-info`, {
+      params: { userId },
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data.userInfo
+  } catch (error) {
+    errorMessage = error.response.data.message
+    throw new Error(errorMessage)
+  }
+}
+
 export const createRoom = async (familyId) => {
   try {
     const response = await axios.post(`${apiUrl}/create-room`, {
