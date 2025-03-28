@@ -90,15 +90,17 @@ const CgMaps = () => {
   return (
     <SafeAreaView>
       <View className="flex justify-start items-center p-2">
-        <View className="flex justify-start items-start h-24 min-h-24 min-w-full p-2 bg-white rounded-lg shadow-lg shadow-black overflow-hidden">
+        <View className="flex justify-start items-start h-24 min-h-24 min-w-full p-4 bg-gray-200 rounded-lg shadow-lg shadow-black overflow-hidden">
           {errorMsg ? (
-            <Text className="text-red-600 text-xl text-center">{errorMsg}</Text>
+            <Text className="text-red-600 text-xl text-center font-semibold">
+              {errorMsg}
+            </Text>
           ) : (
             <>
-              <Text className="text-green-600 text-lg text-start font-bold">
+              <Text className="text-green-600 text-lg text-start font-semibold mb-1">
                 {PATName} Location
               </Text>
-              <Text className="text-green-600 text-lg text-start font-bold">
+              <Text className="text-green-600 text- text-start font-semibold">
                 {address}
               </Text>
             </>

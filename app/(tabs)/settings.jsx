@@ -45,70 +45,84 @@ const Settings = () => {
       title: "Custom Notifications",
       onPress: toggleNotificationsModal,
       library: "MaterialIcons",
-      name: "notification-important"
+      name: "notification-important",
+      color: "#FF9800"
     },
     {
       title: "Add Info",
       onPress: toggleInfoModal,
       library: "Entypo",
-      name: "info"
+      name: "info",
+      color: "#2196F3"
     },
     {
       title: "Manage Family",
       onPress: toggleFamilyModal,
       library: "FontAwesome6",
-      name: "people-roof"
+      name: "people-roof",
+      color: "#4CAF50"
     },
     {
       title: "Add Patient",
       onPress: togglePatientModal,
       library: "Fontisto",
-      name: "bed-patient"
+      name: "bed-patient",
+      color: "#F44336"
     },
     {
       title: "Add Members",
       onPress: toggleMemberModal,
       library: "MaterialIcons",
-      name: "people-alt"
+      name: "people-alt",
+      color: "#3F51B5"
     },
     {
       title: "Create Room",
       onPress: toogleRommModal,
       library: "Ionicons",
-      name: "chatbox"
+      name: "chatbox",
+      color: "#9C27B0"
     },
     {
       title: "About Us",
       onPress: toggleAboutModal,
       library: "MaterialIcons",
-      name: "feedback"
+      name: "feedback",
+      color: "#00BCD4"
     }
 
   ]
   return (
     <>
-      <SafeAreaView className="h-full">
-        <View className="items-center justify-center py-4">
-          <Text className="text-3xl font-bold">Settings</Text>
+      <SafeAreaView className="h-full bg-gray-100">
+        <View className="items-center justify-center py-6 mx-4 bg-white shadow-md shadow-black rounded-3xl">
+          <Text className="text-3xl font-bold text-gray-800">Settings</Text>
         </View>
-
-        <View className="m-4 border border-black rounded-xl bg-white">
+        <View className="m-4 bg-white rounded-3xl shadow-md shadow-black">
           {settingsOptions.map((option, index) => (
             <React.Fragment key={index}>
-              <View className="h-20 flex flex-row items-center justify-between px-4">
+              <View className="h-20 flex flex-row items-center justify-between px-6 py-3">
                 <View className="flex flex-row items-center">
-                  <Icon library={option.library}
+                  <Icon
+                    library={option.library}
                     name={option.name}
                     size={36}
-                    className="mr-4" />
-                  <Text className="text-xl">{option.title}</Text>
+                    color={option.color}
+                    className="mr-5"
+                  />
+                  <Text className="text-xl text-gray-800 font-semibold">{option.title}</Text>
                 </View>
-                <TouchableOpacity onPress={option.onPress}>
-                  <Icon library="AntDesign" name="arrowright" size={36} />
+                <TouchableOpacity onPress={option.onPress} className="p-2">
+                  <Icon
+                    library="AntDesign"
+                    name="arrowright"
+                    size={24}
+                    color="#4B5563"
+                  />
                 </TouchableOpacity>
               </View>
               {index < settingsOptions.length - 1 && (
-                <View className="border-b border-gray-300 mx-4" />
+                <View className="border-b border-gray-300 mx-4 shadow-sm shadow-black" />
               )}
             </React.Fragment>
           ))}

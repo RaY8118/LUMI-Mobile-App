@@ -127,35 +127,39 @@ const CgChat = () => {
   // }, [socket]);
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-gray-100">
       {!joined ? (
-        <View className="flex-1 justify-center p-5">
-          <Text className="text-2xl mb-5 text-center">Join Chat Room</Text>
-          <TextInput
-            placeholder="Enter your name"
-            value={name}
-            onChangeText={setName}
-            className="border border-gray-400 rounded-md my-2 p-2"
-          />
+        <View className="flex-1 justify-center items-center p-5 bg-white shadow-lg rounded-xl ">
+          <Text className="text-3xl font-bold mb-5 text-center text-gray-800">Join Chat Room</Text>
+          <View className="w-full">
+            <TextInput
+              placeholder="Enter your name"
+              value={name}
+              onChangeText={setName}
+              className="border border-gray-400 rounded-md my-2 p-3 w-full text-lg"
+            />
+          </View>
           <TextInput
             placeholder="Enter room code"
             value={room}
             onChangeText={setRoom}
-            autoCapitalize='characters'
-            className="border border-gray-400 rounded-md my-2 p-2"
+            autoCapitalize="characters"
+            className="border border-gray-400 rounded-md my-2 p-3 w-full text-lg"
           />
           <TouchableOpacity
             title="Join Room"
             onPress={handleJoinRoom}
-            className="p-3 bg-blue-400 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black h-fit w-fit">
-            <Text className="text-xl font-bold">Join room</Text>
+            className="p-4 mt-5 bg-blue-500 rounded-3xl shadow-lg shadow-black w-full items-center justify-center"
+          >
+            <Text className="text-2xl font-bold text-white">Join Room</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <>
           <TouchableOpacity
             onPress={handleLeaveRoom}
-            className="bg-red-500 p-3 rounded-3xl shadow-lg shadow-black items-center justify-center border-4 border-black mx-4 my-2">
+            className="bg-red-500 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center w-3/4 mx-auto mt-4"
+          >
             <Text className="text-xl font-bold text-white">Leave Room</Text>
           </TouchableOpacity>
           <GiftedChat
@@ -170,5 +174,4 @@ const CgChat = () => {
     </View>
   );
 }
-
 export default CgChat;

@@ -40,6 +40,7 @@ const TabsLayout = () => {
           redirect={role !== "PAT"}
           options={({ navigation }) => ({
             headerTitle: "Maps",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Maps",
             tabBarIcon: ({ color, size }) => (
               <Icon name="map" color={color} size={size} library="Entypo" />
@@ -60,6 +61,7 @@ const TabsLayout = () => {
           redirect={role !== "PAT"}
           options={({ navigation }) => ({
             headerTitle: "Chat Room",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Chat",
             tabBarIcon: ({ color, size }) => (
               <Icon
@@ -85,6 +87,7 @@ const TabsLayout = () => {
           redirect={role !== "PAT"}
           options={({ navigation }) => ({
             headerTitle: "Camera",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Camera",
             tabBarIcon: ({ color, size }) => (
               <Icon
@@ -136,6 +139,7 @@ const TabsLayout = () => {
           redirect={role !== "CG"}
           options={({ navigation }) => ({
             headerTitle: "CG Map",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "CG Map",
             tabBarIcon: ({ color, size }) => (
               <Icon name="map" color={color} size={size} library="Entypo" />
@@ -156,6 +160,7 @@ const TabsLayout = () => {
           redirect={role !== "CG"}
           options={({ navigation }) => ({
             headerTitle: "CG Chat",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "CG Chat",
             tabBarIcon: ({ color, size }) => (
               <Icon
@@ -180,7 +185,8 @@ const TabsLayout = () => {
           name="settings"
           redirect={role !== "CG"}
           options={({ navigation }) => ({
-            headerTitle: "Settings",
+            headerTitle: "",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Settings",
             tabBarIcon: ({ color, size }) => (
               <Icon
@@ -206,6 +212,7 @@ const TabsLayout = () => {
           redirect={role !== "PAT"}
           options={({ navigation }) => ({
             headerTitle: "Tutorials",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Tutorials",
             tabBarIcon: ({ color, size }) => (
               <Icon
@@ -231,6 +238,7 @@ const TabsLayout = () => {
           options={{
             tabBarButton: () => null,
             headerTitle: "Profile",
+            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
           }}
         />
       </Tabs>

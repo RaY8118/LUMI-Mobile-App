@@ -59,7 +59,7 @@ const Map = () => {
     // Save current location to database only if it has changed
     if (shouldSaveLocation(currentLocation)) {
       saveCurrLocation(userId, setErrorMsg);
-      setPreviousLocation(currentLocation); // Update previous location
+      setPreviousLocation(currentLocation);
     }
   };
 
@@ -100,7 +100,7 @@ const Map = () => {
       }
     };
 
-    initializeData(); // Call the function on component load
+    initializeData();
   }, [userId]);
 
   useEffect(() => {
@@ -171,8 +171,7 @@ const Map = () => {
 
   return (
     <View className="flex justify-start items-center p-2 bg-white ">
-      {/* Message Section */}
-      <View className="flex justify-start items-center">
+      <View className="flex justify-start items-center bg-white">
         {errorMsg ? (
           <Text className="text-red-600 text-xl text-center">{errorMsg}</Text>
         ) : isSafe === null ? (
@@ -189,14 +188,13 @@ const Map = () => {
           </Text>
         )}
       </View>
-      <View className="flex justify-start items-start p-2 h-24 min-h-24 w-full min-w-full rounded-3xl bg-slate-200 shadow-lg shadow-black overflow-hidden">
+      <View className="flex justify-start items-start h-24 min-h-24 min-w-full p-2 bg-gray-200 rounded-lg shadow-lg shadow-black overflow-hidden">
         <Text className="text-lg">You are currently here</Text>
         <Text>{address}</Text>
         <Text className="text-green-700">
           {String(distance).slice(0, 1)} meters away from your home
         </Text>
       </View>
-      {/* Map Section */}
       {location && (
         <View className="w-full h-3/4 min-h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
           <MapView

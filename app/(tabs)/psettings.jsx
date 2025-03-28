@@ -46,8 +46,7 @@ const Psettings = () => {
   }
   return (
     <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} className="bg-gray-100" />}>
-      <Text className="text-4xl font-bold text-center mb-2 text-gray-800">Tutorials</Text>
-      <Text className="text-lg text-center mb-2 text-gray-600">Follow the videos below for tutorial</Text>
+      <Text className="text-2xl text-center font-semibold mt-3 mb-6 text-gray-600">Follow the videos below for tutorial</Text>
       <View className="flex flex-row flex-wrap justify-between">
         {TutorialVideos.map((option, index) => (
           <View key={index} className="w-1/2 p-2">

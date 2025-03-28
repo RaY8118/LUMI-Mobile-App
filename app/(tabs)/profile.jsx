@@ -23,8 +23,8 @@ import EditForm from "@/components/EditForm"
 import axios from "axios";
 
 const CLOUDINARY_URL = process.env.CLOUDINARY_URL
-const UPLOAD_PRESET =  process.env.UPLOAD_PRESET
-const UPLOAD_FOLDER =  process.env.UPLOAD_FOLDER
+const UPLOAD_PRESET = process.env.UPLOAD_PRESET
+const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER
 
 const Profile = () => {
   const { user, setUser, isLoading } = useUser();
@@ -130,7 +130,7 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await SecureStore.deleteItemAsync("token");
-      setUser(null); // Trigger conditional rendering in the layout
+      setUser(null);
       Alert.alert("Success", "Logout Successful");
       router.replace("/sign-in");
     } catch (error) {
@@ -146,103 +146,96 @@ const Profile = () => {
     );
   }
   return (
-    <SafeAreaView className="bg-custom-white h-full border border-black m-2 rounded-xl">
+    <SafeAreaView className="bg-white h-full rounded-xl">
       <View>
         <EditForm userId={userId} isVisible={isModalVisible} setIsVisible={setIsModalVisible} toggleModal={toggleModal} />
       </View>
-      <View className="flex-col items-center h-40 justify-center p-3 m-4">
-        <Text className="text-3xl font-bold">User Profile</Text>
-        <TouchableOpacity className="absolute top-2 right-0" onPress={toggleModal}>
-          <Icon library="MaterialIcons" name="edit-square" size={44} />
-        </TouchableOpacity>
-        <View className="">
+      <View className="flex-col items-center justify-center h-40 p-5 m-4 bg-gray-100 shadow-lg shadow-black rounded-3xl">
+        <View className="mt-1">
           {profileImg ? (
-            <Image source={{ uri: profileImg }} style={{ width: 160, height: 160 }} className="rounded-full" />
+            <Image source={{ uri: profileImg }} style={{ width: 150, height: 150 }} className="rounded-full border-4 border-white" />
           ) : (
-            <Text>No profile image uploaded</Text>
+            <View className="rounded-full border-4 border-white h-36 w-36 bg-gray-300/40 justify-center items-center">
+              <Text className="text-sm font-thin text-slate-600/60">No profile image uploaded</Text>
+            </View>
           )}
-
         </View>
         <TouchableOpacity onPress={() => selectImage(true)} className="absolute right-1/3 bottom-0">
-
-          <Icon library="Entypo" name="circle-with-plus" size={48} color="white" />
+          <Icon library="MaterialIcons" name="add-photo-alternate" size={48} color="black" />
         </TouchableOpacity>
       </View>
 
-      <View className="flex-row h-4/6 items-start m-3 ">
-        <View className="flex-1 justify-start items-start border border-black pt-4 pl-4 rounded-2xl bg-white w-full h-full">
+      <View className="flex-row h-4/6 items-start m-3">
+        <View className="flex-1 justify-start items-start pt-4 pl-4 rounded-2xl bg-gray-100 w-full h-full shadow-lg shadow-black">
           {user ? (
             <View className="flex flex-col w-full pr-5">
-              <View className=" flex flex-col ">
-                <Text className="text-2xl font-bold m-1">
-                  Name:</Text>
-                <Text className="text-xl m-1">{user.name}</Text>
+              <View className="flex flex-col mb-3">
+                <TouchableOpacity className="absolute top-0 right-0 z-10" onPress={() => toggleModal()}>
+                  <Icon library="MaterialCommunityIcons" name="account-edit-outline" size={40} />
+                </TouchableOpacity>
+                <Text className="text-2xl font-semibold text-gray-700 mb-1">Name:</Text>
+                <Text className="text-xl text-gray-800">{user.name}</Text>
               </View>
-              <View className="border-b-2 border-gray-500 my-2" />
-              <View className=" flex flex-col ">
-                <Text className="text-2xl font-bold m-1">
-                  Email:</Text>
-                <Text className="text-xl m-1">{user.email}</Text>
-              </View>
-              <View className="border-b-2 border-gray-500 my-2" />
-              <View className=" flex flex-col  ">
-                <Text className="text-2xl font-bold m-1">
-                  Mobile:</Text>
-                <Text className="text-xl m-1">{user.mobile}</Text>
-              </View>
-              <View className="border-b-2 border-gray-500 my-2" />
-              <View className=" flex flex-col  ">
-                <Text className="text-2xl font-bold m-1">
-                  Role:</Text>
-                <Text className="text-xl m-1">{user.role === "CG" ? "Care Giver" : "Patient"}</Text>
-              </View>
-              <View className="border-b-2 border-gray-500 my-2" />
-              <View className=" flex flex-col ">
-                <Text className="text-2xl font-bold m-1">
-                  Family ID:</Text>
-                <Text className="text-xl m-1">{familyId}</Text>
-              </View>
-              <View className="border-b-2 border-gray-500 my-2" />
 
+              <View className="border-b-2 border-gray-300 my-3" />
+
+              <View className="flex flex-col mb-3">
+                <Text className="text-2xl font-semibold text-gray-700 mb-1">Email:</Text>
+                <Text className="text-xl text-gray-800">{user.email}</Text>
+              </View>
+
+              <View className="border-b-2 border-gray-300 my-3" />
+
+              <View className="flex flex-col mb-3">
+                <Text className="text-2xl font-semibold text-gray-700 mb-1">Mobile:</Text>
+                <Text className="text-xl text-gray-800">{user.mobile}</Text>
+              </View>
+
+              <View className="border-b-2 border-gray-300 my-3" />
+
+              <View className="flex flex-col mb-3">
+                <Text className="text-2xl font-semibold text-gray-700 mb-1">Role:</Text>
+                <Text className="text-xl text-gray-800">{user.role === "CG" ? "Care Giver" : "Patient"}</Text>
+              </View>
+
+              <View className="border-b-2 border-gray-300 my-3" />
+
+              <View className="flex flex-col mb-3">
+                <Text className="text-2xl font-semibold text-gray-700 mb-1">Family ID:</Text>
+                <Text className="text-xl text-gray-800">{familyId}</Text>
+              </View>
+
+              <View className="border-b-2 border-gray-300 my-3" />
 
               {user.role === "CG" ? (
-                <View className=" flex flex-col">
-                  <Text className="text-2xl font-bold m-1">
-                    Patient:</Text>
-                  <Text className="text-xl m-1">{PATName}</Text>
-                  <Text className="text-xl m-1">{PATId}</Text>
+                <View className="flex flex-col mb-3">
+                  <Text className="text-2xl font-semibold text-gray-700 mb-1">Patient:</Text>
+                  <Text className="text-xl text-gray-800">{PATName}</Text>
+                  <Text className="text-xl text-gray-800">{PATId}</Text>
                 </View>
               ) : (
                 <View>
-                  <Text className="text-2xl font-bold m-1">Caregivers:</Text>
+                  <Text className="text-2xl font-semibold text-gray-700 mb-1">Caregivers:</Text>
                   <FlatList
                     data={user.members}
                     keyExtractor={(item) => item.userId}
                     renderItem={({ item, index }) => (
-                      <View className="flex flex-row">
-                        <Text className="text-2xl font-bold ml-1">
-                          {(index + 1)})Name:
-                        </Text>
-                        <Text className="text-xl ml-2">
-                          {item.name}
-                        </Text>
+                      <View className="flex flex-row mb-2">
+                        <Text className="text-2xl font-semibold text-gray-700 ml-1">{index + 1})</Text>
+                        <Text className="text-xl text-gray-800 ml-2">{item.name}</Text>
                       </View>
-                    )
-                    }
-                    ListEmptyComponent={
-                      <Text>
-                        No caregivers added.
-                      </Text>
-                    } />
+                    )}
+                    ListEmptyComponent={<Text className="text-gray-500 text-xl">No caregivers added.</Text>}
+                  />
                 </View>
               )}
             </View>
           ) : (
-            <Text>Loading user data...</Text>
+            <Text className="text-center text-xl text-gray-500">Loading user data...</Text>
           )}
         </View>
       </View>
-      <View className="items-end  absolute bottom-4 right-4 ">
+      <View className="items-end  absolute bottom-2 right-4 ">
         <CustomButton
           onPress={handleLogout}
           bgcolor="bg-red-500"
@@ -254,7 +247,7 @@ const Profile = () => {
         />
       </View>
 
-    </SafeAreaView>
+    </SafeAreaView >
   );
 };
 
