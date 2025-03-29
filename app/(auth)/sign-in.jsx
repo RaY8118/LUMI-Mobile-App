@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
 import { Link, router } from "expo-router";
-import images from "../../constants/images";
 import { Icon } from "@/constants/Icons";
 import { handleLogin, authenticateAndAutofill } from "@/services/authService";
 import { useUser } from "@/hooks/useUser";
@@ -37,7 +36,9 @@ const SignIn = () => {
     <SafeAreaView className="flex-1 justify-center p-6 pt-2 mt-14 border border-x-2 bg-custom-primary rounded-xl">
       <View>
         <Image
-          source={images.loginImg}
+          source={{
+            uri: "https://res.cloudinary.com/dkyzhoqpb/image/upload/f_auto,q_auto/v1/Lumi/assets/wedkdzyqpqcle4xkelgw",
+          }}
           resizeMode="contain"
           className="self-center mb-4 w-3/4 md:w-1/2" // Responsive width
         />

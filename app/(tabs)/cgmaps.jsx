@@ -1,6 +1,6 @@
 import { View, Text, ActivityIndicator, SafeAreaView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { usePatient } from "@/hooks/usePatient";
 import {
   getPatientCurrentAddress,
@@ -115,7 +115,7 @@ const CgMaps = () => {
           location &&
           Cglocation && (
             <View className="w-full h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
-              <MapView
+              <MapView provider={PROVIDER_GOOGLE}
                 className="w-full h-full"
                 initialRegion={{
                   latitude: location?.latitude,

@@ -2,7 +2,6 @@ import { View, ScrollView, Text, TouchableOpacity, Image } from "react-native";
 import React, { useState } from "react";
 import { useRouter, Link } from "expo-router";
 import DropDownPicker from "react-native-dropdown-picker";
-import images from "../../constants/images";
 import { handleRegister } from "@/services/authService";
 import { Icon } from "@/constants/Icons";
 import CustomInput from "@/components/CustomInput";
@@ -29,7 +28,9 @@ const Register = () => {
     <ScrollView className="flex-1 p-6 mt-14 border border-x-2 border-black bg-custom-primary rounded-xl">
       <View>
         <Image
-          source={images.registerImg}
+          source={{
+            uri: "https://res.cloudinary.com/dkyzhoqpb/image/upload/f_auto,q_auto/v1/Lumi/assets/mqahmsxr9uw0csdl9vwx",
+          }}
           resizeMode="contain"
           className="self-center mb-4 w-3/4 md:w-1/2" // Responsive width
         />

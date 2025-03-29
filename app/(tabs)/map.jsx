@@ -7,7 +7,7 @@ import {
   sendLocationAlert,
 } from "@/services/locationService";
 import { View, Text, Alert } from "react-native";
-import MapView, { Marker, Circle } from "react-native-maps";
+import MapView, { Marker, Circle, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useUser } from "@/hooks/useUser";
 import CustomButton from "@/components/CustomButton";
@@ -62,7 +62,6 @@ const Map = () => {
       setPreviousLocation(currentLocation);
     }
   };
-
 
   useEffect(() => {
     // Consolidated function to fetch required data and handle refresh
@@ -137,7 +136,7 @@ const Map = () => {
       // Fetch saved location and current coordinates in parallel
       const [homeLocation, currentCoords] = await Promise.all([
         fetchSavedLocation(userId, setErrorMsg),
-        getCurrentCoords()
+        getCurrentCoords(),
       ]);
 
       // Update state with fetched data
@@ -197,7 +196,7 @@ const Map = () => {
       </View>
       {location && (
         <View className="w-full h-3/4 min-h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
-          <MapView
+          <MapView provider={PROVIDER_GOOGLE}
             className="w-full h-full"
             initialRegion={{
               latitude: location.latitude,
