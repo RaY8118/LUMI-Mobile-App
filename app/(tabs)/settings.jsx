@@ -94,11 +94,11 @@ const Settings = () => {
   ]
   return (
     <>
-      <SafeAreaView className="h-full bg-gray-100">
-        <View className="items-center justify-center py-6 mx-4 bg-white shadow-md shadow-black rounded-3xl">
+      <SafeAreaView className="h-full bg-white">
+        <View className="items-center justify-center py-6 mx-4 bg-gray-100 shadow-md shadow-black rounded-3xl">
           <Text className="text-3xl font-bold text-gray-800">Settings</Text>
         </View>
-        <View className="m-4 bg-white rounded-3xl shadow-md shadow-black">
+        <View className="m-4 bg-gray-100 rounded-3xl shadow-md shadow-black">
           {settingsOptions.map((option, index) => (
             <React.Fragment key={index}>
               <View className="h-20 flex flex-row items-center justify-between px-6 py-3">
@@ -110,7 +110,7 @@ const Settings = () => {
                     color={option.color}
                     className="mr-5"
                   />
-                  <Text className="text-xl text-gray-800 font-semibold">{option.title}</Text>
+                  <Text className="text-xl text-gray-800 font-bold">{option.title}</Text>
                 </View>
                 <TouchableOpacity onPress={option.onPress} className="p-2">
                   <Icon

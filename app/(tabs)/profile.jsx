@@ -173,35 +173,35 @@ const Profile = () => {
                 <TouchableOpacity className="absolute top-0 right-0 z-10" onPress={() => toggleModal()}>
                   <Icon library="MaterialCommunityIcons" name="account-edit-outline" size={40} />
                 </TouchableOpacity>
-                <Text className="text-2xl font-semibold text-gray-700 mb-1">Name:</Text>
+                <Text className="text-2xl font-bold text-gray-700 mb-1">Name:</Text>
                 <Text className="text-xl text-gray-800">{user.name}</Text>
               </View>
 
               <View className="border-b-2 border-gray-300 my-3" />
 
               <View className="flex flex-col mb-3">
-                <Text className="text-2xl font-semibold text-gray-700 mb-1">Email:</Text>
+                <Text className="text-2xl font-bold text-gray-700 mb-1">Email:</Text>
                 <Text className="text-xl text-gray-800">{user.email}</Text>
               </View>
 
               <View className="border-b-2 border-gray-300 my-3" />
 
               <View className="flex flex-col mb-3">
-                <Text className="text-2xl font-semibold text-gray-700 mb-1">Mobile:</Text>
+                <Text className="text-2xl font-bold text-gray-700 mb-1">Mobile:</Text>
                 <Text className="text-xl text-gray-800">{user.mobile}</Text>
               </View>
 
               <View className="border-b-2 border-gray-300 my-3" />
 
               <View className="flex flex-col mb-3">
-                <Text className="text-2xl font-semibold text-gray-700 mb-1">Role:</Text>
+                <Text className="text-2xl font-bold text-gray-700 mb-1">Role:</Text>
                 <Text className="text-xl text-gray-800">{user.role === "CG" ? "Care Giver" : "Patient"}</Text>
               </View>
 
               <View className="border-b-2 border-gray-300 my-3" />
 
               <View className="flex flex-col mb-3">
-                <Text className="text-2xl font-semibold text-gray-700 mb-1">Family ID:</Text>
+                <Text className="text-2xl font-bold text-gray-700 mb-1">Family ID:</Text>
                 <Text className="text-xl text-gray-800">{familyId}</Text>
               </View>
 
@@ -209,19 +209,19 @@ const Profile = () => {
 
               {user.role === "CG" ? (
                 <View className="flex flex-col mb-3">
-                  <Text className="text-2xl font-semibold text-gray-700 mb-1">Patient:</Text>
+                  <Text className="text-2xl font-bold text-gray-700 mb-1">Patient:</Text>
                   <Text className="text-xl text-gray-800">{PATName}</Text>
                   <Text className="text-xl text-gray-800">{PATId}</Text>
                 </View>
               ) : (
                 <View>
-                  <Text className="text-2xl font-semibold text-gray-700 mb-1">Caregivers:</Text>
+                  <Text className="text-2xl font-bold text-gray-700 mb-1">Caregivers:</Text>
                   <FlatList
                     data={user.members}
                     keyExtractor={(item) => item.userId}
                     renderItem={({ item, index }) => (
                       <View className="flex flex-row mb-2">
-                        <Text className="text-2xl font-semibold text-gray-700 ml-1">{index + 1})</Text>
+                        <Text className="text-2xl font-bold text-gray-700 ml-1">{index + 1})</Text>
                         <Text className="text-xl text-gray-800 ml-2">{item.name}</Text>
                       </View>
                     )}

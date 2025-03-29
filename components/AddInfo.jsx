@@ -14,7 +14,6 @@ const AddInfo = ({ isVisible, setIsVisible, toggleModal }) => {
 
   const showAddInfo = async () => {
     const additionalInfo = await getAddInfo(userId);
-    console.log(additionalInfo);
     setInfo(additionalInfo);
     setIsAddInfo(false);
   }
