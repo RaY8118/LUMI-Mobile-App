@@ -221,12 +221,12 @@ export const sendLocationAlert = async (userId) => {
         })
       }
       catch (error) {
-        console.error(error)
+        console.error(error.response)
       }
     }
 
   } catch (error) {
-    console.log(error);
+    console.log(error.response);
 
   }
 }

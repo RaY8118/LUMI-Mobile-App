@@ -5,16 +5,18 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Icon } from "@/constants/Icons";
 import {
   fetchPatientReminders,
   postPatientReminder,
   updatePatientReminder,
   deletePatientReminder,
+  sendTokenToBackend,
 } from "@/services/remindersService";
 import EditModalComponent from "@/components/EditModalComponent";
 import AddModalComponent from "@/components/AddModalComponent";
+import * as Notifications from "expo-notifications";
 import { usePatient } from "@/hooks/usePatient"
 const CgReminders = () => {
   const [reminders, setReminders] = useState([]);
@@ -31,6 +33,10 @@ const CgReminders = () => {
   const [status, setStatus] = useState("pending");
   const [isUrgent, setIsUrgent] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState(""); // Added for push token
+  const [notification, setNotification] = useState(undefined); // Added for notification
+  const notificationListener = useRef(); // Added for notification listener
+  const responseListener = useRef(); // Added for response listener
   const { CGId, PATId, PATName } = usePatient()
 
   const fetchPatientData = async () => {
@@ -154,6 +160,60 @@ const CgReminders = () => {
     if (a.status === "pending" && b.status === "completed") return -1;
     return dateA - dateB;
   });
+
+
+  async function registerForPushNotificationsAsync() {
+    let token = null;
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
+    if (finalStatus !== "granted") {
+      throw new Error("Failed to get push token for push notification!");
+    }
+
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    // console.log(token);
+    setExpoPushToken(token);
+
+    await sendTokenToBackend(CGId, token);
+  }
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(
+      (token) => token && setExpoPushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+        const title = notification.request.content.title; // Get the title from the notification
+
+        // Add a delay of 5 seconds before speaking the title
+        setTimeout(() => {
+          speak(title); // Speak the title after the delay
+        }, 5000); // 5000 milliseconds = 5 seconds
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      notificationListener.current &&
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      responseListener.current &&
+        Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  })
 
   useEffect(() => {
     fetchPatientData();

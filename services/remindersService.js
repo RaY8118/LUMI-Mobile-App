@@ -10,7 +10,7 @@ export const sendTokenToBackend = async (userId, token) => {
       token,
       userId
     })
-    console.log("Token send to backend: ", response.data.message);
+    // console.log("Token send to backend: ", response.data.message);
 
   } catch (error) {
     console.error(error)

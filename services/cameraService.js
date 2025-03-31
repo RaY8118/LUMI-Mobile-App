@@ -69,7 +69,9 @@ export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition =
           ? `Identified Objects: ${response.data.name.join(', ')}`
           : "No objects found.";
         setTimeout(() => {
-          speak(nameMessage)
+
+          const message = nameMessage.split(":")[1];
+          speak(message)
         }, 2000)
       }
       Alert.alert("Response", nameMessage);

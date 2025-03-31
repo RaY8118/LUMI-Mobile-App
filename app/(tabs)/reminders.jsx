@@ -144,7 +144,7 @@ const Reminders = () => {
     }
 
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
+    // console.log(token);
     setExpoPushToken(token);
 
     await sendTokenToBackend(userId, token);
