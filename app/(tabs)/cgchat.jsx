@@ -6,29 +6,52 @@ import { io } from 'socket.io-client';
 import { usePatient } from '@/hooks/usePatient';
 import { useUser } from '@/hooks/useUser';
 import { Icon } from '@/constants/Icons';
+import AsyncStorage from "@react-native-async-storage/async-storage"
 const apiUrl = process.env.EXPO_PUBLIC_API_URL
 
 const CgChat = () => {
-  const [name, setName] = useState('');
+  const { user, role } = useUser();
+  const [name, setName] = useState(user?.name.split(" ")[0]);
   const [room, setRoom] = useState('');
   const [joined, setJoined] = useState(false);
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { CGId, PATId } = usePatient();
-  const { role } = useUser();
   const currentUserId = role === "CG" ? CGId : PATId
 
-  const handleJoinRoom = async () => {
-    if (!name || !room) {
-      alert('Please enter both name and room.');
+  useEffect(() => {
+    autoJoin()
+  }, [])
+
+  const autoJoin = async () => {
+    try {
+      const savedRoom = await AsyncStorage.getItem("savedRoom")
+      const savedName = await AsyncStorage.getItem("savedName")
+      if (savedName && savedRoom) {
+        setRoom(savedRoom)
+        setName(savedName)
+        await handleJoinRoom(savedName, savedRoom)
+      }
+    } catch (error) {
+      console.error("Failed to auto-join room", error);
+    } finally {
+      setLoading(false)
+    }
+  }
+  const handleJoinRoom = async (savedName = name, savedRoom = room) => {
+    if (!savedName || !savedRoom) {
+      Alert.alert("Missing Info", "Please enter both name and room.")
       return;
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/join-room`, { room, name, CGId, PATId, role });
+      const response = await axios.post(`${apiUrl}/join-room`, { room: savedRoom, name: savedName, CGId, PATId, role });
       const data = response.data;
 
       if (data.status === 'success') {
+        await AsyncStorage.setItem("savedRoom", savedRoom);
+        await AsyncStorage.setItem("savedName", savedName);
         const oldMessages = data.messages.map((msg) => ({
           _id: msg.id || Date.now() + Math.random(),
           text: msg.message,
@@ -126,6 +149,8 @@ const CgChat = () => {
   //   };
   // }, [socket]);
 
+  if (loading) return null;
+
   return (
     <View className="flex-1 bg-gray-100">
       {!joined ? (
@@ -148,10 +173,17 @@ const CgChat = () => {
           />
           <TouchableOpacity
             title="Join Room"
-            onPress={handleJoinRoom}
+            onPress={() => handleJoinRoom()}
             className="p-4 mt-5 bg-blue-500 rounded-3xl shadow-lg shadow-black w-full items-center justify-center"
           >
-            <Text className="text-2xl font-bold text-white">Join Room</Text>
+            <Text className="text-2xl font-bold text-white">Connect</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            title="Join Room"
+            onPress={() => autoJoin()}
+            className="p-4 mt-5 bg-green-500 rounded-3xl shadow-lg shadow-black w-full items-center justify-center"
+          >
+            <Text className="text-2xl font-bold text-white">Reconnect</Text>
           </TouchableOpacity>
         </View>
       ) : (
