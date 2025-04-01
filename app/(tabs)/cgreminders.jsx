@@ -213,7 +213,7 @@ const CgReminders = () => {
       responseListener.current &&
         Notifications.removeNotificationSubscription(responseListener.current);
     };
-  })
+  }, [])
 
   useEffect(() => {
     fetchPatientData();

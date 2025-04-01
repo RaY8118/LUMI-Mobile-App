@@ -6,6 +6,7 @@ import AddPatient from "@/components/AddPatient";
 import AddMembers from "@/components/AddMembers"
 import AddInfo from "@/components/AddInfo"
 import AboutUs from "@/components/AboutUs"
+import Chatbot from "@/components/Chatbot"
 import { Icon } from "@/constants/Icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CreateRoom from "@/components/CreateRoom";
@@ -18,6 +19,7 @@ const Settings = () => {
   const [isAboutVisible, setIsAboutVisible] = useState(false)
   const [isInfoVisible, setIsInfoVisible] = useState(false)
   const [isRoomVisible, setIsRoomVisible] = useState(false)
+  const [isBotVisible, setIsBotVisible] = useState(false)
 
   const toggleNotificationsModal = () => {
     setIsNotificationsVisible(!isNotificationsVisible)
@@ -37,8 +39,11 @@ const Settings = () => {
   const toggleInfoModal = () => {
     setIsInfoVisible(!isInfoVisible)
   }
-  const toogleRommModal = () => {
+  const toogleRoomModal = () => {
     setIsRoomVisible(!isRoomVisible)
+  }
+  const toggleBotModal = () => {
+    setIsBotVisible(!isBotVisible)
   }
   const settingsOptions = [
     {
@@ -78,10 +83,16 @@ const Settings = () => {
     },
     {
       title: "Create Room",
-      onPress: toogleRommModal,
+      onPress: toogleRoomModal,
       library: "Ionicons",
       name: "chatbox",
       color: "#9C27B0"
+    }, {
+      title: "Chatbot",
+      onPress: toggleBotModal,
+      library: "Ionicons",
+      name: "chatbubbles",
+      color: "#FFFF4d"
     },
     {
       title: "About Us",
@@ -134,7 +145,8 @@ const Settings = () => {
       <AddPatient isVisible={isPatientVisible} setIsVisible={setIsPatientVisible} toggleModal={togglePatientModal} />
       <AddMembers isVisible={isMemberVisible} setIsVisible={setIsMemberVisible} toggleModal={toggleMemberModal} />
       <AboutUs isVisible={isAboutVisible} setIsVisible={setIsAboutVisible} toggleModal={toggleAboutModal} />
-      <CreateRoom isVisible={isRoomVisible} setIsVisible={setIsRoomVisible} toggleModal={toogleRommModal} />
+      <CreateRoom isVisible={isRoomVisible} setIsVisible={setIsRoomVisible} toggleModal={toogleRoomModal} />
+      <Chatbot isVisible={isBotVisible} setIsVisible={setIsBotVisible} toggleModal={toggleBotModal} />
     </>
   );
 };

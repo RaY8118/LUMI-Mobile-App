@@ -179,11 +179,11 @@ const Map = () => {
             Checking if you are in a safe area...
           </Text>
         ) : isSafe ? (
-          <Text className="text-green-600 text-2xl text-center font-bold">
+          <Text className="text-green-600 text-2xl text-center font-bold mb-2">
             You are in a safe area.
           </Text>
         ) : (
-          <Text className="text-red-600 text-2xl text-center font-bold">
+          <Text className="text-red-600 text-2xl text-center font-bold mb-2">
             You are outside the safe area!
           </Text>
         )}
@@ -230,7 +230,7 @@ const Map = () => {
           </MapView>
         </View>
       )}
-      <View className="items-center flex-row justify-evenly w-full h-24 min-h-24">
+      <View className="items-center flex-row justify-evenly w-full h-20 min-h-24">
         <CustomButton
           onPress={handleRefresh}
           bgcolor="bg-slate-200"

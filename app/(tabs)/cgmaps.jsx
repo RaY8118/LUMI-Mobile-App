@@ -52,6 +52,7 @@ const CgMaps = () => {
       setCgLocation(currentCoords);
     } catch (error) {
       console.log("Error fetching caregiver's coordinates:", error);
+      Alert.alert("Error", error.message)
       setErrorMsg("Unable to fetch caregiver's coordinates.");
     }
   };
