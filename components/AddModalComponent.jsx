@@ -141,7 +141,7 @@ const AddModalComponent = ({
 
             {showTimePicker && (
               <DateTimePicker
-                value={time instanceof Date ? time : new Date()}
+                value={time instanceof Date && !isNaN(time) ? time : new Date()}
                 mode="time"
                 display="default"
                 onChange={onTimeChange}
