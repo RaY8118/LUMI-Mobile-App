@@ -46,7 +46,7 @@ const CgChat = () => {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/join-room`, { room: savedRoom, name: savedName, CGId, PATId, role });
+      const response = await axios.post(`${apiUrl}/v1/chatroom/join-room`, { room: savedRoom, name: savedName, CGId, PATId, role });
       const data = response.data;
 
       if (data.status === 'success') {

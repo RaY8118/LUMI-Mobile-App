@@ -1,26 +1,32 @@
-import axios from 'axios';
-import { Alert } from 'react-native';
+import axios from "axios";
+import { Alert } from "react-native";
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL
-
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 export const sendTokenToBackend = async (userId, token) => {
   try {
-    const response = await axios.post(`${apiUrl}/store-token`, {
-      token,
-      userId
-    })
+    const response = await axios.post(
+      `${apiUrl}/v1/notifications/store-token`,
+      {
+        token,
+        userId,
+      },
+    );
     // console.log("Token send to backend: ", response.data.message);
-
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};
 
-
-export const fetchReminders = async (userId, setReminders, setError, setLoading, setRefreshing) => {
+export const fetchReminders = async (
+  userId,
+  setReminders,
+  setError,
+  setLoading,
+  setRefreshing,
+) => {
   try {
-    const response = await axios.get(`${apiUrl}/patient/reminders`, {
+    const response = await axios.get(`${apiUrl}/v1/reminders/patient`, {
       params: { userId },
       headers: { "Content-Type": "application/json" },
     });
@@ -48,7 +54,6 @@ export const fetchReminders = async (userId, setReminders, setError, setLoading,
   }
 };
 
-
 export const postReminder = async ({
   title,
   description,
@@ -66,7 +71,7 @@ export const postReminder = async ({
   setIsUrgent,
   setIsImportant,
   setAddModalVisible,
-  onRefresh
+  onRefresh,
 }) => {
   try {
     if (!userId) {
@@ -103,9 +108,10 @@ export const postReminder = async ({
       userId,
     };
 
-
-    const response = await axios.post(`${apiUrl}/patient/reminders`, reminderData);
-
+    const response = await axios.post(
+      `${apiUrl}/v1/reminders/patient`,
+      reminderData,
+    );
 
     setTitle("");
     setDescription("");
@@ -115,7 +121,7 @@ export const postReminder = async ({
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
-      })
+      }),
     );
     setStatus("pending");
     setIsUrgent(false);
@@ -130,8 +136,6 @@ export const postReminder = async ({
     Alert.alert("Error", "Failed to save the reminder. Please try again");
   }
 };
-
-
 
 export const updateReminder = async ({
   selectedReminder,
@@ -185,25 +189,28 @@ export const updateReminder = async ({
     };
 
     const response = await axios.put(
-      `${apiUrl}/patient/reminders/${selectedReminder.remId}`,
-      reminderData
+      `${apiUrl}/v1/reminders/patient/${selectedReminder.remId}`,
+      reminderData,
     );
 
     if (response.status === 200) {
       Alert.alert("Success", response.data.message);
       onRefresh();
       handleEditModalClose();
-
-
     } else {
-      Alert.alert("Error", response.data.message || "Failed to update the reminder");
+      Alert.alert(
+        "Error",
+        response.data.message || "Failed to update the reminder",
+      );
     }
   } catch (error) {
-    console.error("Error updating reminder: ", error.response?.data || error.message);
+    console.error(
+      "Error updating reminder: ",
+      error.response?.data || error.message,
+    );
     Alert.alert("Error", "Failed to update the reminder. Please try again.");
   }
 };
-
 
 export const deleteReminder = async (userId, remId, onRefresh) => {
   if (!remId) {
@@ -224,7 +231,7 @@ export const deleteReminder = async (userId, remId, onRefresh) => {
         onPress: async () => {
           try {
             const response = await axios.delete(
-              `${apiUrl}/patient/reminders/${userId}/${remId}`,
+              `${apiUrl}/v1/reminders/patient/${userId}/${remId}`,
             );
 
             if (response.status === 200) {
@@ -233,7 +240,7 @@ export const deleteReminder = async (userId, remId, onRefresh) => {
             } else {
               Alert.alert(
                 "Error",
-                response.data.message || "Failed to delete the reminder"
+                response.data.message || "Failed to delete the reminder",
               );
             }
           } catch (error) {
@@ -242,27 +249,31 @@ export const deleteReminder = async (userId, remId, onRefresh) => {
             } else {
               console.error(
                 "Error deleting reminder",
-                error.response.data.message
+                error.response.data.message,
               );
               Alert.alert(
                 "Error",
-                "Failed to delete the reminder. Please try again"
+                "Failed to delete the reminder. Please try again",
               );
             }
           }
         },
       },
     ],
-    { cancelable: false }
+    { cancelable: false },
   );
 };
 
-
-
-
-export const fetchPatientReminders = async (CGId, PATId, setReminders, setError, setLoading, setRefreshing) => {
+export const fetchPatientReminders = async (
+  CGId,
+  PATId,
+  setReminders,
+  setError,
+  setLoading,
+  setRefreshing,
+) => {
   try {
-    const response = await axios.get(`${apiUrl}/caregiver/reminders`, {
+    const response = await axios.get(`${apiUrl}/v1/reminders/caregiver`, {
       params: { CGId, PATId },
       headers: { "Content-Type": "application/json" },
     });
@@ -290,7 +301,6 @@ export const fetchPatientReminders = async (CGId, PATId, setReminders, setError,
   }
 };
 
-
 export const postPatientReminder = async ({
   title,
   description,
@@ -310,7 +320,7 @@ export const postPatientReminder = async ({
   setIsUrgent,
   setIsImportant,
   setAddModalVisible,
-  onRefresh
+  onRefresh,
 }) => {
   try {
     if (!userId) {
@@ -349,10 +359,13 @@ export const postPatientReminder = async ({
       isImportant,
       userId,
       PATId,
-      CGId
+      CGId,
     };
 
-    const response = await axios.post(`${apiUrl}/caregiver/reminders`, reminderData);
+    const response = await axios.post(
+      `${apiUrl}/v1/reminders/caregiver`,
+      reminderData,
+    );
     setTitle("");
     setDescription("");
     setDate(new Date());
@@ -361,7 +374,7 @@ export const postPatientReminder = async ({
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
-      })
+      }),
     );
     setStatus("pending");
     setIsUrgent(false);
@@ -377,7 +390,6 @@ export const postPatientReminder = async ({
   }
 };
 
-
 export const updatePatientReminder = async ({
   selectedReminder,
   userId,
@@ -392,7 +404,6 @@ export const updatePatientReminder = async ({
   isImportant,
   onRefresh,
   handleEditModalClose,
-
 }) => {
   if (!selectedReminder) {
     Alert.alert("Error", "No reminder selected for update");
@@ -414,24 +425,21 @@ export const updatePatientReminder = async ({
       typeof time === "string"
         ? time
         : time.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        });
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });
 
     const reminderTime = new Date(date);
     const [hours, minutes] = timeString.split(":");
     reminderTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
     if (isNaN(reminderTime.getTime())) {
-      Alert.alert(
-        "Error",
-        "Invalid date and time. Please check your inputs."
-      );
+      Alert.alert("Error", "Invalid date and time. Please check your inputs.");
       return;
     }
     const response = await axios.put(
-      `${apiUrl}/caregiver/reminders/${selectedReminder.remId}`,
+      `${apiUrl}/v1/reminders/caregiver/${selectedReminder.remId}`,
       {
         title,
         description,
@@ -442,8 +450,8 @@ export const updatePatientReminder = async ({
         isImportant,
         userId,
         CGId,
-        PATId
-      }
+        PATId,
+      },
     );
 
     if (response.status === 200) {
@@ -453,7 +461,7 @@ export const updatePatientReminder = async ({
     } else {
       Alert.alert(
         "Error",
-        response.data.message || "Failed to update the reminder"
+        response.data.message || "Failed to update the reminder",
       );
     }
   } catch (error) {
@@ -461,7 +469,6 @@ export const updatePatientReminder = async ({
     Alert.alert("Error", "Failed to update the reminder. Please try again");
   }
 };
-
 
 export const deletePatientReminder = async (CGId, PATId, remId, onRefresh) => {
   if (!remId) {
@@ -482,7 +489,7 @@ export const deletePatientReminder = async (CGId, PATId, remId, onRefresh) => {
         onPress: async () => {
           try {
             const response = await axios.delete(
-              `${apiUrl}/caregiver/reminders/${CGId}/${PATId}/${remId}`,
+              `${apiUrl}/v1/reminders/caregiver/${CGId}/${PATId}/${remId}`,
             );
 
             if (response.status === 200) {
@@ -491,7 +498,7 @@ export const deletePatientReminder = async (CGId, PATId, remId, onRefresh) => {
             } else {
               Alert.alert(
                 "Error",
-                response.data.message || "Failed to delete the reminder"
+                response.data.message || "Failed to delete the reminder",
               );
             }
           } catch (error) {
@@ -500,17 +507,17 @@ export const deletePatientReminder = async (CGId, PATId, remId, onRefresh) => {
             } else {
               console.error(
                 "Error deleting reminder",
-                error.response.data.message
+                error.response.data.message,
               );
               Alert.alert(
                 "Error",
-                "Failed to delete the reminder. Please try again"
+                "Failed to delete the reminder. Please try again",
               );
             }
           }
         },
       },
     ],
-    { cancelable: false }
+    { cancelable: false },
   );
 };

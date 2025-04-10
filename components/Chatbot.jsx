@@ -18,7 +18,7 @@ const Chatbot = ({ isVisible, toggleModal }) => {
     setLoading(true)
 
     try {
-      const response = await axios.post(`${apiUrl}/chatbot`, { message: input });
+      const response = await axios.post(`${apiUrl}/v1/assistant/`, { message: input });
       const botReply = { role: "bot", text: response.data.reply };
 
       setMessages((prevMessages) => [...prevMessages, botReply]);

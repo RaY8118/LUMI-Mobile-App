@@ -1,13 +1,13 @@
 import axios from "axios";
-import * as SecureStore from "expo-secure-store"
-import * as LocalAuthentication from "expo-local-authentication"
+import * as SecureStore from "expo-secure-store";
+import * as LocalAuthentication from "expo-local-authentication";
 import { Alert } from "react-native";
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 // Funtion to handle the logging of user
 export const handleLogin = async (email, password, router, refetch) => {
   try {
-    const response = await axios.post(`${apiUrl}/sign-in`, {
+    const response = await axios.post(`${apiUrl}/v1/auth/sign-in`, {
       email,
       password,
     });
@@ -19,7 +19,7 @@ export const handleLogin = async (email, password, router, refetch) => {
     await SecureStore.setItemAsync("password", password);
     Alert.alert("Success", response.data.message);
     router.replace("/reminders");
-    await refetch()
+    await refetch();
   } catch (error) {
     if (error.response && error.response.data) {
       Alert.alert("Error", error.response.data.message || "Failed to login");
@@ -30,7 +30,11 @@ export const handleLogin = async (email, password, router, refetch) => {
 };
 
 // Combined function to handle authentication and autofill
-export const authenticateAndAutofill = async (setEmail, setPassword, setIsAutofilled) => {
+export const authenticateAndAutofill = async (
+  setEmail,
+  setPassword,
+  setIsAutofilled,
+) => {
   const compatible = await LocalAuthentication.hasHardwareAsync();
   const enrolled = await LocalAuthentication.isEnrolledAsync();
 
@@ -54,7 +58,7 @@ export const authenticateAndAutofill = async (setEmail, setPassword, setIsAutofi
   } else {
     Alert.alert("Biometric authentication is not supported or not enrolled.");
   }
-};;
+};
 
 // Function to handle registration of new users
 export const handleRegister = async (
@@ -63,10 +67,10 @@ export const handleRegister = async (
   mobile,
   password,
   value,
-  router
+  router,
 ) => {
   try {
-    const response = await axios.post(`${apiUrl}/sign-up`, {
+    const response = await axios.post(`${apiUrl}/v1/auth/sign-up`, {
       name,
       email,
       mobile,
@@ -76,16 +80,17 @@ export const handleRegister = async (
     Alert.alert("Success", response.data.message);
     router.push("/sign-in");
   } catch (error) {
-    Alert.alert("Error", error.response?.data?.message || "Failed to register")
+    Alert.alert("Error", error.response?.data?.message || "Failed to register");
   }
-
-}
+};
 
 // Function to handle the password reset
 export const handleReset = async (email, setIsLoading, setEmail) => {
   setIsLoading(true);
   try {
-    const response = await axios.post(`${apiUrl}/reset-password`, { email });
+    const response = await axios.post(`${apiUrl}/v1/auth/reset-password`, {
+      email,
+    });
     setEmail("");
     Alert.alert("Success", response.data.message);
   } catch (error) {

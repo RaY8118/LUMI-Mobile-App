@@ -97,7 +97,7 @@ const CgReminders = () => {
     await updatePatientReminder(patientReminderData);
   };
 
-  const deletePatientReminders = async (remId) => {
+  const handleDeleteReminder = async (remId) => {
     await deletePatientReminder(CGId, PATId, remId, onRefresh);
   };
 

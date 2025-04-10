@@ -1,7 +1,7 @@
 import * as ImageManipulator from "expo-image-manipulator";
 import axios from "axios";
 import * as Speech from "expo-speech";
-import { Alert } from "react-native"
+import { Alert } from "react-native";
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 export const takePicture = async (cameraRef) => {
@@ -21,12 +21,17 @@ export const resizeImage = async (uri) => {
   const resizedImage = await ImageManipulator.manipulateAsync(
     uri,
     [{ resize: { width: 816, height: 1088 } }],
-    { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+    { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
   );
   return resizedImage.uri;
 };
 
-export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition = true) => {
+export const uploadImage = async (
+  uri,
+  endpoint,
+  setLoading,
+  isFaceRecognition = true,
+) => {
   const formData = new FormData();
   formData.append("image", {
     uri,
@@ -62,17 +67,16 @@ export const uploadImage = async (uri, endpoint, setLoading, isFaceRecognition =
         } else {
           nameMessage = "No faces found.";
         }
-
       } else {
         // Handle object detection response
-        nameMessage = response.data.name && response.data.name.length > 0
-          ? `Identified Objects: ${response.data.name.join(', ')}`
-          : "No objects found.";
+        nameMessage =
+          response.data.name && response.data.name.length > 0
+            ? `Identified Objects: ${response.data.name.join(", ")}`
+            : "No objects found.";
         setTimeout(() => {
-
           const message = nameMessage.split(":")[1];
-          speak(message)
-        }, 2000)
+          speak(message);
+        }, 2000);
       }
       Alert.alert("Response", nameMessage);
     } else {
@@ -89,7 +93,12 @@ export const handleFaceRecognition = async (cameraRef, user, setLoading) => {
   const uri = await takePicture(cameraRef);
   if (uri) {
     const resizedUri = await resizeImage(uri);
-    uploadImage(resizedUri, `${apiUrl}/detect_faces/${user.familyId}`, setLoading, true);
+    uploadImage(
+      resizedUri,
+      `${apiUrl}/v1/vision/detect_faces/${user.familyId}`,
+      setLoading,
+      true,
+    );
   }
 };
 
@@ -97,17 +106,27 @@ export const handleObjectDetection = async (cameraRef, setLoading) => {
   const uri = await takePicture(cameraRef);
   if (uri) {
     const resizedUri = await resizeImage(uri);
-    uploadImage(resizedUri, `${apiUrl}/obj-detection`, setLoading, false);
+    uploadImage(
+      resizedUri,
+      `${apiUrl}/v1/vision/obj-detection`,
+      setLoading,
+      false,
+    );
   }
 };
 
 export const handleGeminiDetection = async (cameraRef, setLoading) => {
   const uri = await takePicture(cameraRef);
   if (uri) {
-    const reseizedUri = await resizeImage(uri)
-    uploadImage(reseizedUri, `${apiUrl}/gemini-detection`, setLoading, false)
+    const reseizedUri = await resizeImage(uri);
+    uploadImage(
+      reseizedUri,
+      `${apiUrl}/v1/vision/gemini-detection`,
+      setLoading,
+      false,
+    );
   }
-}
+};
 
 const speak = (text) => {
   Speech.speak(text); // Function to speak the text
@@ -115,15 +134,16 @@ const speak = (text) => {
 
 export const fetchAdditionalInfo = async (userId) => {
   try {
-    response = await axios.get(`${apiUrl}/get-additional-info?userId=${userId}`)
+    response = await axios.get(
+      `${apiUrl}/v1/family/get-additional-info?userId=${userId}`,
+    );
     if (response.data.status === "success") {
-      const userInfo = response.data.userInfo
-      return userInfo
+      const userInfo = response.data.userInfo;
+      return userInfo;
     } else {
-      return "No additional information found"
+      return "No additional information found";
     }
   } catch (error) {
     console.error(error);
-
   }
-}
+};

@@ -41,7 +41,9 @@ export const fetchSavedLocation = async (userId, setErrorMsg) => {
       throw new Error(message);
     }
 
-    const response = await axios.get(`${apiUrl}/safe-location?userId=${userId}`);
+    const response = await axios.get(
+      `${apiUrl}/v1/location/patient/safe-location?userId=${userId}`,
+    );
 
     if (response.data?.status === "success") {
       return response.data.coords; // Return the coordinates
@@ -51,22 +53,26 @@ export const fetchSavedLocation = async (userId, setErrorMsg) => {
       throw new Error(message);
     }
   } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
+    const errorMessage =
+      error.response?.data?.message ||
+      error.message ||
+      "An unknown error occurred.";
     setErrorMsg(errorMessage);
     throw new Error(errorMessage);
   }
 };
 
-
-
 // Function to save the current location as a safe location
 export const saveLocation = async (userId, setErrorMsg) => {
   try {
     const coords = await getCurrentCoords();
-    const response = await axios.post(`${apiUrl}/safe-location`, {
-      userId,
-      coords,
-    });
+    const response = await axios.post(
+      `${apiUrl}/v1/location/patient/safe-location`,
+      {
+        userId,
+        coords,
+      },
+    );
 
     if (response.data?.status === "success") {
       return response.data.message;
@@ -76,7 +82,10 @@ export const saveLocation = async (userId, setErrorMsg) => {
       throw new Error(message);
     }
   } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
+    const errorMessage =
+      error.response?.data?.message ||
+      error.message ||
+      "An unknown error occurred.";
     setErrorMsg(errorMessage);
     throw new Error(errorMessage);
   }
@@ -85,11 +94,14 @@ export const saveLocation = async (userId, setErrorMsg) => {
 export const savePatientLocation = async (CGId, PATId, setErrorMsg) => {
   try {
     const coords = await getCurrentCoords();
-    const response = await axios.post(`${apiUrl}/caregiver/safe-location`, {
-      CGId,
-      PATId,
-      coords,
-    });
+    const response = await axios.post(
+      `${apiUrl}/v1/location/caregiver/safe-location`,
+      {
+        CGId,
+        PATId,
+        coords,
+      },
+    );
 
     if (response.data?.status === "success") {
       return response.data.message;
@@ -99,19 +111,25 @@ export const savePatientLocation = async (CGId, PATId, setErrorMsg) => {
       throw new Error(message);
     }
   } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
+    const errorMessage =
+      error.response?.data?.message ||
+      error.message ||
+      "An unknown error occurred.";
     setErrorMsg(errorMessage);
     throw new Error(errorMessage);
   }
-}
+};
 
 export const saveCurrLocation = async (userId, setErrorMsg) => {
   try {
     const coords = await getCurrentCoords();
-    const response = await axios.post(`${apiUrl}/curr-location`, {
-      userId,
-      coords,
-    });
+    const response = await axios.post(
+      `${apiUrl}/v1/location/caregiver/curr-location`,
+      {
+        userId,
+        coords,
+      },
+    );
 
     if (response.data?.status === "success") {
       return response.data.message;
@@ -121,47 +139,52 @@ export const saveCurrLocation = async (userId, setErrorMsg) => {
       throw new Error(message);
     }
   } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message || "An unknown error occurred.";
+    const errorMessage =
+      error.response?.data?.message ||
+      error.message ||
+      "An unknown error occurred.";
     setErrorMsg(errorMessage);
     throw new Error(errorMessage);
   }
-
-
 };
 
-
-export const getPatientCurrentLocation = async (CGId, PATId, setLocation, setErrorMsg) => {
+export const getPatientCurrentLocation = async (
+  CGId,
+  PATId,
+  setLocation,
+  setErrorMsg,
+) => {
   try {
     if (!CGId || !PATId) {
-      const message = "Cargiver ID or Patient ID is not available"
-      setErrorMsg(message)
-      throw new Error(message)
+      const message = "Cargiver ID or Patient ID is not available";
+      setErrorMsg(message);
+      throw new Error(message);
     }
 
-    const response = await axios.get(`${apiUrl}/curr-location?CGId=${CGId}&PATId=${PATId}`)
+    const response = await axios.get(
+      `${apiUrl}/v1/location/caregiver/curr-location?CGId=${CGId}&PATId=${PATId}`,
+    );
 
     if (response.data?.status === "success") {
-      setLocation(response.data.coords)
+      setLocation(response.data.coords);
     } else {
-      const message = response.data?.message
-      setErrorMsg(message)
-      throw new Error(message)
+      const message = response.data?.message;
+      setErrorMsg(message);
+      throw new Error(message);
     }
   } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message
-    setErrorMsg(errorMessage)
-    throw new Error(errorMessage)
+    const errorMessage = error.response?.data?.message || error.message;
+    setErrorMsg(errorMessage);
+    throw new Error(errorMessage);
   }
-}
-
-
+};
 
 export const getPatientCurrentAddress = async (
   CGId,
   PATId,
   setLocation,
   setAddress,
-  setErrorMsg
+  setErrorMsg,
 ) => {
   try {
     if (!CGId || !PATId) {
@@ -171,7 +194,7 @@ export const getPatientCurrentAddress = async (
     }
 
     const response = await axios.get(
-      `${apiUrl}/curr-location?CGId=${CGId}&PATId=${PATId}`
+      `${apiUrl}/v1/location/caregiver/curr-location?CGId=${CGId}&PATId=${PATId}`,
     );
 
     if (response.data?.status === "success") {
@@ -205,11 +228,12 @@ export const getPatientCurrentAddress = async (
   }
 };
 
-
 export const sendLocationAlert = async (userId) => {
   try {
-    response = await axios.get(`${apiUrl}/get-user-token?userId=${userId}`)
-    const token = response.data.token
+    response = await axios.get(
+      `${apiUrl}/v1/notifications/get-user-token?userId=${userId}`,
+    );
+    const token = response.data.token;
     console.log(token);
     if (token) {
       try {
@@ -217,16 +241,13 @@ export const sendLocationAlert = async (userId) => {
           to: token,
           title: "Important message",
           body: "Patient out of safe area",
-          sound: "default"
-        })
-      }
-      catch (error) {
-        console.error(error.response)
+          sound: "default",
+        });
+      } catch (error) {
+        console.error(error.response);
       }
     }
-
   } catch (error) {
     console.log(error.response);
-
   }
-}
+};
