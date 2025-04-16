@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Fontisto from "@expo/vector-icons/Fontisto";
+import { Icon } from "@/constants/Icons";
 import { handleReset } from "@/services/authService";
 import { Link } from "expo-router";
 const ForgotPassword = () => {
@@ -9,44 +9,53 @@ const ForgotPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <SafeAreaView className="flex-1 justify-center p-6 pt-2 mt-14 border border-x-2 bg-custom-primary rounded-xl">
-      <View>
-        <Text className="text-5xl py-2 mb-3 text-center font-pbold text-custom-tertiary">
+
+    <SafeAreaView className="flex-1 justify-center p-6 pt-6 bg-white rounded-xl">
+      {/* Title */}
+      <View className="mb-8">
+        <Text className="text-4xl font-bold text-blue-600 text-center">
           Reset Password
         </Text>
+        <Text className="text-center text-base text-gray-500 mt-2">
+          We'll send a password reset link to your email
+        </Text>
       </View>
-      <View className="flex-row items-center p-4">
-        <Fontisto name="email" size={32} color="black" className="mr-4" />
+
+      {/* Email Input */}
+      <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3 mb-6 shadow-sm">
+        <Icon name="email" size={24} color="gray" library="Fontisto" />
         <TextInput
-          className="h-12 flex-1 border-2 border-black px-3 rounded-3xl bg-white font-pmedium ml-4"
           placeholder="Enter your email"
-          accessibilityLabel="Email input field"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
-          autoComplete="email"
+          className="flex-1 ml-3 text-base text-gray-800 font-pmedium"
+          placeholderTextColor="#A0AEC0"
         />
       </View>
+
+      {/* Send Button */}
       <TouchableOpacity
         onPress={() => handleReset(email, setIsLoading, setEmail)}
         disabled={isLoading}
-        className={`${isLoading ? "bg-gray-400" : "bg-violet-800"
-          } py-2 px-5 rounded-3xl items-center mt-2 w-32 self-center`}
+        className={`${isLoading ? "bg-gray-400" : "bg-blue-600"
+          } rounded-2xl py-3 items-center mb-6`}
       >
         <Text className="text-white font-pbold text-lg">
           {isLoading ? "Sending..." : "Send"}
         </Text>
       </TouchableOpacity>
 
-      <View className="mt-4 flex-row justify-center items-center">
-        <Text className="font-plight text-lg">Back to Sign In </Text>
+      <View className="flex-row justify-center">
+        <Text className="text-gray-600">
+          Back to Sign In{" "}
+        </Text>
         <Link href="/sign-in">
-          <Text className="text-violet-500 font-pregular text-lg">
-            click here!{" "}
-          </Text>
+          <Text className="text-blue-600 font-medium">Click here</Text>
         </Link>
       </View>
+
     </SafeAreaView>
   );
 };

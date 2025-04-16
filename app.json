@@ -2,6 +2,7 @@
   "expo": {
     "name": "lumi",
     "slug": "lumi",
+    "icon": "./icon.png",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "myapp",
@@ -13,7 +14,6 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION",
         "FOREGROUND_SERVICE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
@@ -22,7 +22,8 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.ACCESS_MEDIA_LOCATION"
-      ]
+      ],
+      "package": "com.ray8118.lumi"
     },
     "web": {
       "bundler": "metro",
@@ -33,7 +34,6 @@
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
-          "isAndroidBackgroundLocationEnabled": true,
           "isAndroidForegroundServiceEnabled": true
         }
       ],
@@ -59,11 +59,12 @@
         {
           "defaultChannel": "default"
         }
-      ],[
+      ],
+      [
         "expo-image-picker",
         {
-          "photosPermission" : "Select abd upload images",
-          "cameraPermission" : "Allow $(PRODUCT_NAME) to access your camera"
+          "photosPermission": "Select abd upload images",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
         }
       ]
     ],

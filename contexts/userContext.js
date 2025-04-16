@@ -49,7 +49,6 @@ export const UserProvider = ({ children }) => {
         setIsLoading(false);
       }
     } else {
-      console.log("No token found");
       setAuthState("unauthenticated");
       setIsLoading(false);
     }
