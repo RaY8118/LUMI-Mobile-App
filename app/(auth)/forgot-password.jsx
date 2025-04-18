@@ -13,7 +13,7 @@ const ForgotPassword = () => {
     <SafeAreaView className="flex-1 justify-center p-6 pt-6 bg-white rounded-xl">
       {/* Title */}
       <View className="mb-8">
-        <Text className="text-4xl font-bold text-blue-600 text-center">
+        <Text className="text-4xl font-bold text-purple-600 text-center">
           Reset Password
         </Text>
         <Text className="text-center text-base text-gray-500 mt-2">
@@ -39,7 +39,7 @@ const ForgotPassword = () => {
       <TouchableOpacity
         onPress={() => handleReset(email, setIsLoading, setEmail)}
         disabled={isLoading}
-        className={`${isLoading ? "bg-gray-400" : "bg-blue-600"
+        className={`${isLoading ? "bg-gray-400" : "bg-purple-600"
           } rounded-2xl py-3 items-center mb-6`}
       >
         <Text className="text-white font-pbold text-lg">
@@ -52,7 +52,7 @@ const ForgotPassword = () => {
           Back to Sign In{" "}
         </Text>
         <Link href="/sign-in">
-          <Text className="text-blue-600 font-medium">Click here</Text>
+          <Text className="text-purple-600 font-medium">Click here</Text>
         </Link>
       </View>
 

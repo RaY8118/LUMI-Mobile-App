@@ -42,7 +42,7 @@ const SignIn = () => {
             className="self-center mb-4 w-3/4 md:w-1/2" // Responsive width
           />
         </View>
-        <Text className="text-4xl font-bold text-blue-600 text-center mb-2">
+        <Text className="text-4xl font-bold text-purple-600 text-center mb-2">
           Welcome Back
         </Text>
         <Text className="text-base text-gray-700 text-center mb-6">
@@ -103,14 +103,14 @@ const SignIn = () => {
         <View className="flex-row justify-center mt-6 mb-2">
           <Text className="text-gray-600">Don't have an account? </Text>
           <Link href="/sign-up">
-            <Text className="text-blue-600 font-medium">Sign Up</Text>
+            <Text className="text-purple-600 font-medium">Sign Up</Text>
           </Link>
         </View>
 
         <View className="flex-row justify-center">
           <Text className="text-gray-600">Forgot password? </Text>
           <Link href="/forgot-password">
-            <Text className="text-blue-600 font-medium">Click here</Text>
+            <Text className="text-purple-600 font-medium">Click here</Text>
           </Link>
         </View>
       </View>

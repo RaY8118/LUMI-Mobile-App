@@ -38,16 +38,16 @@ const Register = () => {
             className="self-center mb-4 w-3/4 md:w-1/2" // Responsive width
           />
         </View>
-        <Text className="text-4xl font-bold text-blue-600 text-center mb-2">
+        <Text className="text-4xl font-bold text-purple-600 text-center mb-2">
           Create New
         </Text>
-        <Text className="text-4xl font-bold text-blue-600 text-center mb-2">
+        <Text className="text-4xl font-bold text-purple-600 text-center mb-2">
           Account
         </Text>
         <View className="mt-2 mb-6 flex-row justify-center items-center">
           <Text className="text-gray-600">Already registered? </Text>
           <Link href="/sign-in">
-            <Text className="text-blue-600 font-medium">Sign In</Text>
+            <Text className="text-purple-600 font-medium">Sign In</Text>
           </Link>
         </View>
 
@@ -152,7 +152,7 @@ const Register = () => {
 
         <TouchableOpacity
           onPress={handleSubmit}
-          className="bg-blue-600 rounded-2xl py-3 items-center mb-4"
+          className="bg-purple-600 rounded-2xl py-3 items-center mb-4"
         >
           <Text className="text-white font-semibold text-lg">Sign Up</Text>
         </TouchableOpacity>

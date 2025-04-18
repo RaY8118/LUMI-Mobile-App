@@ -20,7 +20,7 @@ import {
   updateReminder,
   sendTokenToBackend,
 } from "@/services/remindersService";
-// Notification handler setup
+import * as Haptics from "expo-haptics"
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -392,11 +392,14 @@ const Reminders = () => {
       </ScrollView>
       <View className="justify-center items-center">
         <TouchableOpacity
-          onPress={() => setAddModalVisible(true)}
+          onPress={() => {
+            setAddModalVisible(true)
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+          }}
           className="absolute bottom-5"
           activeOpacity={0.9}
         >
-          <View className="bg-blue-500 w-full shadow-md shadow-black p-4 pl-20 pr-20 justify-center rounded-xl">
+          <View className="bg-purple-600 w-full shadow-md shadow-black p-4 pl-20 pr-20 justify-center rounded-xl">
             <Text className="text-white font-bold text-xl">
               Add new task
             </Text>

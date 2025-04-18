@@ -33,10 +33,10 @@ const CgReminders = () => {
   const [status, setStatus] = useState("pending");
   const [isUrgent, setIsUrgent] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
-  const [expoPushToken, setExpoPushToken] = useState(""); // Added for push token
-  const [notification, setNotification] = useState(undefined); // Added for notification
-  const notificationListener = useRef(); // Added for notification listener
-  const responseListener = useRef(); // Added for response listener
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(undefined);
+  const notificationListener = useRef();
+  const responseListener = useRef();
   const { CGId, PATId, PATName } = usePatient()
 
   const fetchPatientData = async () => {
@@ -342,7 +342,7 @@ const CgReminders = () => {
           className="absolute bottom-5"
           activeOpacity={0.9}
         >
-          <View className="bg-blue-500 w-full shadow-md shadow-black p-4 pl-20 pr-20 justify-center rounded-xl">
+          <View className="bg-purple-600 w-full shadow-md shadow-black p-4 pl-20 pr-20 justify-center rounded-xl">
             <Text className="text-white font-bold text-xl">
               Add new task
             </Text>
