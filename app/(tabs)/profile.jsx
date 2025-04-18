@@ -15,16 +15,16 @@ import { useUser } from "@/hooks/useUser";
 import { usePatient } from "@/hooks/usePatient";
 import CustomButton from "@/components/CustomButton";
 import * as ImagePicker from "expo-image-picker"
+import * as ImageManipulator from "expo-image-manipulator"
 import { uploadProfileImg } from "@/services/userService"
 import * as FileSystem from "expo-file-system"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Icon } from "@/constants/Icons";
 import EditForm from "@/components/EditForm"
-import axios from "axios";
 
-const CLOUDINARY_URL = process.env.CLOUDINARY_URL
-const UPLOAD_PRESET = process.env.UPLOAD_PRESET
-const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER
+const CLOUDINARY_URL = process.env.EXPO_PUBLIC_CLOUDINARY_URL
+const UPLOAD_PRESET = process.env.EXPO_PUBLIC_UPLOAD_PRESET
+const UPLOAD_FOLDER = process.env.EXPO_PUBLIC_UPLOAD_FOLDER
 
 const Profile = () => {
   const { user, setUser, isLoading } = useUser();
@@ -34,7 +34,6 @@ const Profile = () => {
   const userId = user?.userId || null
   const familyId = user?.familyId || "Not set"
   const [profileImg, setProfileImg] = useState("")
-  const imgDir = FileSystem.documentDirectory + 'images/'
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible)
   }
@@ -43,23 +42,33 @@ const Profile = () => {
     loadProfileImage()
   }, [user])
 
-
   const loadProfileImage = async () => {
     try {
-      const savedImg = await AsyncStorage.getItem(`profileImg_${userId}`)
+      const savedImg = await AsyncStorage.getItem(`profileImg_${userId}`);
+
       if (savedImg) {
-        setProfileImg(savedImg)
+        if (savedImg.startsWith("http")) {
+          setProfileImg(savedImg);
+          return;
+        }
+
+        const fileInfo = await FileSystem.getInfoAsync(savedImg);
+        if (fileInfo.exists) {
+          setProfileImg(savedImg);
+        } else {
+          const cloudinaryUrl = await AsyncStorage.getItem(`profileImg_${userId}_cloud`);
+          if (cloudinaryUrl) {
+            setProfileImg(cloudinaryUrl);
+          } else {
+            console.warn("No local or cloud image found");
+          }
+        }
       }
     } catch (error) {
-      console.error(error)
+      console.error("Error loading profile image:", error);
     }
-  }
-  const ensureDirExists = async () => {
-    const dirInfo = await FileSystem.getInfoAsync(imgDir)
-    if (!dirInfo.exists) {
-      await FileSystem.makeDirectoryAsync(imgDir, { intermediates: true })
-    }
-  }
+  };
+
 
   const selectImage = async (useLibrary) => {
     let result;
@@ -85,47 +94,62 @@ const Profile = () => {
     }
   }
 
+
   const saveProfileImage = async (uri, userId) => {
-    await ensureDirExists()
-    const filename = new Date().getTime() + '.jpg'
-    const dest = imgDir + filename
     try {
-      await FileSystem.copyAsync({ from: uri, to: dest })
-      await AsyncStorage.setItem(`profileImg_${userId}`, dest)
-      setProfileImg(dest)
-      console.log("Saved Locally:", dest)
-      uplaodToCloudinary(uri, userId)
+      const manipulated = await ImageManipulator.manipulateAsync(
+        uri,
+        [],
+        {
+          compress: 0.8,
+          format: ImageManipulator.SaveFormat.JPEG,
+        }
+      );
+
+      const dest = manipulated.uri;
+
+      await AsyncStorage.setItem(`profileImg_${userId}`, dest);
+      setProfileImg(dest);
+      uplaodToCloudinary(dest, userId);
     } catch (error) {
-      console.error(error)
+      console.error("Image Save Error:", error);
     }
-  }
+  };
+
+
 
   const uplaodToCloudinary = async (localUri, userId) => {
     try {
-      const formData = new FormData()
+      const formData = new FormData();
       formData.append("file", {
         uri: localUri,
         type: "image/jpeg",
-        name: `profileImg_${userId}.jpg`
-      })
-      formData.append("upload_preset", UPLOAD_PRESET)
-      formData.append("folder", UPLOAD_FOLDER)
-      const response = await axios.post(CLOUDINARY_URL, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      })
+        name: `profileImg_${userId}.jpg`,
+      });
+      formData.append("upload_preset", UPLOAD_PRESET);
+      formData.append("folder", UPLOAD_FOLDER);
 
-      if (response.data.secure_url) {
-        await AsyncStorage.setItem(`profileImg_${userId}`, response.data.secure_url)
-        setProfileImg(response.data.secure_url)
-        console.log("Uploaded to cloudinary:", response.data.secure_url)
+      const res = await fetch(CLOUDINARY_URL, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const data = await res.json();
+      if (data.secure_url) {
+        await AsyncStorage.setItem(`profileImg_${userId}`, data.secure_url);
+        await AsyncStorage.setItem(`profileImg_${userId}_cloud`, data.secure_url);
+        setProfileImg(data.secure_url);
       } else {
-        throw new Error("Failed to upload image")
+        throw new Error("Upload failed");
       }
     } catch (error) {
-      console.error("Upload failed", error)
-      Alert.alert("Error", "Failed to upload image to cloudinary")
+      console.error("Upload failed", error);
+      Alert.alert("Upload Error", "Could not upload image to Cloudinary.");
     }
-  }
+  };
 
   const handleLogout = async () => {
     try {

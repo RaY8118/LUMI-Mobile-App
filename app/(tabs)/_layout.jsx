@@ -209,7 +209,7 @@ const TabsLayout = () => {
           })}
         />
         <Tabs.Screen
-          name="psettings"
+          name="tutorial"
           redirect={role !== "PAT"}
           options={({ navigation }) => ({
             headerTitle: "Tutorials",
