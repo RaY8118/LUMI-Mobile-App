@@ -23,7 +23,7 @@ const Camera = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const [loading, setLoading] = useState<boolean>(false);
   const cameraRef = useRef<CameraView>(null);
-  const rotateRef = useRef<any>(null); // Reference for the rotate animation
+  const rotateRef = useRef<any>(null);
 
   if (!permission) {
     return <View />;
@@ -41,18 +41,14 @@ const Camera = () => {
   }
 
   const toggleCameraFacing = () => {
-    // Trigger the rotate animation
     if (rotateRef.current) {
       rotateRef.current.animate("rotate", 500);
     }
-
-    // Toggle the camera facing
     setFacing((current) => (current === "back" ? "front" : "back"));
   };
 
   return (
     <View className="flex-1 justify-end p-5 relative bg-white">
-      {/* Parent View with rounded edges */}
       <View className="flex-1 rounded-3xl overflow-hidden shadow-xl shadow-black">
         <CameraView
           style={{

@@ -11,7 +11,6 @@ const ForgotPassword = () => {
   return (
 
     <SafeAreaView className="flex-1 justify-center p-6 pt-6 bg-white rounded-xl">
-      {/* Title */}
       <View className="mb-8">
         <Text className="text-4xl font-bold text-purple-600 text-center">
           Reset Password
@@ -21,7 +20,6 @@ const ForgotPassword = () => {
         </Text>
       </View>
 
-      {/* Email Input */}
       <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3 mb-6 shadow-sm">
         <Icon name="email" size={24} color="gray" library="Fontisto" />
         <TextInput
@@ -35,7 +33,6 @@ const ForgotPassword = () => {
         />
       </View>
 
-      {/* Send Button */}
       <TouchableOpacity
         onPress={() => handleReset(email, setIsLoading, setEmail)}
         disabled={isLoading}

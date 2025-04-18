@@ -4,7 +4,6 @@ import * as LocalAuthentication from "expo-local-authentication";
 import { Alert } from "react-native";
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-// Funtion to handle the logging of user
 export const handleLogin = async (email, password, router, refetch) => {
   try {
     const response = await axios.post(`${apiUrl}/v1/auth/sign-in`, {
@@ -14,7 +13,6 @@ export const handleLogin = async (email, password, router, refetch) => {
 
     const token = response.data.token;
     await SecureStore.setItemAsync("token", token);
-    // Save email and password to SecureStore for future logins
     await SecureStore.setItemAsync("email", email);
     await SecureStore.setItemAsync("password", password);
     Alert.alert("Success", response.data.message);
@@ -29,7 +27,6 @@ export const handleLogin = async (email, password, router, refetch) => {
   }
 };
 
-// Combined function to handle authentication and autofill
 export const authenticateAndAutofill = async (
   setEmail,
   setPassword,
@@ -44,7 +41,6 @@ export const authenticateAndAutofill = async (
     });
 
     if (result.success) {
-      // If authentication is successful, autofill the credentials
       const storedEmail = await SecureStore.getItemAsync("email");
       const storedPassword = await SecureStore.getItemAsync("password");
       if (storedEmail && storedPassword) {
@@ -60,7 +56,6 @@ export const authenticateAndAutofill = async (
   }
 };
 
-// Function to handle registration of new users
 export const handleRegister = async (
   name,
   email,
@@ -84,7 +79,6 @@ export const handleRegister = async (
   }
 };
 
-// Function to handle the password reset
 export const handleReset = async (email, setIsLoading, setEmail) => {
   setIsLoading(true);
   try {

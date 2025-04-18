@@ -25,7 +25,6 @@ const CgMaps = () => {
   const fetchData = async () => {
     if (!refreshing) setIsLoading(true);
     try {
-      // Fetch patient address and location
       await getPatientCurrentAddress(
         CGId,
         PATId,
@@ -33,8 +32,6 @@ const CgMaps = () => {
         setAddress,
         setErrorMsg
       );
-
-      // Fetch caregiver coordinates
       await caregiverCoords();
       setErrorMsg("");
     } catch (error) {
@@ -107,7 +104,7 @@ const CgMaps = () => {
             </>
           )}
         </View>
-        {isLoading && !refreshing ? ( // Show loader only during initial fetch
+        {isLoading && !refreshing ? (
           <View className="flex h-full justify-center items-center">
             <ActivityIndicator size="large" color="#0000ff" />
             <Text>Loading...</Text>

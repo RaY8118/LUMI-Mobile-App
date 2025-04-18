@@ -143,11 +143,6 @@ const CgChat = () => {
       </Send>
     )
   }
-  // useEffect(() => {
-  //   return () => {
-  //     if (socket) socket.disconnect();
-  //   };
-  // }, [socket]);
 
   if (loading) return null;
 

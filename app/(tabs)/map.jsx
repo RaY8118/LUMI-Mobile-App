@@ -14,7 +14,7 @@ import CustomButton from "@/components/CustomButton";
 const Map = () => {
   const { user } = useUser();
   const userId = user?.userId;
-  const memberId = user?.members[0].userId;
+  const memberId = user?.members?.[0]?.userId;
 
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -36,7 +36,6 @@ const Map = () => {
     setDistance(distance);
     return distance > 50;
   };
-  // Function to compare current location with the saved location
   const compareLocations = (currentLocation) => {
     if (!savedLocation) {
       setErrorMsg("No Home Location, Please save your home location first.");
@@ -56,7 +55,6 @@ const Map = () => {
     } else {
       setIsSafe(true);
     }
-    // Save current location to database only if it has changed
     if (shouldSaveLocation(currentLocation)) {
       saveCurrLocation(userId, setErrorMsg);
       setPreviousLocation(currentLocation);
@@ -65,29 +63,23 @@ const Map = () => {
 
 
   useEffect(() => {
-    // Consolidated function to fetch required data and handle refresh
     const initializeData = async () => {
       try {
         setErrorMsg("Initializing data, please wait...");
-
-        // Fetch saved location and current coordinates in parallel
         const [homeLocation, currentCoords] = await Promise.all([
           fetchSavedLocation(userId, setErrorMsg),
           getCurrentCoords(),
         ]);
 
-        // Update state with fetched data
         setSavedLocation(homeLocation);
         setLocation(currentCoords);
 
-        // Optionally reverse geocode to get the address
         const geocode = await Location.reverseGeocodeAsync(currentCoords);
         if (geocode.length > 0) {
           const { formattedAddress } = geocode[0];
           setAddress(formattedAddress);
         }
 
-        // Save current location if necessary
         if (shouldSaveLocation(currentCoords)) {
           saveCurrLocation(userId, setErrorMsg);
           setPreviousLocation(currentCoords);
@@ -111,7 +103,7 @@ const Map = () => {
         locationSubscription = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.High,
-            timeInterval: 5000, // Update every 5 seconds
+            timeInterval: 5000,
           },
           (position) => {
             const { latitude, longitude } = position.coords;
@@ -134,17 +126,14 @@ const Map = () => {
     setErrorMsg("Refreshing, please wait...");
 
     try {
-      // Fetch saved location and current coordinates in parallel
       const [homeLocation, currentCoords] = await Promise.all([
         fetchSavedLocation(userId, setErrorMsg),
         getCurrentCoords()
       ]);
 
-      // Update state with fetched data
       setSavedLocation(homeLocation);
       setLocation(currentCoords);
 
-      // Reverse geocode the location to get the address
       try {
         setErrorMsg("Updating your current address...");
         const geocode = await Location.reverseGeocodeAsync(currentCoords);
@@ -156,13 +145,12 @@ const Map = () => {
         console.warn("Failed to fetch address:", error.message);
       }
 
-      // Save the current location to the database if needed
       if (shouldSaveLocation(currentCoords)) {
         saveCurrLocation(userId, setErrorMsg);
         setPreviousLocation(currentCoords);
       }
 
-      setErrorMsg(null); // Clear error message
+      setErrorMsg(null);
     } catch (error) {
       console.error("Failed to refresh data:", error.message);
       setErrorMsg("Failed to refresh data. Please try again.");
@@ -195,16 +183,18 @@ const Map = () => {
           {String(distance).slice(0, 1)} meters away from your home
         </Text>
       </View>
-      {location && (
+
+      {location ? (
         <View className="w-full h-3/4 min-h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
           <MapView
             className="w-full h-full"
             initialRegion={{
               latitude: location.latitude,
               longitude: location.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
             }}
+            showsUserLocation={true}
           >
             {savedLocation && (
               <Circle
@@ -220,6 +210,7 @@ const Map = () => {
                 }
               />
             )}
+
             <Marker
               coordinate={{
                 latitude: location.latitude,
@@ -229,7 +220,22 @@ const Map = () => {
             />
           </MapView>
         </View>
-      )}
+      ) : (
+        <View className="w-full h-3/4 min-h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
+          <MapView
+            className="w-full h-full"
+            initialRegion={{
+              latitude: 19.0760,
+              longitude: 72.8777,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
+            }}
+            showsUserLocation={true}
+          >
+          </MapView>
+        </View>
+      )
+      }
       <View className="items-center flex-row justify-evenly w-full h-20 min-h-24">
         <CustomButton
           onPress={handleRefresh}
@@ -241,7 +247,7 @@ const Map = () => {
           width="w-1/2"
         />
       </View>
-    </View>
+    </View >
   );
 };
 

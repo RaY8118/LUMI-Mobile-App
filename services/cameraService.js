@@ -51,12 +51,9 @@ export const uploadImage = async (
     if (response.data.status === "success") {
       let nameMessage;
       if (isFaceRecognition) {
-        // Handle face recognition response
         if (response.data.name && response.data.name.length > 0) {
           const userId = response.data.name[0];
           nameMessage = `Identified User ID: ${userId}`;
-
-          // Fetch additional info for the identified userId
           const additionalInfo = await fetchAdditionalInfo(userId);
 
           if (additionalInfo) {
@@ -68,7 +65,6 @@ export const uploadImage = async (
           nameMessage = "No faces found.";
         }
       } else {
-        // Handle object detection response
         nameMessage =
           response.data.name && response.data.name.length > 0
             ? `Identified Objects: ${response.data.name.join(", ")}`
@@ -129,7 +125,7 @@ export const handleGeminiDetection = async (cameraRef, setLoading) => {
 };
 
 const speak = (text) => {
-  Speech.speak(text); // Function to speak the text
+  Speech.speak(text);
 };
 
 export const fetchAdditionalInfo = async (userId) => {

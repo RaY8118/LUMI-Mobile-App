@@ -83,7 +83,7 @@ const SignIn = () => {
 
         <TouchableOpacity
           onPress={() => handleLogin(email, password, router)}
-          className="bg-blue-600 rounded-2xl py-3 items-center mb-6"
+          className="bg-purple-600 rounded-2xl py-3 items-center mb-6"
         >
           <Text className="text-white font-semibold text-lg">Sign In</Text>
         </TouchableOpacity>

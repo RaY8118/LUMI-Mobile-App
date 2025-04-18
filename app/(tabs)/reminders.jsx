@@ -20,7 +20,6 @@ import {
   updateReminder,
   sendTokenToBackend,
 } from "@/services/remindersService";
-import * as Haptics from "expo-haptics"
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -394,7 +393,6 @@ const Reminders = () => {
         <TouchableOpacity
           onPress={() => {
             setAddModalVisible(true)
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
           }}
           className="absolute bottom-5"
           activeOpacity={0.9}

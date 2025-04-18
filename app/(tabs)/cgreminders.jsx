@@ -192,12 +192,10 @@ const CgReminders = () => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
-        const title = notification.request.content.title; // Get the title from the notification
-
-        // Add a delay of 5 seconds before speaking the title
+        const title = notification.request.content.title;
         setTimeout(() => {
-          speak(title); // Speak the title after the delay
-        }, 5000); // 5000 milliseconds = 5 seconds
+          speak(title);
+        }, 5000);
       });
 
     responseListener.current =
