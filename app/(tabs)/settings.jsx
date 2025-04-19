@@ -10,6 +10,7 @@ import Chatbot from "@/components/Chatbot"
 import { Icon } from "@/constants/Icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CreateRoom from "@/components/CreateRoom";
+import FadeWrapper from "@/components/FadeWrapper";
 
 const Settings = () => {
   const [isNotificationsVisible, setIsNotificationsVisible] = useState(false)
@@ -105,39 +106,41 @@ const Settings = () => {
   ]
   return (
     <>
-      <SafeAreaView className="h-full bg-white">
-        <View className="items-center justify-center py-6 mx-4 bg-gray-100 shadow-md shadow-black rounded-3xl">
-          <Text className="text-3xl font-bold text-gray-800">Settings</Text>
-        </View>
-        <View className="m-4 bg-gray-100 rounded-3xl shadow-md shadow-black">
-          {settingsOptions.map((option, index) => (
-            <React.Fragment key={index}>
-              <View className="h-20 flex flex-row items-center justify-between px-6 py-3">
-                <View className="flex flex-row items-center">
-                  <Icon
-                    library={option.library}
-                    name={option.name}
-                    size={36}
-                    color={option.color}
-                    className="mr-5"
-                  />
-                  <Text className="text-xl text-gray-800 font-bold">{option.title}</Text>
+      <SafeAreaView className="h-full bg-purple-100">
+        <FadeWrapper>
+          <View className="items-center justify-center py-6 mx-4 bg-purple-400 shadow-md shadow-black rounded-3xl">
+            <Text className="text-3xl font-bold text-gray-800">Settings</Text>
+          </View>
+          <View className="m-4 bg-white rounded-3xl shadow-md shadow-black">
+            {settingsOptions.map((option, index) => (
+              <React.Fragment key={index}>
+                <View className="h-20 flex flex-row items-center justify-between px-6 py-3">
+                  <View className="flex flex-row items-center">
+                    <Icon
+                      library={option.library}
+                      name={option.name}
+                      size={36}
+                      color={option.color}
+                      className="mr-5"
+                    />
+                    <Text className="text-xl text-gray-800 font-bold">{option.title}</Text>
+                  </View>
+                  <TouchableOpacity onPress={option.onPress} className="p-2">
+                    <Icon
+                      library="AntDesign"
+                      name="arrowright"
+                      size={24}
+                      color="#4B5563"
+                    />
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={option.onPress} className="p-2">
-                  <Icon
-                    library="AntDesign"
-                    name="arrowright"
-                    size={24}
-                    color="#4B5563"
-                  />
-                </TouchableOpacity>
-              </View>
-              {index < settingsOptions.length - 1 && (
-                <View className="border-b border-gray-300 mx-4 shadow-sm shadow-black" />
-              )}
-            </React.Fragment>
-          ))}
-        </View>
+                {index < settingsOptions.length - 1 && (
+                  <View className="border-b border-gray-200 mx-4 shadow-sm shadow-black" />
+                )}
+              </React.Fragment>
+            ))}
+          </View>
+        </FadeWrapper>
       </SafeAreaView>
       <CustomNotifications isVisible={isNotificationsVisible} setIsVisible={setIsNotificationsVisible} toggleModal={toggleNotificationsModal} />
       <AddInfo isVisible={isInfoVisible} setIsVisible={setIsInfoVisible} toggleModal={toggleInfoModal} />

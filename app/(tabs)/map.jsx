@@ -11,6 +11,8 @@ import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
 import { useUser } from "@/hooks/useUser";
 import CustomButton from "@/components/CustomButton";
+import FadeWrapper from "@/components/FadeWrapper";
+
 const Map = () => {
   const { user } = useUser();
   const userId = user?.userId;
@@ -158,96 +160,98 @@ const Map = () => {
   };
 
   return (
-    <View className="flex justify-start items-center p-2 bg-white ">
-      <View className="flex justify-start items-center bg-white">
-        {errorMsg ? (
-          <Text className="text-red-600 text-xl text-center">{errorMsg}</Text>
-        ) : isSafe === null ? (
-          <Text className="text-gray-600 text-xl text-center">
-            Checking if you are in a safe area...
+    <FadeWrapper>
+      <View className="flex justify-start items-center p-2 bg-purple-100">
+        <View className="flex justify-start items-center bg-purple-100">
+          {errorMsg ? (
+            <Text className="text-red-600 text-xl text-center">{errorMsg}</Text>
+          ) : isSafe === null ? (
+            <Text className="text-gray-600 text-xl text-center">
+              Checking if you are in a safe area...
+            </Text>
+          ) : isSafe ? (
+            <Text className="text-green-600 text-2xl text-center font-bold mb-2">
+              You are in a safe area.
+            </Text>
+          ) : (
+            <Text className="text-red-600 text-2xl text-center font-bold mb-2">
+              You are outside the safe area!
+            </Text>
+          )}
+        </View>
+        <View className="flex justify-start items-start h-24 min-h-24 min-w-full p-2 bg-gray-200 rounded-lg shadow-lg shadow-black overflow-hidden">
+          <Text className="text-lg">You are currently here</Text>
+          <Text>{address}</Text>
+          <Text className="text-green-700">
+            {String(distance).slice(0, 1)} meters away from your home
           </Text>
-        ) : isSafe ? (
-          <Text className="text-green-600 text-2xl text-center font-bold mb-2">
-            You are in a safe area.
-          </Text>
-        ) : (
-          <Text className="text-red-600 text-2xl text-center font-bold mb-2">
-            You are outside the safe area!
-          </Text>
-        )}
-      </View>
-      <View className="flex justify-start items-start h-24 min-h-24 min-w-full p-2 bg-gray-200 rounded-lg shadow-lg shadow-black overflow-hidden">
-        <Text className="text-lg">You are currently here</Text>
-        <Text>{address}</Text>
-        <Text className="text-green-700">
-          {String(distance).slice(0, 1)} meters away from your home
-        </Text>
-      </View>
+        </View>
 
-      {location ? (
-        <View className="w-full h-3/4 min-h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
-          <MapView
-            className="w-full h-full"
-            initialRegion={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            }}
-            showsUserLocation={true}
-          >
-            {savedLocation && (
-              <Circle
-                center={{
-                  latitude: savedLocation.latitude,
-                  longitude: savedLocation.longitude,
-                }}
-                radius={2000}
-                strokeWidth={2}
-                strokeColor={isSafe ? "green" : "red"}
-                fillColor={
-                  isSafe ? "rgba(0, 255, 0, 0.2)" : "rgba(255, 0, 0, 0.2)"
-                }
-              />
-            )}
-
-            <Marker
-              coordinate={{
+        {location ? (
+          <View className="w-full h-3/4 m-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
+            <MapView
+              className="w-full h-full"
+              initialRegion={{
                 latitude: location.latitude,
                 longitude: location.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
               }}
-              title="You are here"
-            />
-          </MapView>
+              showsUserLocation={true}
+            >
+              {savedLocation && (
+                <Circle
+                  center={{
+                    latitude: savedLocation.latitude,
+                    longitude: savedLocation.longitude,
+                  }}
+                  radius={2000}
+                  strokeWidth={2}
+                  strokeColor={isSafe ? "green" : "red"}
+                  fillColor={
+                    isSafe ? "rgba(0, 255, 0, 0.2)" : "rgba(255, 0, 0, 0.2)"
+                  }
+                />
+              )}
+
+              <Marker
+                coordinate={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                }}
+                title="You are here"
+              />
+            </MapView>
+          </View>
+        ) : (
+          <View className="w-full h-3/4 min-h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
+            <MapView
+              className="w-full h-full"
+              initialRegion={{
+                latitude: 19.0760,
+                longitude: 72.8777,
+                latitudeDelta: 0.05,
+                longitudeDelta: 0.05,
+              }}
+              showsUserLocation={true}
+            >
+            </MapView>
+          </View>
+        )
+        }
+        <View className="items-center flex-row justify-evenly w-full h-16 min-h-24">
+          <CustomButton
+            onPress={handleRefresh}
+            bgcolor="bg-slate-200"
+            name="refresh"
+            library="FontAwesome"
+            size={32}
+            height="h-fit"
+            width="w-1/2"
+          />
         </View>
-      ) : (
-        <View className="w-full h-3/4 min-h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
-          <MapView
-            className="w-full h-full"
-            initialRegion={{
-              latitude: 19.0760,
-              longitude: 72.8777,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05,
-            }}
-            showsUserLocation={true}
-          >
-          </MapView>
-        </View>
-      )
-      }
-      <View className="items-center flex-row justify-evenly w-full h-20 min-h-24">
-        <CustomButton
-          onPress={handleRefresh}
-          bgcolor="bg-slate-200"
-          name="refresh"
-          library="FontAwesome"
-          size={48}
-          height="h-fit"
-          width="w-1/2"
-        />
-      </View>
-    </View >
+      </View >
+    </FadeWrapper>
   );
 };
 

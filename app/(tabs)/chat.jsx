@@ -7,6 +7,7 @@ import { usePatient } from '@/hooks/usePatient';
 import { useUser } from '@/hooks/useUser';
 import { Icon } from '@/constants/Icons'
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import FadeWrapper from '@/components/FadeWrapper';
 const apiUrl = process.env.EXPO_PUBLIC_API_URL
 
 const chat = () => {
@@ -147,58 +148,63 @@ const chat = () => {
   if (loading) return null;
 
   return (
-    <View className="flex-1 bg-gray-100">
-      {!joined ? (
-        <View className="flex-1 justify-center items-center p-5 bg-white shadow-lg rounded-xl ">
-          <Text className="text-3xl font-bold mb-5 text-center text-gray-800">Join Chat Room</Text>
-          <View className="w-full">
-            <TextInput
-              placeholder="Enter your name"
-              value={name}
-              onChangeText={setName}
-              className="border border-gray-400 rounded-md my-2 p-3 w-full text-lg"
-            />
+    <FadeWrapper>
+      <View className="flex-1 bg-gray-100">
+        {!joined ? (
+          <View className="flex-1 justify-center items-center p-5 bg-purple-100 shadow-lg rounded-xl ">
+            <Text className="text-3xl font-bold mb-5 text-center text-gray-800">Join Chat Room</Text>
+            <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3 mb-6">
+              <Icon name="user" size={24} color="gray" library="AntDesign" />
+              <TextInput
+                placeholder="Name"
+                value={name}
+                onChangeText={setName}
+                className="flex-1 ml-3 text-base text-gray-800"
+              />
+            </View>
+            <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3 mb-6">
+              <Icon name="user" size={24} color="gray" library="AntDesign" />
+              <TextInput
+                placeholder="Room"
+                value={room}
+                onChangeText={setRoom}
+                className="flex-1 ml-3 text-base text-gray-800"
+              />
+            </View>
+            <TouchableOpacity
+              title="Join Room"
+              onPress={() => handleJoinRoom()}
+              className="p-4 mt-5 bg-blue-500 rounded-3xl shadow-lg shadow-black w-full items-center justify-center"
+            >
+              <Text className="text-2xl font-bold text-white">Connect</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              title="Join Room"
+              onPress={() => autoJoin()}
+              className="p-4 mt-5 bg-green-500 rounded-3xl shadow-lg shadow-black w-full items-center justify-center"
+            >
+              <Text className="text-2xl font-bold text-white">Reconnect</Text>
+            </TouchableOpacity>
           </View>
-          <TextInput
-            placeholder="Enter room code"
-            value={room}
-            onChangeText={setRoom}
-            autoCapitalize="characters"
-            className="border border-gray-400 rounded-md my-2 p-3 w-full text-lg"
-          />
-          <TouchableOpacity
-            title="Join Room"
-            onPress={() => handleJoinRoom()}
-            className="p-4 mt-5 bg-blue-500 rounded-3xl shadow-lg shadow-black w-full items-center justify-center"
-          >
-            <Text className="text-2xl font-bold text-white">Connect</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            title="Join Room"
-            onPress={() => autoJoin()}
-            className="p-4 mt-5 bg-green-500 rounded-3xl shadow-lg shadow-black w-full items-center justify-center"
-          >
-            <Text className="text-2xl font-bold text-white">Reconnect</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <>
-          <TouchableOpacity
-            onPress={handleLeaveRoom}
-            className="bg-red-500 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center w-3/4 mx-auto mt-4"
-          >
-            <Text className="text-xl font-bold text-white">Leave Room</Text>
-          </TouchableOpacity>
-          <GiftedChat
-            messages={messages}
-            onSend={(msgs) => handleSend(msgs)}
-            user={{ _id: currentUserId, name: name }}
-            renderInputToolbar={renderInputToolbar}
-            renderSend={renderSend}
-          />
-        </>
-      )}
-    </View>
+        ) : (
+          <>
+            <TouchableOpacity
+              onPress={handleLeaveRoom}
+              className="bg-red-500 p-4 rounded-3xl shadow-lg shadow-black items-center justify-center w-3/4 mx-auto mt-4"
+            >
+              <Text className="text-xl font-bold text-white">Leave Room</Text>
+            </TouchableOpacity>
+            <GiftedChat
+              messages={messages}
+              onSend={(msgs) => handleSend(msgs)}
+              user={{ _id: currentUserId, name: name }}
+              renderInputToolbar={renderInputToolbar}
+              renderSend={renderSend}
+            />
+          </>
+        )}
+      </View>
+    </FadeWrapper >
   );
 }
 

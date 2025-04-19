@@ -1,19 +1,38 @@
 import React from "react";
-import { Tabs } from "expo-router";
+import { Tabs, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Icon } from "@/constants/Icons";
 import { useUser } from "@/hooks/useUser";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TabsLayout = () => {
   const { role } = useUser();
+  const insets = useSafeAreaInsets()
   return (
     <>
       <StatusBar backgroundColor="" style="dark" />
-      <Tabs>
+      <Tabs
+        screenOptions={{
+          headerTintColor: "violet",
+          tabBarStyle: {
+            position: 'absolute',
+            bottom: insets.bottom + 12,
+            left: 16,
+            right: 16,
+            height: 70,
+            borderRadius: 30,
+            backgroundColor: '#fff',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 10,
+          },
+        }}>
         <Tabs.Screen
           name="reminders"
           redirect={role !== "PAT"}
-          options={({ navigation }) => ({
+          options={() => ({
             headerTitle: "Reminders",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Reminders",
@@ -27,10 +46,10 @@ const TabsLayout = () => {
             ),
             headerRight: () => (
               <Icon
-                name="person-circle-outline"
-                size={30}
+                name="person-outline"
+                size={40}
                 style={{ marginRight: 15 }}
-                onPress={() => navigation.navigate("profile")}
+                onPress={() => router.push("/profile")}
                 library="Ionicons"
               />
             ),
@@ -39,17 +58,17 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="map"
           redirect={role !== "PAT"}
-          options={({ navigation }) => ({
+          options={() => ({
             headerTitle: "Maps",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Maps",
             tabBarIcon: ({ color, size }) => (
-              <Icon name="map" color={color} size={size} library="Entypo" />
+              <Icon name="map-o" color={color} size={size} library="FontAwesome" />
             ),
             headerRight: () => (
               <Icon
-                name="person-circle-outline"
-                size={30}
+                name="person-outline"
+                size={40}
                 style={{ marginRight: 15 }}
                 onPress={() => navigation.navigate("profile")}
                 library="Ionicons"
@@ -60,7 +79,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="chat"
           redirect={role !== "PAT"}
-          options={({ navigation }) => ({
+          options={() => ({
             headerTitle: "Chat Room",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Chat",
@@ -69,15 +88,15 @@ const TabsLayout = () => {
                 name="chat"
                 color={color}
                 size={size}
-                library="MaterialCommunityIcons"
+                library="Entypo"
               />
             ),
             headerRight: () => (
               <Icon
-                name="person-circle-outline"
-                size={30}
+                name="person-outline"
+                size={40}
                 style={{ marginRight: 15 }}
-                onPress={() => navigation.navigate("profile")}
+                onPress={() => router.push("/profile")}
                 library="Ionicons"
               />
             ),
@@ -86,7 +105,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="camera"
           redirect={role !== "PAT"}
-          options={({ navigation }) => ({
+          options={() => ({
             headerTitle: "Camera",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Camera",
@@ -100,10 +119,10 @@ const TabsLayout = () => {
             ),
             headerRight: () => (
               <Icon
-                name="person-circle-outline"
-                size={30}
+                name="person-outline"
+                size={40}
                 style={{ marginRight: 15 }}
-                onPress={() => navigation.navigate("profile")}
+                onPress={() => router.push("/profile")}
                 library="Ionicons"
               />
             ),
@@ -112,7 +131,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="cgreminders"
           redirect={role !== "CG"}
-          options={({ navigation }) => ({
+          options={() => ({
             headerTitle: "CG Reminders",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "CG Reminders",
@@ -126,10 +145,10 @@ const TabsLayout = () => {
             ),
             headerRight: () => (
               <Icon
-                name="person-circle-outline"
-                size={30}
+                name="person-outline"
+                size={40}
                 style={{ marginRight: 15 }}
-                onPress={() => navigation.navigate("profile")}
+                onPress={() => router.push("/profile")}
                 library="Ionicons"
               />
             ),
@@ -138,19 +157,19 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="cgmaps"
           redirect={role !== "CG"}
-          options={({ navigation }) => ({
+          options={() => ({
             headerTitle: "CG Map",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "CG Map",
             tabBarIcon: ({ color, size }) => (
-              <Icon name="map" color={color} size={size} library="Entypo" />
+              <Icon name="map-o" color={color} size={size} library="FontAwesome" />
             ),
             headerRight: () => (
               <Icon
-                name="person-circle-outline"
-                size={30}
+                name="person-outline"
+                size={40}
                 style={{ marginRight: 15 }}
-                onPress={() => navigation.navigate("profile")}
+                onPress={() => router.push("/profile")}
                 library="Ionicons"
               />
             ),
@@ -159,7 +178,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="cgchat"
           redirect={role !== "CG"}
-          options={({ navigation }) => ({
+          options={() => ({
             headerTitle: "CG Chat",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "CG Chat",
@@ -168,15 +187,15 @@ const TabsLayout = () => {
                 name="chat"
                 color={color}
                 size={size}
-                library="MaterialCommunityIcons"
+                library="Entypo"
               />
             ),
             headerRight: () => (
               <Icon
-                name="person-circle-outline"
-                size={30}
+                name="person-outline"
+                size={40}
                 style={{ marginRight: 15 }}
-                onPress={() => navigation.navigate("profile")}
+                onPress={() => router.push("/profile")}
                 library="Ionicons"
               />
             ),
@@ -185,7 +204,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="settings"
           redirect={role !== "CG"}
-          options={({ navigation }) => ({
+          options={() => ({
             headerTitle: "",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Settings",
@@ -199,10 +218,10 @@ const TabsLayout = () => {
             ),
             headerRight: () => (
               <Icon
-                name="person-circle-outline"
-                size={30}
+                name="person-outline"
+                size={40}
                 style={{ marginRight: 15 }}
-                onPress={() => navigation.navigate("profile")}
+                onPress={() => router.push("/profile")}
                 library="Ionicons"
               />
             ),
@@ -211,7 +230,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="tutorial"
           redirect={role !== "PAT"}
-          options={({ navigation }) => ({
+          options={() => ({
             headerTitle: "Tutorials",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Tutorials",
@@ -225,22 +244,14 @@ const TabsLayout = () => {
             ),
             headerRight: () => (
               <Icon
-                name="person-circle-outline"
-                size={30}
+                name="person-outline"
+                size={40}
                 style={{ marginRight: 15 }}
-                onPress={() => navigation.navigate("profile")}
+                onPress={() => router.push("/profile")}
                 library="Ionicons"
               />
             ),
           })}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            tabBarButton: () => null,
-            headerTitle: "Profile",
-            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
-          }}
         />
       </Tabs>
     </>

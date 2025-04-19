@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import AddModalComponent from "../../components/AddModalComponent";
 import EditModalComponent from "../../components/EditModalComponent";
+import FadeWrapper from "@/components/FadeWrapper"
 import * as Notifications from "expo-notifications"; // Added for notifications
 import * as Speech from "expo-speech"; // Added for speech
 import { Icon } from "@/constants/Icons";
@@ -278,132 +279,134 @@ const Reminders = () => {
 
   return (
     <>
-      <ScrollView
-        className="bg-white rounded-lg"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View className="bg-white p-2 grid grid-cols-2 shadow-xl shadow-black h-full mt-0">
-          {error ? (
-            <Text className="col-span-2 text-2xl">{error}</Text>
-          ) : (
-            sortedReminders.map((reminder) => (
-              <View
-                key={reminder._id}
-                className={`p-4 pb-2 rounded-3xl shadow-xl shadow-black mb-3 ${getBackgroundColorClass(
-                  reminder.urgent,
-                  reminder.important
-                )}`}
-              >
-                <Text className="text-3xl ">
-                  {reminder.title}
-                </Text>
-                <Text className="text-xl ">
-                  {reminder.description}
-                </Text>
-
-                <View className="flex-1 flex-row items-center">
-                  <Icon name="date" size={20} library="Fontisto" />
-                  <Text className="text-xl ml-2 ">
-                    {new Date(reminder.date).toLocaleDateString()}
-                  </Text>
-                </View>
-                <View className="flex-1 flex-row items-center">
-                  <Icon name="clockcircleo" size={20} library="AntDesign" />
-                  <Text className="text-xl ml-2">{reminder.time}</Text>
-                </View>
-                <View className="flex-1 flex-row items-center">
-                  {reminder.status === "pending" ?
-                    <Icon name="pending" size={20} library="MaterialIcons" /> :
-                    <Icon name="pending" size={20} library="MaterialIcons" color="white" />}
-                  <Text className="text-xl ml-2">
-                    {reminder.status === "pending" ? "Pending" : "Completed"}
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  onPress={() => handleEdit(reminder._id)}
-                  className="absolute right-14 bottom-4"
-                >
-                  <Icon
-                    name="edit-note"
-                    size={30}
-                    color="black"
-                    library="MaterialIcons"
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleDeleteReminder(reminder.remId)}
-                  className="absolute right-4 bottom-4"
-                >
-                  <Icon
-                    name="delete-outline"
-                    size={30}
-                    color="black"
-                    library="MaterialIcons"
-                  />
-                </TouchableOpacity>
-              </View>
-            ))
-          )}
-        </View>
-        <View className="mt-2">
-          <AddModalComponent
-            addModalVisible={addModalVisible}
-            setAddModalVisible={setAddModalVisible}
-            title={title}
-            setTitle={setTitle}
-            description={description}
-            setDescription={setDescription}
-            date={date}
-            setDate={setDate}
-            time={time}
-            setTime={setTime}
-            setStatus={setStatus}
-            isUrgent={isUrgent}
-            setIsUrgent={setIsUrgent}
-            isImportant={isImportant}
-            setIsImportant={setIsImportant}
-            onSave={postReminders}
-          />
-
-          <EditModalComponent
-            editModalVisible={editModalVisible}
-            setEditModalVisible={handleEditModalClose}
-            title={title}
-            setTitle={setTitle}
-            description={description}
-            setDescription={setDescription}
-            date={date}
-            setDate={setDate}
-            time={time}
-            setTime={setTime}
-            status={status}
-            setStatus={setStatus}
-            isUrgent={isUrgent}
-            setIsUrgent={setIsUrgent}
-            isImportant={isImportant}
-            setIsImportant={setIsImportant}
-            onSave={handleUpdateReminders}
-          />
-        </View>
-      </ScrollView>
-      <View className="justify-center items-center">
-        <TouchableOpacity
-          onPress={() => {
-            setAddModalVisible(true)
-          }}
-          className="absolute bottom-5"
-          activeOpacity={0.9}
+      <FadeWrapper>
+        <ScrollView
+          className="bg-purple-100 rounded-lg"
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
-          <View className="bg-purple-600 w-full shadow-md shadow-black p-4 pl-20 pr-20 justify-center rounded-xl">
-            <Text className="text-white font-bold text-xl">
-              Add new task
-            </Text>
+          <View className="bg-purple-100 p-2 grid grid-cols-2 shadow-xl shadow-black h-full mt-0">
+            {error ? (
+              <Text className="col-span-2 text-2xl">{error}</Text>
+            ) : (
+              sortedReminders.map((reminder) => (
+                <View
+                  key={reminder._id}
+                  className={`p-4 pb-2 rounded-3xl shadow-xl shadow-black mb-3 ${getBackgroundColorClass(
+                    reminder.urgent,
+                    reminder.important
+                  )}`}
+                >
+                  <Text className="text-3xl ">
+                    {reminder.title}
+                  </Text>
+                  <Text className="text-xl ">
+                    {reminder.description}
+                  </Text>
+
+                  <View className="flex-1 flex-row items-center">
+                    <Icon name="date" size={20} library="Fontisto" />
+                    <Text className="text-xl ml-2 ">
+                      {new Date(reminder.date).toLocaleDateString()}
+                    </Text>
+                  </View>
+                  <View className="flex-1 flex-row items-center">
+                    <Icon name="clockcircleo" size={20} library="AntDesign" />
+                    <Text className="text-xl ml-2">{reminder.time}</Text>
+                  </View>
+                  <View className="flex-1 flex-row items-center">
+                    {reminder.status === "pending" ?
+                      <Icon name="pending" size={20} library="MaterialIcons" /> :
+                      <Icon name="pending" size={20} library="MaterialIcons" color="white" />}
+                    <Text className="text-xl ml-2">
+                      {reminder.status === "pending" ? "Pending" : "Completed"}
+                    </Text>
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={() => handleEdit(reminder._id)}
+                    className="absolute right-14 bottom-4"
+                  >
+                    <Icon
+                      name="edit-note"
+                      size={30}
+                      color="black"
+                      library="MaterialIcons"
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleDeleteReminder(reminder.remId)}
+                    className="absolute right-4 bottom-4"
+                  >
+                    <Icon
+                      name="delete-outline"
+                      size={30}
+                      color="black"
+                      library="MaterialIcons"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))
+            )}
           </View>
-        </TouchableOpacity>
-      </View>
+          <View className="mt-2">
+            <AddModalComponent
+              addModalVisible={addModalVisible}
+              setAddModalVisible={setAddModalVisible}
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
+              date={date}
+              setDate={setDate}
+              time={time}
+              setTime={setTime}
+              setStatus={setStatus}
+              isUrgent={isUrgent}
+              setIsUrgent={setIsUrgent}
+              isImportant={isImportant}
+              setIsImportant={setIsImportant}
+              onSave={postReminders}
+            />
+
+            <EditModalComponent
+              editModalVisible={editModalVisible}
+              setEditModalVisible={handleEditModalClose}
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
+              date={date}
+              setDate={setDate}
+              time={time}
+              setTime={setTime}
+              status={status}
+              setStatus={setStatus}
+              isUrgent={isUrgent}
+              setIsUrgent={setIsUrgent}
+              isImportant={isImportant}
+              setIsImportant={setIsImportant}
+              onSave={handleUpdateReminders}
+            />
+          </View>
+        </ScrollView>
+        <View className="justify-center items-center">
+          <TouchableOpacity
+            onPress={() => {
+              setAddModalVisible(true)
+            }}
+            className="absolute bottom-24"
+            activeOpacity={0.9}
+          >
+            <View className="bg-purple-600 w-full shadow-md shadow-black p-4 pl-20 pr-20 justify-center rounded-xl">
+              <Text className="text-white font-bold text-xl">
+                Add new task
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </FadeWrapper>
     </>
   );
 };

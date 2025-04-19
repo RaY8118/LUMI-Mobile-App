@@ -16,6 +16,7 @@ import { Icon } from "@/constants/Icons";
 import CustomButton from "@/components/CustomButton";
 import { useUser } from "@/hooks/useUser";
 import * as Animatable from "react-native-animatable";
+import FadeWrapper from "@/components/FadeWrapper";
 
 const Camera = () => {
   const { user } = useUser();
@@ -48,81 +49,83 @@ const Camera = () => {
   };
 
   return (
-    <View className="flex-1 justify-end p-5 relative bg-white">
-      <View className="flex-1 rounded-3xl overflow-hidden shadow-xl shadow-black">
-        <CameraView
-          style={{
-            flex: 1,
-            width: "100%",
-            backgroundColor: "black",
-          }}
-          facing={facing}
-          ref={cameraRef}
-        >
-          <View className="absolute right-6 bottom-3 my-2">
-            <TouchableOpacity>
-              <Animatable.View ref={rotateRef} duration={500}>
-                <Icon
-                  name="cameraswitch"
-                  library="MaterialIcons"
-                  color="white"
-                  size={70}
-                  onPress={toggleCameraFacing}
-                  className=""
-                  style={""}
-                />
-              </Animatable.View>
-            </TouchableOpacity>
-          </View>
-        </CameraView>
+    <FadeWrapper>
+      <View className="flex-1 justify-end p-5 relative bg-purple-100">
+        <View className="flex-1 rounded-3xl overflow-hidden shadow-xl shadow-black">
+          <CameraView
+            style={{
+              flex: 1,
+              width: "100%",
+              backgroundColor: "black",
+            }}
+            facing={facing}
+            ref={cameraRef}
+          >
+            <View className="absolute right-6 bottom-3 my-2">
+              <TouchableOpacity>
+                <Animatable.View ref={rotateRef} duration={500}>
+                  <Icon
+                    name="cameraswitch"
+                    library="MaterialIcons"
+                    color="white"
+                    size={70}
+                    onPress={toggleCameraFacing}
+                    className=""
+                    style={""}
+                  />
+                </Animatable.View>
+              </TouchableOpacity>
+            </View>
+          </CameraView>
+        </View>
+
+        <View className="items-center my-0 flex flex-row justify-around m-12">
+          <CustomButton
+            onPress={() => handleFaceRecognition(cameraRef, user, setLoading)}
+            bgcolor="bg-blue-500"
+            name="face-recognition"
+            library="MaterialCommunityIcons"
+            size={60}
+            activeOpacity={0.7}
+            color="white"
+            height="h-fit"
+            width="w-fit"
+          />
+
+          <CustomButton
+            onPress={() => handleObjectDetection(cameraRef, setLoading)}
+            bgcolor="bg-green-500"
+            name="object-group"
+            library="FontAwesome"
+            size={60}
+            activeOpacity={0.7}
+            color="white"
+            height="h-fit"
+            width="w-fit"
+          />
+
+          <CustomButton
+            onPress={() => handleGeminiDetection(cameraRef, setLoading)}
+            bgcolor="bg-red-500"
+            name="object-group"
+            library="FontAwesome"
+            size={60}
+            activeOpacity={0.7}
+            color="white"
+            height="h-fit"
+            width="w-fit"
+          />
+        </View>
+
+        {loading && (
+          <ActivityIndicator
+            size="large"
+            color="#0000ff"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          />
+        )}
       </View>
-
-      <View className="items-center my-2 flex flex-row justify-around m-10">
-        <CustomButton
-          onPress={() => handleFaceRecognition(cameraRef, user, setLoading)}
-          bgcolor="bg-blue-500"
-          name="face-recognition"
-          library="MaterialCommunityIcons"
-          size={60}
-          activeOpacity={0.7}
-          color="white"
-          height="h-fit"
-          width="w-fit"
-        />
-
-        <CustomButton
-          onPress={() => handleObjectDetection(cameraRef, setLoading)}
-          bgcolor="bg-green-500"
-          name="object-group"
-          library="FontAwesome"
-          size={60}
-          activeOpacity={0.7}
-          color="white"
-          height="h-fit"
-          width="w-fit"
-        />
-
-        <CustomButton
-          onPress={() => handleGeminiDetection(cameraRef, setLoading)}
-          bgcolor="bg-red-500"
-          name="object-group"
-          library="FontAwesome"
-          size={60}
-          activeOpacity={0.7}
-          color="white"
-          height="h-fit"
-          width="w-fit"
-        />
-      </View>
-
-      {loading && (
-        <ActivityIndicator
-          size="large"
-          color="#0000ff"
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-        />
-      )}
-    </View>
+    </FadeWrapper>
   );
 };
 
