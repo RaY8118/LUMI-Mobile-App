@@ -33,7 +33,7 @@ const SignIn = () => {
     await authenticateAndAutofill(setEmail, setPassword, setIsAutofilled);
   };
   return (
-    <SafeAreaView className="flex-1 bg-white px-6 justify-center">
+    <SafeAreaView className="flex-1 bg-purple-100 px-6 justify-center">
       <View className="mt-auto mb-auto">
         <View>
           <Image

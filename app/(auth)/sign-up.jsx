@@ -29,7 +29,7 @@ const Register = () => {
     setIsPasswordVisible((prev) => !prev);
   };
   return (
-    <SafeAreaView className="flex-1 p-6 bg-white rounded-xl">
+    <SafeAreaView className="flex-1 p-6 bg-purple-100 rounded-xl">
       <View className="mt-auto mb-auto">
         <View>
           <Image

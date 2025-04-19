@@ -34,14 +34,14 @@ const HomeScreen = () => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
+      <View className="flex-1 justify-center items-center bg-purple-100">
         <ActivityIndicator size="large" color="#3b82f6" />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 justify-center items-center bg-white px-6">
+    <View className="flex-1 justify-center items-center bg-purple-100 px-6">
       <Image
         source={Images.logo}
         resizeMode="contain"
