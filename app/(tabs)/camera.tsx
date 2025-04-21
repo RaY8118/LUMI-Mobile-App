@@ -32,7 +32,7 @@ const Camera = () => {
 
   if (!permission.granted) {
     return (
-      <View className="flex-1 justify-end p-5 relative">
+      <View className="flex-1 justify-center p-5 relative">
         <Text className="text-center pb-3">
           We need your permission to show the camera
         </Text>
@@ -79,7 +79,7 @@ const Camera = () => {
           </CameraView>
         </View>
 
-        <View className="items-center my-0 flex flex-row justify-around m-12">
+        <View className="items-center my-0 flex flex-row justify-around mt-12 mb-20">
           <CustomButton
             onPress={() => handleFaceRecognition(cameraRef, user, setLoading)}
             bgcolor="bg-blue-500"

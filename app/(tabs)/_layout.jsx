@@ -20,14 +20,19 @@ const TabsLayout = () => {
             left: 16,
             right: 16,
             height: 70,
-            borderRadius: 30,
+            borderRadius: 24,
             backgroundColor: '#fff',
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.1,
             shadowRadius: 8,
             elevation: 10,
+            padding: 6
           },
+          tabBarLabelStyle: {
+            fontSize: 14,
+            fontWeight: 700
+          }
         }}>
         <Tabs.Screen
           name="reminders"
@@ -36,18 +41,18 @@ const TabsLayout = () => {
             headerTitle: "Reminders",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Reminders",
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="tasks"
                 color={color}
-                size={size}
+                size={32}
                 library="FontAwesome5"
               />
             ),
             headerRight: () => (
               <Icon
                 name="person-outline"
-                size={40}
+                size={32}
                 style={{ marginRight: 15 }}
                 onPress={() => router.push("/profile")}
                 library="Ionicons"
@@ -63,12 +68,15 @@ const TabsLayout = () => {
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Maps",
             tabBarIcon: ({ color, size }) => (
-              <Icon name="map-o" color={color} size={size} library="FontAwesome" />
+              <Icon name="map-o"
+                color={color}
+                size={size}
+                library="FontAwesome" />
             ),
             headerRight: () => (
               <Icon
                 name="person-outline"
-                size={40}
+                size={36}
                 style={{ marginRight: 15 }}
                 onPress={() => navigation.navigate("profile")}
                 library="Ionicons"
@@ -83,18 +91,18 @@ const TabsLayout = () => {
             headerTitle: "Chat Room",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Chat",
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="chat"
                 color={color}
-                size={size}
+                size={32}
                 library="Entypo"
               />
             ),
             headerRight: () => (
               <Icon
                 name="person-outline"
-                size={40}
+                size={32}
                 style={{ marginRight: 15 }}
                 onPress={() => router.push("/profile")}
                 library="Ionicons"
@@ -109,18 +117,18 @@ const TabsLayout = () => {
             headerTitle: "Camera",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Camera",
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="camera"
                 color={color}
-                size={size}
+                size={32}
                 library="MaterialCommunityIcons"
               />
             ),
             headerRight: () => (
               <Icon
                 name="person-outline"
-                size={40}
+                size={32}
                 style={{ marginRight: 15 }}
                 onPress={() => router.push("/profile")}
                 library="Ionicons"
@@ -135,18 +143,18 @@ const TabsLayout = () => {
             headerTitle: "CG Reminders",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "CG Reminders",
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="tasks"
                 color={color}
-                size={size}
+                size={32}
                 library="FontAwesome5"
               />
             ),
             headerRight: () => (
               <Icon
                 name="person-outline"
-                size={40}
+                size={32}
                 style={{ marginRight: 15 }}
                 onPress={() => router.push("/profile")}
                 library="Ionicons"
@@ -167,7 +175,7 @@ const TabsLayout = () => {
             headerRight: () => (
               <Icon
                 name="person-outline"
-                size={40}
+                size={32}
                 style={{ marginRight: 15 }}
                 onPress={() => router.push("/profile")}
                 library="Ionicons"
@@ -182,18 +190,18 @@ const TabsLayout = () => {
             headerTitle: "CG Chat",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "CG Chat",
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="chat"
                 color={color}
-                size={size}
+                size={32}
                 library="Entypo"
               />
             ),
             headerRight: () => (
               <Icon
                 name="person-outline"
-                size={40}
+                size={32}
                 style={{ marginRight: 15 }}
                 onPress={() => router.push("/profile")}
                 library="Ionicons"
@@ -208,18 +216,18 @@ const TabsLayout = () => {
             headerTitle: "",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Settings",
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="settings"
                 color={color}
-                size={size}
+                size={32}
                 library="Ionicons"
               />
             ),
             headerRight: () => (
               <Icon
                 name="person-outline"
-                size={40}
+                size={32}
                 style={{ marginRight: 15 }}
                 onPress={() => router.push("/profile")}
                 library="Ionicons"
@@ -234,18 +242,18 @@ const TabsLayout = () => {
             headerTitle: "Tutorials",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
             title: "Tutorials",
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="play-video"
                 color={color}
-                size={size}
+                size={32}
                 library="Foundation"
               />
             ),
             headerRight: () => (
               <Icon
                 name="person-outline"
-                size={40}
+                size={32}
                 style={{ marginRight: 15 }}
                 onPress={() => router.push("/profile")}
                 library="Ionicons"

@@ -1,10 +1,10 @@
-// constants/Icon.js
 import React from "react";
 import {
   FontAwesome5,
   Fontisto,
   MaterialIcons,
   Ionicons,
+  Feather,
   AntDesign,
   Entypo,
   MaterialCommunityIcons,
@@ -13,7 +13,6 @@ import {
   Foundation,
 } from "@expo/vector-icons";
 
-// Map of icon libraries
 const IconLibraries = {
   FontAwesome5,
   FontAwesome6,
@@ -21,6 +20,7 @@ const IconLibraries = {
   Fontisto,
   MaterialIcons,
   Ionicons,
+  Feather,
   AntDesign,
   Entypo,
   MaterialCommunityIcons,
