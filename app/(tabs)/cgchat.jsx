@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat';
+import { Composer, GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
 import { usePatient } from '@/hooks/usePatient';
 import { useUser } from '@/hooks/useUser';
@@ -71,11 +71,11 @@ const CgChat = () => {
         setJoined(true);
 
         newSocket.on('connect', () => {
-          console.log('Socket connected');
+          // console.log('Socket connected');
         });
 
         newSocket.on('message', (data) => {
-          console.log('Message received:', data);
+          // console.log('Message received:', data);
           const newMsg = {
             _id: Date.now() + Math.random(),
             text: data.message,
@@ -86,7 +86,7 @@ const CgChat = () => {
         });
 
         newSocket.on('disconnect', () => {
-          console.log('Socket disconnected');
+          // console.log('Socket disconnected');
         });
       } else {
         Alert.alert(error.message)
@@ -129,14 +129,28 @@ const CgChat = () => {
       <InputToolbar
         {...props}
         containerStyle={{
-          backgroundColor: "#e8e8e8",
-          borderTopWidth: 1,
-          borderTopColor: "#ccc",
-          padding: 10
-        }} />
+          backgroundColor: "#f8f8f8",
+          borderTopWidth: 0,
+          borderRadius: 20,
+          marginHorizontal: 10,
+          marginBottom: 10,
+        }}
+        primaryStyle={{ alignItems: "center" }} />
     )
   }
 
+
+  const renderComposer = (props) => {
+    <Composer
+      {...props}
+      textInputStyle={{
+        color: "#000",
+        backgroundColor: "#fff",
+        borderRadius: 20,
+        paddingHorizontal: 12,
+        marginTop: 5
+      }} />
+  }
   const renderSend = (props) => {
     return (
       <Send {...props}>
@@ -194,13 +208,17 @@ const CgChat = () => {
             >
               <Text className="text-xl font-bold text-white">Leave Room</Text>
             </TouchableOpacity>
-            <GiftedChat
-              messages={messages}
-              onSend={(msgs) => handleSend(msgs)}
-              user={{ _id: currentUserId, name: name }}
-              renderInputToolbar={renderInputToolbar}
-              renderSend={renderSend}
-            />
+
+            <View className="flex-1 pb-20 mb-2">
+              <GiftedChat
+                messages={messages}
+                onSend={(msgs) => handleSend(msgs)}
+                user={{ _id: currentUserId, name: name }}
+                renderInputToolbar={renderInputToolbar}
+                renderSend={renderSend}
+                renderComposer={renderComposer}
+              />
+            </View>
           </>
         )}
       </View>

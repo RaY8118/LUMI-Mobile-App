@@ -3,35 +3,36 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
 import { Link, router } from "expo-router";
 import { Icon } from "@/constants/Icons";
-import Images from "@/constants/Images"
 import { handleLogin, authenticateAndAutofill } from "@/services/authService";
 import { useUser } from "@/hooks/useUser";
+import Images from "@/constants/Images";
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isAutofilled, setIsAutofilled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const { refetch } = useUser();
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  // Handle autofill-triggered login
   useEffect(() => {
     const login = async () => {
       if (isAutofilled) {
+        setIsLoading(true)
         await handleLogin(email, password, router, refetch);
-        setIsAutofilled(false); // Reset after successful login
+        setIsLoading(false)
+        setIsAutofilled(false);
       }
     };
-
-    login(); // Call the async function
+    login();
   }, [isAutofilled, email, password, router]);
 
-  // Handle Biometric Authentication & Autofill Combined
   const handleBiometricAuthentication = async () => {
     await authenticateAndAutofill(setEmail, setPassword, setIsAutofilled);
   };
+
   return (
     <SafeAreaView className="flex-1 bg-purple-100 px-6 justify-center">
       <View className="mt-auto mb-auto">
@@ -39,7 +40,7 @@ const SignIn = () => {
           <Image
             source={Images.loginImg}
             resizeMode="contain"
-            className="self-center mb-4 w-3/4 md:w-1/2" // Responsive width
+            className="self-center mb-4 w-3/4 md:w-1/2"
           />
         </View>
         <Text className="text-4xl font-bold text-purple-600 text-center mb-2">
@@ -82,7 +83,11 @@ const SignIn = () => {
         </View>
 
         <TouchableOpacity
-          onPress={() => handleLogin(email, password, router)}
+          onPress={() => {
+            setIsLoading(true)
+            handleLogin(email, password, router, refetch)
+            setIsLoading(false)
+          }}
           className="bg-purple-600 rounded-2xl py-3 items-center mb-6"
         >
           <Text className="text-white font-semibold text-lg">Sign In</Text>
@@ -114,7 +119,18 @@ const SignIn = () => {
           </Link>
         </View>
       </View>
+
+      {isLoading && (
+        <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/90 flex items-center justify-center z-50">
+          <View className="items-center space-y-4 animate-pulse">
+            <Text className="text-2xl font-extrabold text-purple-700 tracking-wide">
+              Signing you in...
+            </Text>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
+
   );
 };
 

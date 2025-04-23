@@ -45,7 +45,7 @@ const HomeScreen = () => {
       <Image
         source={Images.logo}
         resizeMode="contain"
-        className="self-center mb-4 w-3/4 md:w-1/2"
+        className="self-center w-40 h-40 mb-4 "
       />
       <Text className="text-4xl font-bold text-purple-600 mb-3">Welcome to Lumi</Text>
       <Text className="text-base text-gray-700 text-center mb-8">

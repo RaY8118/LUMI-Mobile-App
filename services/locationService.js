@@ -234,7 +234,7 @@ export const sendLocationAlert = async (userId) => {
       `${apiUrl}/v1/notifications/get-user-token?userId=${userId}`,
     );
     const token = response.data.token;
-    console.log(token);
+    // console.log(token);
     if (token) {
       try {
         response = await axios.post("https://exp.host/--/api/v2/push/send", {

@@ -4,9 +4,10 @@ import { useRouter, Link } from "expo-router";
 import DropDownPicker from "react-native-dropdown-picker";
 import { handleRegister } from "@/services/authService";
 import { Icon } from "@/constants/Icons";
-import Images from "@/constants/Images"
 import { TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Images from "@/constants/Images";
+
 const Register = () => {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -34,8 +35,7 @@ const Register = () => {
         <View>
           <Image
             source={Images.registerImg}
-            resizeMode="contain"
-            className="self-center mb-4 w-3/4 md:w-1/2" // Responsive width
+            className="self-center mb-4 w-3/4 md:w-1/2"
           />
         </View>
         <Text className="text-4xl font-bold text-purple-600 text-center mb-2">

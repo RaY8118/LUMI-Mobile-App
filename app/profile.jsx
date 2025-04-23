@@ -4,7 +4,6 @@ import {
   Alert,
   FlatList,
   SafeAreaView,
-  ActivityIndicator,
   Image,
   TouchableOpacity,
 } from "react-native";
@@ -26,9 +25,10 @@ const UPLOAD_PRESET = process.env.EXPO_PUBLIC_UPLOAD_PRESET
 const UPLOAD_FOLDER = process.env.EXPO_PUBLIC_UPLOAD_FOLDER
 
 const Profile = () => {
-  const { user, setUser, isLoading } = useUser();
+  const { user, setUser } = useUser();
   const { PATId, PATName } = usePatient()
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const userId = user?.userId || null
   const familyId = user?.familyId || "Not set"
@@ -75,7 +75,7 @@ const Profile = () => {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [9, 16],
         quality: 0.75
       })
     } else {
@@ -88,8 +88,10 @@ const Profile = () => {
     }
     if (!result.canceled) {
       const uri = result.assets[0].uri
+      setLoading(true)
       await uploadProfileImg(uri, userId, familyId)
       await saveProfileImage(uri, userId)
+      setLoading(false)
     }
   }
 
@@ -161,13 +163,6 @@ const Profile = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="bg-purple-200 rounded-b-xl h-80 items-center justify-center">
@@ -270,7 +265,11 @@ const Profile = () => {
           </TouchableOpacity>
         </View>
       </View>
-
+      {loading && (
+        <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/90 flex items-center justify-center z-50">
+          <Text className="text-lg font-semibold text-purple-700">Loading please wait...</Text>
+        </View>
+      )}
       <EditForm userId={userId} isVisible={isModalVisible} setIsVisible={setIsModalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
   );

@@ -13,16 +13,15 @@ export const handleLogin = async (email, password, router, refetch) => {
 
     const token = response.data.token;
     await SecureStore.setItemAsync("token", token);
+    await new Promise((res) => setTimeout(res, 100));
     await SecureStore.setItemAsync("email", email);
     await SecureStore.setItemAsync("password", password);
+    await refetch();
     Alert.alert("Success", response.data.message);
     router.replace("/reminders");
-    await refetch();
   } catch (error) {
     if (error.response && error.response.data) {
-      Alert.alert("Error", error.response.data.message || "Failed to login");
-    } else {
-      Alert.alert("Error", "Failed to login");
+      Alert.alert("Error", error.response.data.message);
     }
   }
 };
