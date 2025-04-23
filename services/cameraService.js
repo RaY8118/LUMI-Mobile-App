@@ -76,10 +76,10 @@ export const uploadImage = async (
       }
       Alert.alert("Response", nameMessage);
     } else {
-      Alert.alert("Error", `Error: ${response.data.message}`);
+      Alert.alert("Error", "Something went wrong");
     }
   } catch (error) {
-    Alert.alert("Error", error.response?.data?.message);
+    Alert.alert("Error", "Unknow person detected");
   } finally {
     setLoading(false);
   }
@@ -104,20 +104,7 @@ export const handleObjectDetection = async (cameraRef, setLoading) => {
     const resizedUri = await resizeImage(uri);
     uploadImage(
       resizedUri,
-      `${apiUrl}/v1/vision/obj-detection`,
-      setLoading,
-      false,
-    );
-  }
-};
-
-export const handleGeminiDetection = async (cameraRef, setLoading) => {
-  const uri = await takePicture(cameraRef);
-  if (uri) {
-    const reseizedUri = await resizeImage(uri);
-    uploadImage(
-      reseizedUri,
-      `${apiUrl}/v1/vision/gemini-detection`,
+      `${apiUrl}/v1/vision/detect_object`,
       setLoading,
       false,
     );

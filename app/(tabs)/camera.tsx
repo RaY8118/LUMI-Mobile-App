@@ -5,12 +5,10 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
 import {
   handleFaceRecognition,
   handleObjectDetection,
-  handleGeminiDetection
 } from "@/services/cameraService";
 import { Icon } from "@/constants/Icons";
 import CustomButton from "@/components/CustomButton";
@@ -103,26 +101,16 @@ const Camera = () => {
             height="h-fit"
             width="w-fit"
           />
-
-          <CustomButton
-            onPress={() => handleGeminiDetection(cameraRef, setLoading)}
-            bgcolor="bg-red-500"
-            name="object-group"
-            library="FontAwesome"
-            size={60}
-            activeOpacity={0.7}
-            color="white"
-            height="h-fit"
-            width="w-fit"
-          />
         </View>
 
         {loading && (
-          <ActivityIndicator
-            size="large"
-            color="#0000ff"
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-          />
+          <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/90 flex items-center justify-center z-50">
+            <View className="items-center space-y-4 animate-pulse">
+              <Text className="text-2xl font-extrabold text-purple-700 tracking-wide">
+                Detecting please wait...
+              </Text>
+            </View>
+          </View>
         )}
       </View>
     </FadeWrapper>
