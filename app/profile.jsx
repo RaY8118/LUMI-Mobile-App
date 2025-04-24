@@ -19,6 +19,7 @@ import * as FileSystem from "expo-file-system"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Icon } from "@/constants/Icons";
 import EditForm from "@/components/EditForm"
+import Spinner from "@/components/Spinner";
 
 const CLOUDINARY_URL = process.env.EXPO_PUBLIC_CLOUDINARY_URL
 const UPLOAD_PRESET = process.env.EXPO_PUBLIC_UPLOAD_PRESET
@@ -43,6 +44,7 @@ const Profile = () => {
 
   const loadProfileImage = async () => {
     try {
+      console.log("Called load profile function")
       const savedImg = await AsyncStorage.getItem(`profileImg_${userId}`);
 
       if (savedImg) {
@@ -265,11 +267,7 @@ const Profile = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {loading && (
-        <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/90 flex items-center justify-center z-50">
-          <Text className="text-lg font-semibold text-purple-700">Loading please wait...</Text>
-        </View>
-      )}
+      {loading && <Spinner message="Updating profile photo.Please wait.." />}
       <EditForm userId={userId} isVisible={isModalVisible} setIsVisible={setIsModalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
   );

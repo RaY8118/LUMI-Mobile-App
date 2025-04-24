@@ -6,6 +6,8 @@ import { Icon } from "@/constants/Icons";
 import { handleLogin, authenticateAndAutofill } from "@/services/authService";
 import { useUser } from "@/hooks/useUser";
 import Images from "@/constants/Images";
+import Spinner from "@/components/Spinner"
+
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -83,9 +85,9 @@ const SignIn = () => {
         </View>
 
         <TouchableOpacity
-          onPress={() => {
+          onPress={async () => {
             setIsLoading(true)
-            handleLogin(email, password, router, refetch)
+            await handleLogin(email, password, router, refetch)
             setIsLoading(false)
           }}
           className="bg-purple-600 rounded-2xl py-3 items-center mb-6"
@@ -120,15 +122,7 @@ const SignIn = () => {
         </View>
       </View>
 
-      {isLoading && (
-        <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/90 flex items-center justify-center z-50">
-          <View className="items-center space-y-4 animate-pulse">
-            <Text className="text-2xl font-extrabold text-purple-700 tracking-wide">
-              Signing you in...
-            </Text>
-          </View>
-        </View>
-      )}
+      {isLoading && <Spinner message="Signing in..." />}
     </SafeAreaView>
 
   );

@@ -78,7 +78,7 @@ const TabsLayout = () => {
                 name="person-outline"
                 size={36}
                 style={{ marginRight: 15 }}
-                onPress={() => navigation.navigate("profile")}
+                onPress={() => router.push("profile")}
                 library="Ionicons"
               />
             ),

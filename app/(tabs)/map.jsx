@@ -12,6 +12,7 @@ import * as Location from "expo-location";
 import { useUser } from "@/hooks/useUser";
 import CustomButton from "@/components/CustomButton";
 import FadeWrapper from "@/components/FadeWrapper";
+import Spinner from "@/components/Spinner";
 
 const Map = () => {
   const { user } = useUser();
@@ -25,6 +26,7 @@ const Map = () => {
   const [previousLocation, setPreviousLocation] = useState(null);
   const [address, setAddress] = useState(null);
   const [distance, setDistance] = useState(0);
+  const [loading, setLoading] = useState(false)
 
   const shouldSaveLocation = (currentLocation) => {
     if (!previousLocation) return true;
@@ -67,6 +69,7 @@ const Map = () => {
   useEffect(() => {
     const initializeData = async () => {
       try {
+        setLoading(true)
         setErrorMsg("Initializing data, please wait...");
         const [homeLocation, currentCoords] = await Promise.all([
           fetchSavedLocation(userId, setErrorMsg),
@@ -88,6 +91,7 @@ const Map = () => {
         }
 
         setErrorMsg(null);
+        setLoading(false)
       } catch (error) {
         console.error(error.message);
         setErrorMsg(error.message);
@@ -128,11 +132,12 @@ const Map = () => {
     setErrorMsg("Refreshing, please wait...");
 
     try {
+      setLoading(true)
       const [homeLocation, currentCoords] = await Promise.all([
         fetchSavedLocation(userId, setErrorMsg),
         getCurrentCoords()
       ]);
-
+      setLoading(false)
       setSavedLocation(homeLocation);
       setLocation(currentCoords);
 
@@ -251,6 +256,7 @@ const Map = () => {
           />
         </View>
       </View >
+      {loading && <Spinner message="Loading location data.Please wait..." />}
     </FadeWrapper>
   );
 };

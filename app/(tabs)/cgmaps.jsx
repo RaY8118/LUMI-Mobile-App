@@ -9,6 +9,7 @@ import {
 } from "@/services/locationService";
 import CustomButton from "@/components/CustomButton";
 import FadeWrapper from "@/components/FadeWrapper";
+import Spinner from "@/components/Spinner";
 
 const CgMaps = () => {
   const { PATId, CGId, PATName } = usePatient()
@@ -81,9 +82,9 @@ const CgMaps = () => {
     );
   }
   const handleRefresh = async () => {
-    setErrorMsg("Refreshing, please wait...");
-    setRefreshing(true);
+    setIsLoading(true)
     await fetchData();
+    setIsLoading(false)
   };
 
   return (
@@ -106,12 +107,7 @@ const CgMaps = () => {
               </>
             )}
           </View>
-          {isLoading && !refreshing ? (
-            <View className="flex h-full justify-center items-center">
-              <ActivityIndicator size="large" color="#0000ff" />
-              <Text>Loading...</Text>
-            </View>
-          ) : (
+          {
             location &&
             Cglocation && (
               <View className="w-full h-3/4 m-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
@@ -143,7 +139,7 @@ const CgMaps = () => {
                 </MapView>
               </View>
             )
-          )}
+          }
           <View className="items-center flex-row justify-evenly w-full mb-auto h-28">
             <CustomButton
               onPress={handleRefresh}
@@ -163,6 +159,7 @@ const CgMaps = () => {
           </View>
         </View>
       </SafeAreaView>
+      {isLoading && <Spinner message="Location data loading.Please wait..." />}
     </FadeWrapper>
   );
 };

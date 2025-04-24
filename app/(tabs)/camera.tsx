@@ -15,6 +15,7 @@ import CustomButton from "@/components/CustomButton";
 import { useUser } from "@/hooks/useUser";
 import * as Animatable from "react-native-animatable";
 import FadeWrapper from "@/components/FadeWrapper";
+import Spinner from "@/components/Spinner";
 
 const Camera = () => {
   const { user } = useUser();
@@ -103,15 +104,7 @@ const Camera = () => {
           />
         </View>
 
-        {loading && (
-          <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/90 flex items-center justify-center z-50">
-            <View className="items-center space-y-4 animate-pulse">
-              <Text className="text-2xl font-extrabold text-purple-700 tracking-wide">
-                Detecting please wait...
-              </Text>
-            </View>
-          </View>
-        )}
+        {loading && <Spinner message="Detecting please wait..." />}
       </View>
     </FadeWrapper>
   );
