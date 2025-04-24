@@ -2,9 +2,12 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 import { Alert } from "react-native";
+import { Router } from "expo-router";
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-export const handleLogin = async (email, password, router, refetch) => {
+type RefetchFn = () => Promise<void>;
+
+export const handleLogin = async (email: string, password: string, router: Router, refetch: RefetchFn): Promise<void> => {
   try {
     const response = await axios.post(`${apiUrl}/v1/auth/sign-in`, {
       email,
@@ -19,7 +22,7 @@ export const handleLogin = async (email, password, router, refetch) => {
     await refetch();
     Alert.alert("Success", response.data.message);
     router.replace("/reminders");
-  } catch (error) {
+  } catch (error: any) {
     if (error.response && error.response.data) {
       Alert.alert("Error", error.response.data.message);
     }
@@ -27,9 +30,9 @@ export const handleLogin = async (email, password, router, refetch) => {
 };
 
 export const authenticateAndAutofill = async (
-  setEmail,
-  setPassword,
-  setIsAutofilled,
+  setEmail: (email: string) => void,
+  setPassword: (password: string) => void,
+  setIsAutofilled: (val: boolean) => void,
 ) => {
   const compatible = await LocalAuthentication.hasHardwareAsync();
   const enrolled = await LocalAuthentication.isEnrolledAsync();
@@ -56,13 +59,13 @@ export const authenticateAndAutofill = async (
 };
 
 export const handleRegister = async (
-  name,
-  email,
-  mobile,
-  password,
-  value,
-  router,
-) => {
+  name: string,
+  email: string,
+  mobile: number,
+  password: string,
+  value: boolean,
+  router: Router,
+): Promise<void> => {
   try {
     const response = await axios.post(`${apiUrl}/v1/auth/sign-up`, {
       name,
@@ -73,12 +76,12 @@ export const handleRegister = async (
     });
     Alert.alert("Success", response.data.message);
     router.push("/sign-in");
-  } catch (error) {
+  } catch (error: any) {
     Alert.alert("Error", error.response?.data?.message || "Failed to register");
   }
 };
 
-export const handleReset = async (email, setIsLoading, setEmail) => {
+export const handleReset = async (email: string, setIsLoading: (val: boolean) => void, setEmail: (email: string) => void): Promise<void> => {
   setIsLoading(true);
   try {
     const response = await axios.post(`${apiUrl}/v1/auth/reset-password`, {
@@ -86,7 +89,7 @@ export const handleReset = async (email, setIsLoading, setEmail) => {
     });
     setEmail("");
     Alert.alert("Success", response.data.message);
-  } catch (error) {
+  } catch (error: any) {
     const message =
       error.response?.data?.message ||
       (error.response

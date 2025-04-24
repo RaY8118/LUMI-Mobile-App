@@ -1,30 +1,107 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Alert } from "react-native";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-export const sendTokenToBackend = async (userId, token) => {
+
+type ReminderStatus = "pending" | "completed" | string;
+
+interface ReminderBase {
+  title: string;
+  description: string;
+  date: string | Date;
+  time: string | Date;
+  status: ReminderStatus;
+  isUrgent: boolean;
+  isImportant: boolean;
+  userId: string;
+}
+
+interface Reminder extends ReminderBase {
+  _id: string;
+}
+
+interface ReminderWithSetters extends ReminderBase {
+  setTitle: (value: string) => void;
+  setDescription: (value: string) => void;
+  setDate: (value: Date) => void;
+  setTime: (value: string) => void;
+  setStatus: (value: string) => void;
+  setIsUrgent: (value: boolean) => void;
+  setIsImportant: (value: boolean) => void;
+  setAddModalVisible: (visible: boolean) => void;
+  onRefresh: () => void;
+}
+
+
+interface FetchReminderHelpers {
+  setReminders: (reminders: Reminder[]) => void;
+  setError: (error: string | null) => void;
+  setLoading: (loading: boolean) => void;
+  setRefreshing: (refreshing: boolean) => void;
+}
+
+interface FetchRemindersParams extends FetchReminderHelpers {
+  userId: string;
+}
+
+interface FetchPatientRemindersParams extends FetchReminderHelpers {
+  CGId: string;
+  PATId: string;
+}
+
+interface PostReminderParams extends ReminderWithSetters { }
+
+interface PostPatientReminderParams extends ReminderWithSetters {
+  CGId: string;
+  PATId: string;
+}
+
+interface UpdateReminderParams extends ReminderBase {
+  selectedReminder: { remId: string };
+  onRefresh: () => void;
+  handleEditModalClose: () => void;
+}
+
+interface UpdatePatientReminderParams extends ReminderBase {
+  selectedReminder: { remId: string };
+  CGId: string;
+  PATId: string;
+  onRefresh: () => void;
+  handleEditModalClose: () => void;
+}
+
+interface DeleteRemindersParams {
+  userId: string;
+  remId: string;
+  onRefresh: () => void;
+}
+interface DeletePatientReminderParams {
+  CGId: string;
+  PATId: string;
+  remId: string;
+  onRefresh: () => void;
+}
+
+
+export const sendTokenToBackend = async (userId: string, token: string) => {
   try {
-    const response = await axios.post(
-      `${apiUrl}/v1/notifications/store-token`,
-      {
-        token,
-        userId,
-      },
-    );
-    // console.log("Token send to backend: ", response.data.message);
-  } catch (error) {
+    await axios.post(`${apiUrl}/v1/notifications/store-token`, {
+      token,
+      userId,
+    });
+  } catch (error: any) {
     console.error(error);
   }
 };
 
-export const fetchReminders = async (
+export const fetchReminders = async ({
   userId,
   setReminders,
   setError,
   setLoading,
   setRefreshing,
-) => {
+}: FetchRemindersParams): Promise<void> => {
   try {
     const response = await axios.get(`${apiUrl}/v1/reminders/patient`, {
       params: { userId },
@@ -42,7 +119,7 @@ export const fetchReminders = async (
     } else {
       setError(response.data.message || "Unexpected response from server");
     }
-  } catch (error) {
+  } catch (error: any) {
     if (error.response && error.response.status === 500) {
       setError("Internal server error: " + error.response.data.error);
     } else {
@@ -72,7 +149,7 @@ export const postReminder = async ({
   setIsImportant,
   setAddModalVisible,
   onRefresh,
-}) => {
+}: PostReminderParams): Promise<any> => {
   try {
     if (!userId) {
       Alert.alert("Error", "Failed to retrieve user ID");
@@ -131,7 +208,7 @@ export const postReminder = async ({
     setAddModalVisible(false);
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error posting reminder: ", error.response.data.error);
     Alert.alert("Error", "Failed to save the reminder. Please try again");
   }
@@ -149,7 +226,7 @@ export const updateReminder = async ({
   isImportant,
   onRefresh,
   handleEditModalClose,
-}) => {
+}: UpdateReminderParams): Promise<void> => {
   try {
     if (!selectedReminder) {
       Alert.alert("Error", "No reminder selected for update");
@@ -203,7 +280,7 @@ export const updateReminder = async ({
         response.data.message || "Failed to update the reminder",
       );
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Error updating reminder: ",
       error.response?.data || error.message,
@@ -212,7 +289,7 @@ export const updateReminder = async ({
   }
 };
 
-export const deleteReminder = async (userId, remId, onRefresh) => {
+export const deleteReminder = async ({ userId, remId, onRefresh }: DeleteRemindersParams): Promise<void> => {
   if (!remId) {
     Alert.alert("Error", "Reminder ID is required");
     return;
@@ -243,7 +320,7 @@ export const deleteReminder = async (userId, remId, onRefresh) => {
                 response.data.message || "Failed to delete the reminder",
               );
             }
-          } catch (error) {
+          } catch (error: any) {
             if (error.response && error.response.status === 404) {
               Alert.alert("Error", "Reminder not found");
             } else {
@@ -264,14 +341,14 @@ export const deleteReminder = async (userId, remId, onRefresh) => {
   );
 };
 
-export const fetchPatientReminders = async (
+export const fetchPatientReminders = async ({
   CGId,
   PATId,
   setReminders,
   setError,
   setLoading,
   setRefreshing,
-) => {
+}: FetchPatientRemindersParams): Promise<void> => {
   try {
     const response = await axios.get(`${apiUrl}/v1/reminders/caregiver`, {
       params: { CGId, PATId },
@@ -289,7 +366,7 @@ export const fetchPatientReminders = async (
     } else {
       setError(response.data.message || "Unexpected response from server");
     }
-  } catch (error) {
+  } catch (error: any) {
     if (error.response && error.response.status === 500) {
       setError("Internal server error: " + error.response.data.error);
     } else {
@@ -321,7 +398,7 @@ export const postPatientReminder = async ({
   setIsImportant,
   setAddModalVisible,
   onRefresh,
-}) => {
+}: PostPatientReminderParams): Promise<void | AxiosResponse> => {
   try {
     if (!userId) {
       Alert.alert("Error", "Failed to retrieve user ID");
@@ -384,7 +461,7 @@ export const postPatientReminder = async ({
     setAddModalVisible(false);
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error posting reminder", error.response.data.message);
     Alert.alert("Error", "Failed to save the reminder. Please try again");
   }
@@ -404,7 +481,7 @@ export const updatePatientReminder = async ({
   isImportant,
   onRefresh,
   handleEditModalClose,
-}) => {
+}: UpdatePatientReminderParams): Promise<void> => {
   if (!selectedReminder) {
     Alert.alert("Error", "No reminder selected for update");
     return;
@@ -425,10 +502,10 @@ export const updatePatientReminder = async ({
       typeof time === "string"
         ? time
         : time.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          });
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
 
     const reminderTime = new Date(date);
     const [hours, minutes] = timeString.split(":");
@@ -470,7 +547,7 @@ export const updatePatientReminder = async ({
   }
 };
 
-export const deletePatientReminder = async (CGId, PATId, remId, onRefresh) => {
+export const deletePatientReminder = async ({ CGId, PATId, remId, onRefresh }: DeletePatientReminderParams): Promise<void> => {
   if (!remId) {
     Alert.alert("Error", "Reminder ID is required");
     return;
@@ -501,7 +578,7 @@ export const deletePatientReminder = async (CGId, PATId, remId, onRefresh) => {
                 response.data.message || "Failed to delete the reminder",
               );
             }
-          } catch (error) {
+          } catch (error: any) {
             if (error.response && error.response.status === 404) {
               Alert.alert("Error", "Reminder not found");
             } else {

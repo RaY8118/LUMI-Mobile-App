@@ -4,7 +4,14 @@ import * as Speech from "expo-speech";
 import { Alert } from "react-native";
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-export const takePicture = async (cameraRef) => {
+interface UserInfo {
+  name: string;
+  relation: string;
+  tagline: string;
+  triggerMemory: string
+}
+
+export const takePicture = async (cameraRef: React.RefObject<any>): Promise<string | undefined> => {
   if (cameraRef.current) {
     try {
       const photo = await cameraRef.current.takePictureAsync();
@@ -17,7 +24,7 @@ export const takePicture = async (cameraRef) => {
   }
 };
 
-export const resizeImage = async (uri) => {
+export const resizeImage = async (uri: string): Promise<string> => {
   const resizedImage = await ImageManipulator.manipulateAsync(
     uri,
     [{ resize: { width: 816, height: 1088 } }],
@@ -27,17 +34,17 @@ export const resizeImage = async (uri) => {
 };
 
 export const uploadImage = async (
-  uri,
-  endpoint,
-  setLoading,
-  isFaceRecognition = true,
-) => {
+  uri: string,
+  endpoint: string,
+  setLoading: (loading: boolean) => void,
+  isFaceRecognition: boolean = true,
+): Promise<void> => {
   const formData = new FormData();
   formData.append("image", {
     uri,
     type: "image/jpeg",
     name: "photo.jpg",
-  });
+  } as unknown as Blob);
 
   setLoading(true);
 
@@ -49,7 +56,7 @@ export const uploadImage = async (
     });
 
     if (response.data.status === "success") {
-      let nameMessage;
+      let nameMessage: string;
       if (isFaceRecognition) {
         if (response.data.name && response.data.name.length > 0) {
           const userId = response.data.name[0];
@@ -85,7 +92,7 @@ export const uploadImage = async (
   }
 };
 
-export const handleFaceRecognition = async (cameraRef, user, setLoading) => {
+export const handleFaceRecognition = async (cameraRef: React.RefObject<any>, user: { familyId: string }, setLoading: (loading: boolean) => void): Promise<void> => {
   const uri = await takePicture(cameraRef);
   if (uri) {
     const resizedUri = await resizeImage(uri);
@@ -98,7 +105,7 @@ export const handleFaceRecognition = async (cameraRef, user, setLoading) => {
   }
 };
 
-export const handleObjectDetection = async (cameraRef, setLoading) => {
+export const handleObjectDetection = async (cameraRef: React.RefObject<any>, setLoading: (loading: boolean) => void): Promise<any> => {
   const uri = await takePicture(cameraRef);
   if (uri) {
     const resizedUri = await resizeImage(uri);
@@ -111,20 +118,20 @@ export const handleObjectDetection = async (cameraRef, setLoading) => {
   }
 };
 
-const speak = (text) => {
+const speak = (text: string) => {
   Speech.speak(text);
 };
 
-export const fetchAdditionalInfo = async (userId) => {
+export const fetchAdditionalInfo = async (userId: string): Promise<UserInfo[] | undefined> => {
   try {
-    response = await axios.get(
+    const response = await axios.get(
       `${apiUrl}/v1/family/get-additional-info?userId=${userId}`,
     );
     if (response.data.status === "success") {
       const userInfo = response.data.userInfo;
       return userInfo;
     } else {
-      return "No additional information found";
+      return undefined;
     }
   } catch (error) {
     console.error(error);

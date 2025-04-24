@@ -39,18 +39,18 @@ const CgReminders = () => {
   const [notification, setNotification] = useState(undefined);
   const notificationListener = useRef();
   const responseListener = useRef();
-  const { CGId, PATId, PATName } = usePatient()
+  const { CGId, PATId } = usePatient()
 
   const fetchPatientData = async () => {
     if (CGId && PATId) {
-      fetchPatientReminders(
+      fetchPatientReminders({
         CGId,
         PATId,
         setReminders,
         setError,
         setLoading,
         setRefreshing
-      );
+      });
     } else {
       setLoading(false);
     }
@@ -100,7 +100,7 @@ const CgReminders = () => {
   };
 
   const handleDeleteReminder = async (remId) => {
-    await deletePatientReminder(CGId, PATId, remId, onRefresh);
+    await deletePatientReminder({ CGId, PATId, remId, onRefresh });
   };
 
   const onRefresh = useCallback(() => {

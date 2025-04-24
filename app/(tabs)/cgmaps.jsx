@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, SafeAreaView, Alert } from "react-native";
+import { View, Text, SafeAreaView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { usePatient } from "@/hooks/usePatient";

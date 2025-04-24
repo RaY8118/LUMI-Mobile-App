@@ -10,8 +10,8 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import AddModalComponent from "../../components/AddModalComponent";
 import EditModalComponent from "../../components/EditModalComponent";
 import FadeWrapper from "@/components/FadeWrapper"
-import * as Notifications from "expo-notifications"; // Added for notifications
-import * as Speech from "expo-speech"; // Added for speech
+import * as Notifications from "expo-notifications";
+import * as Speech from "expo-speech";
 import { Icon } from "@/constants/Icons";
 import { useUser } from "@/hooks/useUser";
 import {
@@ -31,7 +31,7 @@ Notifications.setNotificationHandler({
 
 const Reminders = () => {
   const [reminders, setReminders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -44,16 +44,16 @@ const Reminders = () => {
   const [status, setStatus] = useState("pending");
   const [isUrgent, setIsUrgent] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
-  const [expoPushToken, setExpoPushToken] = useState(""); // Added for push token
-  const [notification, setNotification] = useState(undefined); // Added for notification
-  const notificationListener = useRef(); // Added for notification listener
-  const responseListener = useRef(); // Added for response listener
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(undefined);
+  const notificationListener = useRef();
+  const responseListener = useRef();
   const { user } = useUser();
   const userId = user?.userId;
 
   const fetchUserData = async () => {
     if (userId) {
-      fetchReminders(userId, setReminders, setError, setLoading, setRefreshing);
+      fetchReminders({ userId, setReminders, setError, setLoading, setRefreshing });
     } else {
       setLoading(false);
     }
@@ -72,12 +72,11 @@ const Reminders = () => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
-        const title = notification.request.content.title; // Get the title from the notification
+        const title = notification.request.content.title;
 
-        // Add a delay of 5 seconds before speaking the title
         setTimeout(() => {
-          speak(title); // Speak the title after the delay
-        }, 5000); // 5000 milliseconds = 5 seconds
+          speak(title);
+        }, 5000);
       });
 
     responseListener.current =
@@ -95,14 +94,13 @@ const Reminders = () => {
     };
   }, []);
 
-  // Function to schedule a notification
   const scheduleNotification = async (
     reminderTitle,
     reminderBody,
     reminderDate,
     reminderTime
   ) => {
-    const triggerDate = new Date(reminderDate); // Ensure it's a Date object
+    const triggerDate = new Date(reminderDate);
     triggerDate.setHours(
       reminderTime.getHours(),
       reminderTime.getMinutes(),
@@ -110,8 +108,7 @@ const Reminders = () => {
       0
     );
 
-    // Schedule the notification only if the time is in the future
-    const trigger = triggerDate.getTime() - Date.now(); // Time in milliseconds
+    const trigger = triggerDate.getTime() - Date.now();
     if (trigger > 0) {
       await Notifications.scheduleNotificationAsync({
         content: {
@@ -206,7 +203,7 @@ const Reminders = () => {
   };
 
   const handleDeleteReminder = async (remId) => {
-    await deleteReminder(userId, remId, onRefresh);
+    await deleteReminder({ userId, remId, onRefresh });
   };
 
   const onRefresh = useCallback(() => {

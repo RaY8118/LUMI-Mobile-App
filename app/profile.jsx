@@ -44,7 +44,6 @@ const Profile = () => {
 
   const loadProfileImage = async () => {
     try {
-      console.log("Called load profile function")
       const savedImg = await AsyncStorage.getItem(`profileImg_${userId}`);
 
       if (savedImg) {

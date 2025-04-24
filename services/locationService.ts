@@ -1,9 +1,10 @@
 import * as Location from "expo-location";
 import axios from "axios";
+import { Dispatch, SetStateAction } from "react";
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 // Function to calculate distance between two coordinates (Haversine formula)
-export const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
+export const getDistanceFromLatLonInMeters = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const R = 6371e3; // meters
   const φ1 = (lat1 * Math.PI) / 180;
   const φ2 = (lat2 * Math.PI) / 180;
@@ -19,7 +20,7 @@ export const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
 };
 
 // Function to get current location
-export const getCurrentCoords = async () => {
+export const getCurrentCoords = async (): Promise<Location.LocationObjectCoords> => {
   let { status } = await Location.requestForegroundPermissionsAsync();
   if (status !== "granted") {
     throw new Error("Permission to access location was denied");
@@ -33,7 +34,7 @@ export const getCurrentCoords = async () => {
 };
 
 // Function to fetch the saved home location
-export const fetchSavedLocation = async (userId, setErrorMsg) => {
+export const fetchSavedLocation = async (userId: string, setErrorMsg: Dispatch<SetStateAction<string>>): Promise<{ latitude: number; longitude: number }> => {
   try {
     if (!userId) {
       const message = "User ID is not available.";
@@ -52,7 +53,7 @@ export const fetchSavedLocation = async (userId, setErrorMsg) => {
       setErrorMsg(message);
       throw new Error(message);
     }
-  } catch (error) {
+  } catch (error: any) {
     const errorMessage =
       error.response?.data?.message ||
       error.message ||
@@ -63,7 +64,7 @@ export const fetchSavedLocation = async (userId, setErrorMsg) => {
 };
 
 // Function to save the current location as a safe location
-export const saveLocation = async (userId, setErrorMsg) => {
+export const saveLocation = async (userId: string, setErrorMsg: Dispatch<SetStateAction<string>>): Promise<string> => {
   try {
     const coords = await getCurrentCoords();
     const response = await axios.post(
@@ -81,7 +82,7 @@ export const saveLocation = async (userId, setErrorMsg) => {
       setErrorMsg(message);
       throw new Error(message);
     }
-  } catch (error) {
+  } catch (error: any) {
     const errorMessage =
       error.response?.data?.message ||
       error.message ||
@@ -91,7 +92,7 @@ export const saveLocation = async (userId, setErrorMsg) => {
   }
 };
 
-export const savePatientLocation = async (CGId, PATId, setErrorMsg) => {
+export const savePatientLocation = async (CGId: string, PATId: string, setErrorMsg: Dispatch<SetStateAction<string>>): Promise<string> => {
   try {
     const coords = await getCurrentCoords();
     const response = await axios.post(
@@ -110,7 +111,7 @@ export const savePatientLocation = async (CGId, PATId, setErrorMsg) => {
       setErrorMsg(message);
       throw new Error(message);
     }
-  } catch (error) {
+  } catch (error: any) {
     const errorMessage =
       error.response?.data?.message ||
       error.message ||
@@ -120,7 +121,7 @@ export const savePatientLocation = async (CGId, PATId, setErrorMsg) => {
   }
 };
 
-export const saveCurrLocation = async (userId, setErrorMsg) => {
+export const saveCurrLocation = async (userId: string, setErrorMsg: Dispatch<SetStateAction<string>>): Promise<string> => {
   try {
     const coords = await getCurrentCoords();
     const response = await axios.post(
@@ -138,7 +139,7 @@ export const saveCurrLocation = async (userId, setErrorMsg) => {
       setErrorMsg(message);
       throw new Error(message);
     }
-  } catch (error) {
+  } catch (error: any) {
     const errorMessage =
       error.response?.data?.message ||
       error.message ||
@@ -149,10 +150,10 @@ export const saveCurrLocation = async (userId, setErrorMsg) => {
 };
 
 export const getPatientCurrentLocation = async (
-  CGId,
-  PATId,
-  setLocation,
-  setErrorMsg,
+  CGId: string,
+  PATId: string,
+  setLocation: Dispatch<SetStateAction<{ latitude: number, longitude: number } | null>>,
+  setErrorMsg: Dispatch<SetStateAction<string>>,
 ) => {
   try {
     if (!CGId || !PATId) {
@@ -172,7 +173,7 @@ export const getPatientCurrentLocation = async (
       setErrorMsg(message);
       throw new Error(message);
     }
-  } catch (error) {
+  } catch (error: any) {
     const errorMessage = error.response?.data?.message || error.message;
     setErrorMsg(errorMessage);
     throw new Error(errorMessage);
@@ -180,12 +181,12 @@ export const getPatientCurrentLocation = async (
 };
 
 export const getPatientCurrentAddress = async (
-  CGId,
-  PATId,
-  setLocation,
-  setAddress,
-  setErrorMsg,
-) => {
+  CGId: string,
+  PATId: string,
+  setLocation: Dispatch<SetStateAction<{ latitude: number; longitude: number } | null>>,
+  setAddress: Dispatch<SetStateAction<string>>,
+  setErrorMsg: Dispatch<SetStateAction<string>>
+): Promise<void> => {
   try {
     if (!CGId || !PATId) {
       const message = "Caregiver ID or Patient ID is not available";
@@ -211,9 +212,14 @@ export const getPatientCurrentAddress = async (
         });
 
         if (geocode.length > 0) {
-          const { formattedAddress } = geocode[0];
-          setAddress(formattedAddress);
+          const formatted = geocode[0]?.formattedAddress;
+          if (formatted) {
+            setAddress(formatted);
+          } else {
+            setAddress("Unknown location");
+          }
         }
+
       }
       setErrorMsg("");
     } else {
@@ -221,33 +227,33 @@ export const getPatientCurrentAddress = async (
       setErrorMsg(errorMessage);
       throw new Error(errorMessage);
     }
-  } catch (error) {
+  } catch (error: any) {
     const errorMessage = error.message || "An unknown error occurred.";
     setErrorMsg(errorMessage);
     throw new Error(errorMessage);
   }
 };
 
-export const sendLocationAlert = async (userId) => {
+export const sendLocationAlert = async (userId: string) => {
   try {
-    response = await axios.get(
+    const response = await axios.get(
       `${apiUrl}/v1/notifications/get-user-token?userId=${userId}`,
     );
     const token = response.data.token;
     // console.log(token);
     if (token) {
       try {
-        response = await axios.post("https://exp.host/--/api/v2/push/send", {
+        await axios.post("https://exp.host/--/api/v2/push/send", {
           to: token,
           title: "Important message",
           body: "Patient out of safe area",
           sound: "default",
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error(error.response);
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error.response);
   }
 };
