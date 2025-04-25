@@ -1,155 +1,166 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import CustomNotifications from "@/components/CustomNotifications";
-import CreateFamily from "@/components/CreateFamily"
-import AddPatient from "@/components/AddPatient";
-import AddMembers from "@/components/AddMembers"
-import AddInfo from "@/components/AddInfo"
-import AboutUs from "@/components/AboutUs"
-import Chatbot from "@/components/Chatbot"
-import { Icon } from "@/constants/Icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CreateRoom from "@/components/CreateRoom";
 import FadeWrapper from "@/components/FadeWrapper";
+import { Icon } from "@/constants/Icons";
+import CustomNotifications from "@/components/CustomNotifications";
+import CreateFamily from "@/components/CreateFamily";
+import AddPatient from "@/components/AddPatient";
+import AddMembers from "@/components/AddMembers";
+import AddInfo from "@/components/AddInfo";
+import AboutUs from "@/components/AboutUs";
+import Chatbot from "@/components/Chatbot";
+import CreateRoom from "@/components/CreateRoom";
+import Tutorial from "@/components/Tutorial";
+import { useUser } from "@/hooks/useUser";
 
 const Settings = () => {
-  const [isNotificationsVisible, setIsNotificationsVisible] = useState(false)
-  const [isFamilyVisible, setIsFamilyVisible] = useState(false)
-  const [isPatientVisible, setIsPatientVisible] = useState(false)
-  const [isMemberVisible, setIsMemberVisible] = useState(false)
-  const [isAboutVisible, setIsAboutVisible] = useState(false)
-  const [isInfoVisible, setIsInfoVisible] = useState(false)
-  const [isRoomVisible, setIsRoomVisible] = useState(false)
-  const [isBotVisible, setIsBotVisible] = useState(false)
+  const { user } = useUser();
+  const [modals, setModals] = useState({
+    notifications: false,
+    family: false,
+    patient: false,
+    member: false,
+    info: false,
+    about: false,
+    room: false,
+    bot: false,
+    tutorial: false,
+  });
 
-  const toggleNotificationsModal = () => {
-    setIsNotificationsVisible(!isNotificationsVisible)
-  }
-  const toggleFamilyModal = () => {
-    setIsFamilyVisible(!isFamilyVisible)
-  }
-  const togglePatientModal = () => {
-    setIsPatientVisible(!isPatientVisible)
-  }
-  const toggleMemberModal = () => {
-    setIsMemberVisible(!isMemberVisible)
-  }
-  const toggleAboutModal = () => {
-    setIsAboutVisible(!isAboutVisible)
-  }
-  const toggleInfoModal = () => {
-    setIsInfoVisible(!isInfoVisible)
-  }
-  const toogleRoomModal = () => {
-    setIsRoomVisible(!isRoomVisible)
-  }
-  const toggleBotModal = () => {
-    setIsBotVisible(!isBotVisible)
-  }
-  const settingsOptions = [
+  const toggleModal = (key) => {
+    setModals((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const baseOptions = [
     {
-      title: "Custom Notifications",
-      onPress: toggleNotificationsModal,
-      library: "MaterialIcons",
-      name: "notification-important",
-      color: "#FF9800"
+      key: "tutorial",
+      title: "Tutorials",
+      library: "Foundation",
+      name: "play-video",
+      color: "#FFA444",
+      onPress: () => toggleModal("tutorial"),
     },
     {
-      title: "Add Info",
-      onPress: toggleInfoModal,
-      library: "Entypo",
-      name: "info",
-      color: "#2196F3"
-    },
-    {
-      title: "Manage Family",
-      onPress: toggleFamilyModal,
-      library: "FontAwesome6",
-      name: "people-roof",
-      color: "#4CAF50"
-    },
-    {
-      title: "Add Patient",
-      onPress: togglePatientModal,
-      library: "Fontisto",
-      name: "bed-patient",
-      color: "#F44336"
-    },
-    {
-      title: "Add Members",
-      onPress: toggleMemberModal,
-      library: "MaterialIcons",
-      name: "people-alt",
-      color: "#3F51B5"
-    },
-    {
-      title: "Create Room",
-      onPress: toogleRoomModal,
-      library: "Ionicons",
-      name: "chatbox",
-      color: "#9C27B0"
-    }, {
+      key: "chatbot",
       title: "Chatbot",
-      onPress: toggleBotModal,
       library: "Ionicons",
       name: "chatbubbles",
-      color: "#FFFF4d"
+      color: "#FFFF4d",
+      onPress: () => toggleModal("bot"),
     },
     {
+      key: "about",
       title: "About Us",
-      onPress: toggleAboutModal,
       library: "MaterialIcons",
       name: "feedback",
-      color: "#00BCD4"
-    }
+      color: "#00BCD4",
+      onPress: () => toggleModal("about"),
+    },
+  ];
 
-  ]
+  const caregiverOptions = [
+    {
+      key: "notifications",
+      title: "Custom Notifications",
+      library: "MaterialIcons",
+      name: "notification-important",
+      color: "#FF9800",
+      onPress: () => toggleModal("notifications"),
+    },
+    {
+      key: "info",
+      title: "Add Info",
+      library: "Entypo",
+      name: "info",
+      color: "#2196F3",
+      onPress: () => toggleModal("info"),
+    },
+    {
+      key: "family",
+      title: "Manage Family",
+      library: "FontAwesome6",
+      name: "people-roof",
+      color: "#4CAF50",
+      onPress: () => toggleModal("family"),
+    },
+    {
+      key: "patient",
+      title: "Add Patient",
+      library: "Fontisto",
+      name: "bed-patient",
+      color: "#F44336",
+      onPress: () => toggleModal("patient"),
+    },
+    {
+      key: "member",
+      title: "Add Members",
+      library: "MaterialIcons",
+      name: "people-alt",
+      color: "#3F51B5",
+      onPress: () => toggleModal("member"),
+    },
+    {
+      key: "room",
+      title: "Create Room",
+      library: "Ionicons",
+      name: "chatbox",
+      color: "#9C27B0",
+      onPress: () => toggleModal("room"),
+    },
+  ];
+
+  const settingsOptions = user?.role === "CG"
+    ? [...caregiverOptions, ...baseOptions]
+    : baseOptions;
+
   return (
     <>
-      <SafeAreaView className="h-full bg-purple-100">
+      <SafeAreaView className="flex-1 bg-purple-100">
         <FadeWrapper>
-          <View className="items-center justify-center py-6 mx-4 bg-purple-400 shadow-md shadow-black rounded-3xl">
-            <Text className="text-3xl font-bold text-gray-800">Settings</Text>
+          <View className="items-center justify-center py-6 mx-4 bg-purple-500 shadow-md rounded-3xl mb-2">
+            <Text className="text-2xl font-extrabold text-white">Settings</Text>
           </View>
-          <View className="m-4 bg-white rounded-3xl shadow-md shadow-black">
+
+          <View className="mx-4 bg-white rounded-3xl shadow-lg overflow-hidden">
             {settingsOptions.map((option, index) => (
-              <React.Fragment key={index}>
-                <View className="h-20 flex flex-row items-center justify-between px-6 py-3">
-                  <View className="flex flex-row items-center">
+              <TouchableOpacity
+                key={option.key}
+                onPress={option.onPress}
+                className="flex-row items-center justify-between px-5 py-4 hover:bg-gray-100 active:scale-[0.98] transition-all"
+              >
+                <View className="flex-row items-center space-x-4">
+                  <View className="p-3 rounded-full" style={{ backgroundColor: option.color + "33" }}>
                     <Icon
                       library={option.library}
                       name={option.name}
-                      size={36}
+                      size={28}
                       color={option.color}
-                      className="mr-5"
                     />
-                    <Text className="text-xl text-gray-800 font-bold">{option.title}</Text>
                   </View>
-                  <TouchableOpacity onPress={option.onPress} className="p-2">
-                    <Icon
-                      library="AntDesign"
-                      name="arrowright"
-                      size={24}
-                      color="#4B5563"
-                    />
-                  </TouchableOpacity>
+                  <Text className="text-lg font-semibold text-gray-800">{option.title}</Text>
                 </View>
-                {index < settingsOptions.length - 1 && (
-                  <View className="border-b border-gray-200 mx-4 shadow-sm shadow-black" />
-                )}
-              </React.Fragment>
+                <Icon
+                  library="AntDesign"
+                  name="arrowright"
+                  size={20}
+                  color="#6B7280"
+                />
+              </TouchableOpacity>
             ))}
           </View>
         </FadeWrapper>
       </SafeAreaView>
-      <CustomNotifications isVisible={isNotificationsVisible} setIsVisible={setIsNotificationsVisible} toggleModal={toggleNotificationsModal} />
-      <AddInfo isVisible={isInfoVisible} setIsVisible={setIsInfoVisible} toggleModal={toggleInfoModal} />
-      <CreateFamily isVisible={isFamilyVisible} setIsVisible={setIsFamilyVisible} toggleModal={toggleFamilyModal} />
-      <AddPatient isVisible={isPatientVisible} setIsVisible={setIsPatientVisible} toggleModal={togglePatientModal} />
-      <AddMembers isVisible={isMemberVisible} setIsVisible={setIsMemberVisible} toggleModal={toggleMemberModal} />
-      <AboutUs isVisible={isAboutVisible} setIsVisible={setIsAboutVisible} toggleModal={toggleAboutModal} />
-      <CreateRoom isVisible={isRoomVisible} setIsVisible={setIsRoomVisible} toggleModal={toogleRoomModal} />
-      <Chatbot isVisible={isBotVisible} setIsVisible={setIsBotVisible} toggleModal={toggleBotModal} />
+
+      <CustomNotifications isVisible={modals.notifications} setIsVisible={() => toggleModal("notifications")} toggleModal={() => toggleModal("notifications")} />
+      <AddInfo isVisible={modals.info} setIsVisible={() => toggleModal("info")} toggleModal={() => toggleModal("info")} />
+      <CreateFamily isVisible={modals.family} setIsVisible={() => toggleModal("family")} toggleModal={() => toggleModal("family")} />
+      <AddPatient isVisible={modals.patient} setIsVisible={() => toggleModal("patient")} toggleModal={() => toggleModal("patient")} />
+      <AddMembers isVisible={modals.member} setIsVisible={() => toggleModal("member")} toggleModal={() => toggleModal("member")} />
+      <CreateRoom isVisible={modals.room} setIsVisible={() => toggleModal("room")} toggleModal={() => toggleModal("room")} />
+      <Chatbot isVisible={modals.bot} setIsVisible={() => toggleModal("bot")} toggleModal={() => toggleModal("bot")} />
+      <AboutUs isVisible={modals.about} setIsVisible={() => toggleModal("about")} toggleModal={() => toggleModal("about")} />
+      <Tutorial isVisible={modals.tutorial} setIsVisible={() => toggleModal("tutorial")} toggleModal={() => toggleModal("tutorial")} />
     </>
   );
 };

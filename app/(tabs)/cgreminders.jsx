@@ -17,6 +17,7 @@ import {
 import EditModalComponent from "@/components/EditModalComponent";
 import AddModalComponent from "@/components/AddModalComponent";
 import * as Notifications from "expo-notifications";
+import * as Speech from "expo-speech"
 import { usePatient } from "@/hooks/usePatient"
 import FadeWrapper from "@/components/FadeWrapper";
 
@@ -190,6 +191,9 @@ const CgReminders = () => {
     registerForPushNotificationsAsync().then(
       (token) => token && setExpoPushToken(token)
     );
+    const speak = (text) => {
+      Speech.speak(text)
+    }
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {

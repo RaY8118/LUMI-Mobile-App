@@ -211,7 +211,6 @@ const TabsLayout = () => {
         />
         <Tabs.Screen
           name="settings"
-          redirect={role !== "CG"}
           options={() => ({
             headerTitle: "",
             headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
@@ -222,32 +221,6 @@ const TabsLayout = () => {
                 color={color}
                 size={32}
                 library="Ionicons"
-              />
-            ),
-            headerRight: () => (
-              <Icon
-                name="person-outline"
-                size={32}
-                style={{ marginRight: 15 }}
-                onPress={() => router.push("/profile")}
-                library="Ionicons"
-              />
-            ),
-          })}
-        />
-        <Tabs.Screen
-          name="tutorial"
-          redirect={role !== "PAT"}
-          options={() => ({
-            headerTitle: "Tutorials",
-            headerTitleStyle: { fontSize: 30, fontWeight: "bold" },
-            title: "Tutorials",
-            tabBarIcon: ({ color }) => (
-              <Icon
-                name="play-video"
-                color={color}
-                size={32}
-                library="Foundation"
               />
             ),
             headerRight: () => (

@@ -3,11 +3,17 @@ import { Modal, View, Text, TextInput, TouchableOpacity } from 'react-native'
 import { Icon } from "@/constants/Icons";
 import { sendCustomNotification } from "@/services/notificationService"
 import { usePatient } from "@/hooks/usePatient"
+import Spinner from "./Spinner";
+
 const CustomNotification = ({ isVisible, setIsVisible, toggleModal }) => {
   const { PATId } = usePatient()
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async () => {
+    setLoading(true)
     await sendCustomNotification(PATId, message)
+    setLoading(false)
     setIsVisible(!isVisible)
     setMessage("")
   }
@@ -50,6 +56,7 @@ const CustomNotification = ({ isVisible, setIsVisible, toggleModal }) => {
           </View>
         </View>
       </Modal>
+      {loading && <Spinner message="Sending message.Please wait..." />}
     </View>
   )
 }
