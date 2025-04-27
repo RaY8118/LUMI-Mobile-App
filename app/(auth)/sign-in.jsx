@@ -5,7 +5,6 @@ import { Link, router } from "expo-router";
 import { Icon } from "@/constants/Icons";
 import { handleLogin, authenticateAndAutofill } from "@/services/authService";
 import { useUser } from "@/hooks/useUser";
-import Images from "@/constants/Images";
 import Spinner from "@/components/Spinner"
 
 const SignIn = () => {
@@ -40,7 +39,7 @@ const SignIn = () => {
       <View className="mt-auto mb-auto">
         <View>
           <Image
-            source={Images.loginImg}
+            source={require("../../assets/images/login_screen.png")}
             resizeMode="contain"
             className="self-center mb-4 w-3/4 md:w-1/2"
           />

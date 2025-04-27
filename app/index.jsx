@@ -3,7 +3,6 @@ import { View, Text, ActivityIndicator, TouchableOpacity, Image } from "react-na
 import { Link, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
-import Images from "@/constants/Images";
 
 const HomeScreen = () => {
   const router = useRouter();
@@ -43,7 +42,7 @@ const HomeScreen = () => {
   return (
     <View className="flex-1 justify-center items-center bg-purple-100 px-6">
       <Image
-        source={Images.logo}
+        source={require("../assets/images/icon.png")}
         resizeMode="contain"
         className="self-center w-40 h-40 mb-4 "
       />

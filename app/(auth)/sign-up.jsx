@@ -6,7 +6,6 @@ import { handleRegister } from "@/services/authService";
 import { Icon } from "@/constants/Icons";
 import { TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Images from "@/constants/Images";
 
 const Register = () => {
   const router = useRouter();
@@ -34,7 +33,7 @@ const Register = () => {
       <View className="mt-auto mb-auto">
         <View>
           <Image
-            source={Images.registerImg}
+            source={require("../../assets/images/register_screen.png")}
             className="self-center mb-4 w-3/4 md:w-1/2"
           />
         </View>
