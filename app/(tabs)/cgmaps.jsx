@@ -1,6 +1,6 @@
 import { View, Text, SafeAreaView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { usePatient } from "@/hooks/usePatient";
 import {
   getPatientCurrentAddress,
@@ -27,6 +27,7 @@ const CgMaps = () => {
   const fetchData = async () => {
     if (!refreshing) setIsLoading(true);
     try {
+      await caregiverCoords();
       await getPatientCurrentAddress(
         CGId,
         PATId,
@@ -34,7 +35,6 @@ const CgMaps = () => {
         setAddress,
         setErrorMsg
       );
-      await caregiverCoords();
       setErrorMsg("");
     } catch (error) {
       const errorMessage = error.message || "An unknown error occurred.";
@@ -112,6 +112,7 @@ const CgMaps = () => {
             Cglocation && (
               <View className="w-full h-3/4 m-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
                 <MapView
+                  provider={PROVIDER_GOOGLE}
                   className="w-full h-full"
                   initialRegion={{
                     latitude: location?.latitude,

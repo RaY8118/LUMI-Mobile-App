@@ -7,7 +7,7 @@ import {
   sendLocationAlert,
 } from "@/services/locationService";
 import { View, Text, Alert } from "react-native";
-import MapView, { Marker, Circle } from "react-native-maps";
+import MapView, { Marker, Circle, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useUser } from "@/hooks/useUser";
 import CustomButton from "@/components/CustomButton";
@@ -195,6 +195,7 @@ const Map = () => {
         {location ? (
           <View className="w-full h-3/4 m-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
             <MapView
+              provider={PROVIDER_GOOGLE}
               className="w-full h-full"
               initialRegion={{
                 latitude: location.latitude,
@@ -231,6 +232,7 @@ const Map = () => {
         ) : (
           <View className="w-full h-3/4 min-h-3/4 m-3 mb-2 shadow-xl shadow-black overflow-hidden rounded-3xl">
             <MapView
+              provider={PROVIDER_GOOGLE}
               className="w-full h-full"
               initialRegion={{
                 latitude: 19.0760,
