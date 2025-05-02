@@ -74,7 +74,7 @@ export const uploadImage = async (
       } else {
         nameMessage =
           response.data.name && response.data.name.length > 0
-            ? `Identified Objects: ${response.data.name.join(", ")}`
+            ? `Identified Objects: ${response.data.name.join(", ")}\n${response.data.message}`
             : "No objects found.";
         setTimeout(() => {
           const message = nameMessage.split(":")[1];
